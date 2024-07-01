@@ -91,20 +91,21 @@ async function startApolloServer() {
       // setCurrentUserType(req,result)
       return { req, res }
     },
-    plugins: [
-      ApolloServerPluginDrainHttpServer({ httpServer }),
-      {
-          async serverWillStart() {
-            console.log(' serverWillStart ')
-              return {
-                  async drainServer() {
-                      await serverCleanup.dispose();
-                  },
-              }
-          }
-      },
+     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    // plugins: [
+    //   ApolloServerPluginDrainHttpServer({ httpServer }),
+    //   {
+    //       async serverWillStart() {
+    //         console.log(' serverWillStart ')
+    //           return {
+    //               async drainServer() {
+    //                   await serverCleanup.dispose();
+    //               },
+    //           }
+    //       }
+    //   },
      
-    ],
+    // ],
 
   })
 
