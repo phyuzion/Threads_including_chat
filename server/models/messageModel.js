@@ -1,6 +1,8 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+mongoose.pluralize(null);
 
-const messageSchema = mongoose.Schema(
+const messageSchema = new Schema(
   {
     sender: {
       type: mongoose.Schema.Types.ObjectId,
@@ -27,6 +29,8 @@ const messageSchema = mongoose.Schema(
   }
 );
 
-const Message = mongoose.model('Message', messageSchema);
+const threadModule = (module.exports = mongoose.model('Message', messageSchema))
+threadModule.messageSchema = messageSchema
 
-export default Message;
+// const Message = mongoose.model('Message', messageSchema);
+// export default Message;

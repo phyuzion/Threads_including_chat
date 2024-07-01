@@ -1,38 +1,29 @@
-import path from 'path';
-import express from 'express';
-import dotenv from 'dotenv';
-import connectDB from './db/connectDB.js';
-import cookieParser from 'cookie-parser';
-import userRoutes from './routes/userRoutes.js';
-import postRoutes from './routes/postRoutes.js';
-import messageRoutes from './routes/messageRoutes.js';
-import { app, server } from './socket/socket.js';
 
-dotenv.config();
+const config = require('./config.js')
+const express = require('express')
+const { connectDB_ } = require('../server/db/connectDB')
+const cookieParser = require('cookie-parser')
+const { startApolloServer } = require('./socket/socket')
+require('dotenv').config()
+const cors = require('cors');
 
-// connecting MongoDB and Initializing app
-connectDB();
+async function startServers() {
+  connectDB_();
+  const {io, server, app, httpServer  } =  await startApolloServer()
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
+  app.use(cors())
+  app.use(express.static('public'))
 
-const PORT = process.env.PORT || 5000;
-const __dirname = path.resolve();
 
-// Middlewares
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+  server.applyMiddleware({ app, path: "/graphql", })
+  await new Promise(resolve => httpServer.listen(config.PORT, resolve))
 
-// Routes
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/messages', messageRoutes);
 
-// Production Settings
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '/client/dist')));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
-  });
+  console.log(
+    `🚀 Server ready at http://${config.HOST}:${config.PORT}${server.graphqlPath}`
+  )
 }
+startServers()
 
-server.listen(PORT, () => console.log(`Server Running on http://localhost:${PORT}`));

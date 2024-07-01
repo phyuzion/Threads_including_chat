@@ -1,18 +1,23 @@
 {
-  "name": "server",
+  "name": "thread",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Thread Application",
+  "main": "server.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon server/server.js",
     "start": "NODE_ENV=production node server/server.js",
-    "build": "npm install && npm install --prefix client && npm run build --prefix client"
+    "build": "npm install && npm install --prefix client && npm run build --prefix client",
+    "dev-local": "env TZ='Asia/Seoul' && export NODE_ENV=development.local && nodemon app"
   },
-  "type": "module",
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.10.4",
+    "@graphql-tools/schema": "^8.5.1",
+    "apollo-server-core": "^3.13.0",
+    "apollo-server-express": "^3.6.0",
+    "graphql": "^16.2.0",
+    "graphql-subscriptions": "^2.0.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.1.0",
     "cookie-parser": "^1.4.6",

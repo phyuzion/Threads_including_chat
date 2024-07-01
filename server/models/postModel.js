@@ -1,6 +1,8 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+mongoose.pluralize(null);
 
-const postSchema = mongoose.Schema(
+const postSchema = new Schema(
   {
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -45,6 +47,8 @@ const postSchema = mongoose.Schema(
   }
 );
 
-const Post = mongoose.model('Post', postSchema);
+const threadModule = (module.exports = mongoose.model('Post', postSchema))
+threadModule.postSchema = postSchema
 
-export default Post;
+// const Post = mongoose.model('Post', postSchema);
+// export default Post;

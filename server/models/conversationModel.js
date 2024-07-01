@@ -1,6 +1,8 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+mongoose.pluralize(null);
 
-const conversationSchema = mongoose.Schema(
+const conversationSchema = new Schema(
   {
     participants: [
       {
@@ -24,7 +26,9 @@ const conversationSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+const threadModule = (module.exports = mongoose.model('Conversation', conversationSchema))
+threadModule.conversationSchema = conversationSchema
 
-const Conversation = mongoose.model('Conversation', conversationSchema);
 
-export default Conversation;
+// const Conversation = mongoose.model('Conversation', conversationSchema);
+// export default Conversation;
