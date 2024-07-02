@@ -13,6 +13,7 @@ const Message = require('../models/messageModel')
 const Conversation = require('../models/conversationModel')
 const app = express();
 const cors = require('cors');
+const { isAuthenticated } = require('../middleware/is-auth')
 
 async function startIOServer(server) {
   const io = new Server(server, {
@@ -60,23 +61,6 @@ async function startApolloServer() {
     typeDefs,
     resolvers,
   });
-  // const serverCleanup = useServer({
-  //   schema ,
-  //   context: (ctx, msg, args) => {
-  //     console.log(' ctx , msg : ', msg)
-  //      return getDynamicContext(ctx, msg, args);
-  //   },    
-  //   onConnect: async (ctx) => {
-  //     console.log(' Ws Connected ctx : ', ctx)
-  //   },
-  //   onDisconnect(ctx, code, reason) {
-  //     //console.log('Disconnected! : ', code, ' reason: ',reason);
-  //   },
-  // }
-// );
-
-
-
   const server = new ApolloServer({
     schema,
     introspection: true,
@@ -87,26 +71,10 @@ async function startApolloServer() {
         console.log("No req........")
         return
       }
-      // const result = await isAuthenticated(req)
-      // setCurrentUserType(req,result)
+      await isAuthenticated(req)
       return { req, res }
     },
      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    // plugins: [
-    //   ApolloServerPluginDrainHttpServer({ httpServer }),
-    //   {
-    //       async serverWillStart() {
-    //         console.log(' serverWillStart ')
-    //           return {
-    //               async drainServer() {
-    //                   await serverCleanup.dispose();
-    //               },
-    //           }
-    //       }
-    //   },
-     
-    // ],
-
   })
 
   await server.start()

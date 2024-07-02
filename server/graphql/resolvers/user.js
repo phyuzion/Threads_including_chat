@@ -40,7 +40,6 @@ module.exports = {
             try {
                 const user = await User.findOne({ username });
                 const isPasswordsCorrect = await bcrypt.compare(password, user?.password || '');
-            
                 if (!user || !isPasswordsCorrect) {
                   throwForbiddenError()
                 }
@@ -51,7 +50,53 @@ module.exports = {
                 const token = generateToken(user._id, user.name , user.email);
                 return transformUser(user,token)
             } catch(error) {
+                throwServerError(error)
+            }
+        },
 
+        freezeAccount: async (_,args,{req, res}) => {
+            try {
+                const user = await User.findById(req.user._id);
+                if (!user) {
+                    throwServerError('User not found')
+                }
+                user.isFrozen = true;
+                await user.save();
+                return true
+              } catch (error) {
+                console.log('Error at Freezing Account: ', error.message);
+                return false
+              }
+        },
+
+        followUnFollow: async (_,args,{req, res}) => {
+            const { id } = args
+            try {
+                const userToModify = await User.findById(id);
+                const currentUser = await User.findById(req.user._id);
+                if (id == req.user._id.toString()) {
+                    throwServerError('You can not follow/un-follow yourself ');
+                }
+                if (!userToModify || !currentUser) {
+                    throwServerError(' User not found' );
+                }   
+                const isFollowing = currentUser.following.includes(id);
+
+                if (isFollowing) {
+                  // Un-Following
+                  await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
+                  await User.findByIdAndUpdate(req.user._id, {
+                    $pull: { following: id },
+                  });
+                  return true
+                } else {
+                  // Following
+                  await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
+                  await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
+                  return true
+                }                             
+            } catch(error) {
+                throwServerError(error)
             }
         }
     }
