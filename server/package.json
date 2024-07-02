@@ -4,10 +4,10 @@
   "description": "Thread Application",
   "main": "server.js",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon server/server.js",
     "start": "NODE_ENV=production node server/server.js",
     "build": "npm install && npm install --prefix client && npm run build --prefix client",
-    "dev-local": "env TZ='Asia/Seoul' && export NODE_ENV=development.local && nodemon app"
+    "dev-local": "env TZ='Asia/Seoul' && export NODE_ENV=development.local && nodemon server",
+    "dev": "env TZ='Asia/Kolkata' && export NODE_ENV=development && nodemon server"
   },
   "author": "",
   "license": "ISC",

@@ -1,5 +1,20 @@
-import jwt from 'jsonwebtoken';
-
+const jwt = require('jsonwebtoken')
+const { GraphQLError } = require('graphql')
+const config = require('../../config')
+const throwForbiddenError = () => {
+  throw new GraphQLError('You are not authorized to perform this action.', {
+      extensions: {
+        code: 'FORBIDDEN',
+      },
+    });
+}
+const throwServerError = (errorMessage) => {
+  throw new GraphQLError(errorMessage, {
+      extensions: {
+        code: 'SERVER_ERROR',
+      },
+    });
+}
 const generateTokenAndSetCookie = (userId, res) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: '15d',
@@ -14,4 +29,20 @@ const generateTokenAndSetCookie = (userId, res) => {
   return token;
 };
 
-export default generateTokenAndSetCookie;
+const generateToken = (userId, name , email) => {
+  const token = jwt.sign(
+    { 
+      userId : userId,
+      name: name,
+      email: email
+    },
+    `${config.SECRET_KEY}`, {
+    expiresIn: '15d',
+  });
+
+  return token;
+};
+
+exports.generateToken = generateToken
+exports.throwServerError = throwServerError
+exports.throwForbiddenError = throwForbiddenError

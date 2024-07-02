@@ -15,12 +15,8 @@ async function startServers() {
   app.use(cookieParser());
   app.use(cors())
   app.use(express.static('public'))
-
-
   server.applyMiddleware({ app, path: "/graphql", })
   await new Promise(resolve => httpServer.listen(config.PORT, resolve))
-
-
   console.log(
     `🚀 Server ready at http://${config.HOST}:${config.PORT}${server.graphqlPath}`
   )

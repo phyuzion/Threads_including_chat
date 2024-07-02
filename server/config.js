@@ -11,5 +11,6 @@ module.exports = {
   CONNECTION_STRING: process.env.CONNECTION_STRING,
   DEBUG_DB: process.env.DEBUG_DB,
   HOST: process.env.HOST,
-  PORT: process.env.PORT
+  PORT: process.env.PORT,
+  SECRET_KEY: "Thread clone secret Key 213213231"
 }
