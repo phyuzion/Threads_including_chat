@@ -42,7 +42,7 @@ type Query {
 }
 type Mutation {
 
-    createPost(postedBy: String,text: String,imgUrl: String, videoUrl: String): Post
+    createPost(text: String,imgUrl: String, videoUrl: String): Post
     generateUrlsForUpload(userId: String, imageUpload: Boolean, videoUpload: Boolean): uploadURLs
     deletePost(postId: String): Boolean!
     likeUnLikePost(postId: String): Boolean!

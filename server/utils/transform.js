@@ -9,4 +9,12 @@ const tranformUser = (user,token) => {
     }
 }
 
+const tranformPost = (post) => {
+    return {
+        ...post._doc,
+        _id: post._id,
+    }
+}
+
 exports.tranformUser = tranformUser
+exports.tranformPost = tranformPost
