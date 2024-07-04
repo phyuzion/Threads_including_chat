@@ -17,6 +17,7 @@ type Post {
     postedBy: String!
     text: String!
     img: String
+    video: String
     likes: [String]
     replies: [Reply]
 }

@@ -43,6 +43,9 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    jwtToken: {
+      type: String
+    }
   },
   {
     timestamps: true,

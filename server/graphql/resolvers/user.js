@@ -35,6 +35,29 @@ module.exports = {
         }
     },
     Mutation: {
+        logoutUser: async (_,args,{req, res}) => {
+            if(!req.user) {
+                throwForbiddenError()
+            }
+
+            try{
+                const user = User.findOneAndUpdate(
+                    {_id: req.user._id},
+                    {
+                        $set: { jwtToken: null}
+                    },
+                    {
+                        returnOriginal: false
+                    })
+                if(user && user.jwtToken == null)
+                    return true
+                return false
+            } catch (error) {
+                throwServerError(error)
+            }
+
+        },
+
         signupUser : async (_,args,{req, res}) => {
             try {
                 const { name, username, password, email } = args;
@@ -52,12 +75,6 @@ module.exports = {
                 });
                 const user_ = await newUser.save();
                 return transformUser(user_)
-                // if (user_) {
-                //     const token = generateToken(user_._id, name , email);
-                //     return transformUserWithToken(user_,token)
-                // } else {
-                //     throwServerError('Invalid user data')
-                // }
               } catch (error) {
                 console.log('Error at Signup: ', error.message);
                 throwServerError(error)
@@ -66,24 +83,33 @@ module.exports = {
         },
         loginUser: async (_,args,{req, res}) => {
             const { username, password } = args;
+
             try {
                 const user = await User.findOne({ username });
+
                 const isPasswordsCorrect = await bcrypt.compare(password, user?.password || '');
                 if (!user || !isPasswordsCorrect) {
                   throwForbiddenError()
                 }
+              
+                const token = generateToken(user._id, user.name , user.email);
                 if (user.isFrozen) {
                     user.isFrozen = false;
-                    user.save();
-                }                
-                const token = generateToken(user._id, user.name , user.email);
-                return transformUserWithToken(user,token)
+                    
+                }  
+                user.jwtToken = token
+                const user_ = await user.save();
+                console.log
+                return transformUserWithToken(user_)
             } catch(error) {
                 throwServerError(error)
             }
         },
 
         freezeAccount: async (_,args,{req, res}) => {
+            if(!req.user) {
+                throwForbiddenError()
+            }
             try {
                 const user = await User.findById(req.user._id);
                 if (!user) {

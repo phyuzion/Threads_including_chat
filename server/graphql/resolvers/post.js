@@ -1,6 +1,8 @@
 const { throwServerError, throwForbiddenError } = require("../../utils/helpers/genrateTokenAndSetCookie")
 const { transformPost,transformPosts } = require('../../utils/transform')
 
+const Post = require('../../models/postModel')
+const User = require('../../models/userModel')
 
 module.exports = {
     Query: {
@@ -82,13 +84,13 @@ module.exports = {
                     throwServerError('Text must have maximum 500 letters')
                 }
                 const newPost = new Post({
-                    userId,
+                    postedBy: userId,
                     text,
                     img: imgUrl,
                     video: videoUrl
                   });
                 const post_ =   await newPost.save();     
-                return tranformPost(post_)           
+                return transformPost(post_)           
             
             } catch(error) {
                 throwServerError(error)

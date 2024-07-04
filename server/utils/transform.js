@@ -1,11 +1,10 @@
 const User = require('../models/userModel')
 
-const transformUserWithToken = (user,token) => {
+const transformUserWithToken = (user) => {
     return {
         ...user._doc,
         _id: user._id,
         password: null,
-        jwtToken: token
     }
 }
 
