@@ -1,21 +1,66 @@
 const { throwServerError, throwForbiddenError } = require("../../utils/helpers/genrateTokenAndSetCookie")
-const { tranformPost } = require('../../utils/transform')
+const { transformPost,transformPosts } = require('../../utils/transform')
 
 
 module.exports = {
     Query: {
         getPost: async (_,args,{req, res}) => {
-
+            const { postId } = args
+            if(!req.user) {
+                throwForbiddenError()
+            }
+            try {
+                const post = await Post.findById(postId);
+                if (!post) throwServerError('Post not found');
+                return transformPost(post)
+            } catch (error) {
+                throwServerError(error)
+            }
 
         },
 
         getUserPosts: async (_,args,{req, res}) => {
-
+            if(!req.user) {
+                throwForbiddenError()
+            }
+            const { username } = args;
+            try {
+                const user = await User.findOne({ username });
+            
+                if (!user) throwServerError('User not found' );
+            
+                const posts = await Post.find({ postedBy: user.id }).sort({
+                  createdAt: -1,
+                });
+                if (!posts) throwServerError('No posts not found' );
+                return transformPosts(posts)
+              } catch (error) {
+                throwServerError(error)
+              }
 
         },
         getFeedPosts: async (_,args,{req, res}) => {
-
-
+            if(!req.user) {
+                throwForbiddenError()
+            }
+            try {
+                const userId = req.user._id;
+                const user = await User.findById(userId);
+                if (!user) throwServerError('User not found' );
+            
+                const userFollowing = user.following;
+                userFollowing.push(userId.toString());
+            
+                const feedPosts = await Post.find({
+                  postedBy: { $in: userFollowing },
+                }).sort({
+                  createdAt: -1,
+                });
+                return transformPosts(feedPosts)
+                
+              } catch (error) {
+                throwServerError(error)
+              }
         },
 
     },
@@ -83,12 +128,57 @@ module.exports = {
         } ,
 
         likeUnLikePost: async (_,args,{req, res}) => {
-
+            const {postId} = args
+            if(!req.user) {
+                throwForbiddenError()
+            }
+            try{
+                const post = await Post.findById(postId);
+                if(!post) {
+                    throwServerError('Post not found')
+                }
+                const isUserLikedPost = post.likes.includes(req.user._id);
+                if (isUserLikedPost) {
+                    // Un-Like
+                    await Post.updateOne(
+                      { _id: postId },
+                      {
+                        $pull: { likes: req.user._id },
+                      }
+                    );
+              
+                    return true;
+                  } else {
+                    // Like
+                    post.likes.push(req.user._id);
+                    await post.save();
+                    return true;
+                } 
+            } catch( error) {
+                throwServerError(error)
+            }
         } ,
 
         replyToPost: async (_,args,{req, res}) => {
-
-
+            const { text, postId } = args;
+            if(!req.user) {
+                throwForbiddenError()
+            }
+            const userId = req.user._id;
+            const userProfilePic = req.user.profilePic;
+            const username = req.user.username;
+          
+            if (!text) throwServerError('Text required');
+            try{
+                const post = await Post.findById(postId);
+                if (!post) throwServerError('Post not found ');
+                const reply = { userId, text, userProfilePic, username };
+                post.replies.push(reply);
+                await post.save();
+                return reply
+            } catch( error) {
+                throwServerError(error)
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ type Query {
     getPost(postId: String): Post
     getUserPosts(username: String): [Post]
     getFeedPosts: [Post]
-
+    getSuggestedUsers: [User]
 }
 type Mutation {
 
@@ -53,7 +53,7 @@ type Mutation {
     loginUser(username: String!, password: String!): User
     logoutUser: Boolean
     followUnFollow(followId: String!): Boolean
-    getSuggestedUsers: [User]
+    
     freezeAccount: Boolean!
     
 

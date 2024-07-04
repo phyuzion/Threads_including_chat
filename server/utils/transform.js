@@ -1,6 +1,6 @@
 const User = require('../models/userModel')
 
-const tranformUser = (user,token) => {
+const transformUserWithToken = (user,token) => {
     return {
         ...user._doc,
         _id: user._id,
@@ -9,12 +9,30 @@ const tranformUser = (user,token) => {
     }
 }
 
-const tranformPost = (post) => {
+const transformUser = (user) => {
+    return {
+        ...user._doc,
+        _id: user._id,
+        password: null,
+        jwtToken: null
+    }
+}
+const transformUsers =  users => {
+    return users.map(transformUser)
+}
+const transformPost = (post) => {
     return {
         ...post._doc,
         _id: post._id,
     }
 }
 
-exports.tranformUser = tranformUser
-exports.tranformPost = tranformPost
+const transformPosts =  posts => {
+    return posts.map(transformPost)
+}
+
+exports.transformUser = transformUser
+exports.transformPost = transformPost
+exports.transformPosts = transformPosts
+exports.transformUserWithToken = transformUserWithToken
+exports.transformUsers = transformUserWithToken

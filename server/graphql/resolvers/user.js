@@ -1,10 +1,38 @@
 const { throwServerError , generateToken, throwForbiddenError} = require("../../utils/helpers/genrateTokenAndSetCookie");
-const { transformUser } = require("../../utils/transform");
+const { transformUser,transformUserWithToken,transformUsers } = require("../../utils/transform");
 const bcrypt = require('bcryptjs')
 const User = require('../../models/userModel')
 module.exports = {
     Query: {
-
+        getSuggestedUsers: async (_,args,{req, res}) => {
+            if(!req.user) {
+                throwForbiddenError()
+            }
+            try {
+                const userId = req.user._id;
+                const usersFollowedByClient = await User.findById(userId).select('following');
+                const users = await User.aggregate([
+                  {
+                    $match: {
+                      _id: { $ne: userId },
+                      isFrozen: false,
+                    },
+                  },
+                  {
+                    $sample: { size: 10 },
+                  },
+                ]);
+                const filteredUsers = users.filter(
+                  (user) => !usersFollowedByClient.following.includes(user._id.toString())
+                );
+                const suggestedUsers = filteredUsers.slice(0, 4);
+                suggestedUsers.forEach((user) => (user.password = null));
+                return transformUsers(suggestedUsers)
+              } catch (error) {
+                console.log(error.message);
+                throwServerError(error)
+              }
+        }
     },
     Mutation: {
         signupUser : async (_,args,{req, res}) => {
@@ -23,12 +51,13 @@ module.exports = {
                   password: hashedPassword,
                 });
                 const user_ = await newUser.save();
-                if (user_) {
-                    const token = generateToken(newUser._id, name , email);
-                    return transformUser(user_,token)
-                } else {
-                    throwServerError('Invalid user data')
-                }
+                return transformUser(user_)
+                // if (user_) {
+                //     const token = generateToken(user_._id, name , email);
+                //     return transformUserWithToken(user_,token)
+                // } else {
+                //     throwServerError('Invalid user data')
+                // }
               } catch (error) {
                 console.log('Error at Signup: ', error.message);
                 throwServerError(error)
@@ -48,7 +77,7 @@ module.exports = {
                     user.save();
                 }                
                 const token = generateToken(user._id, user.name , user.email);
-                return transformUser(user,token)
+                return transformUserWithToken(user,token)
             } catch(error) {
                 throwServerError(error)
             }
@@ -71,6 +100,9 @@ module.exports = {
 
         followUnFollow: async (_,args,{req, res}) => {
             const { id } = args
+            if(!req.user) {
+                throwForbiddenError()
+            }
             try {
                 const userToModify = await User.findById(id);
                 const currentUser = await User.findById(req.user._id);
