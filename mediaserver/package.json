@@ -1,0 +1,31 @@
+{
+  "name": "thread",
+  "version": "1.0.0",
+  "description": "Thread Application",
+  "main": "media.js",
+  "scripts": {
+    "start": "NODE_ENV=production node mediaserver/media.js",
+    "build": "npm install && npm install --prefix client && npm run build --prefix client",
+    "dev-local": "env TZ='Asia/Seoul' && export NODE_ENV=development.local && nodemon  media",
+    "dev": "env TZ='Asia/Seoul' && export NODE_ENV=development && nodemon media"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.4",
+    "multer-s3": "^2.10.0",
+    "sha1": "^1.1.1",
+    "sha256": "^0.2.0",
+    "short-uuid": "^5.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
