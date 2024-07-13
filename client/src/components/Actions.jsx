@@ -20,6 +20,10 @@ import userAtom from '../atoms/userAtom';
 import useShowToast from '../hooks/useShowToast';
 import postsAtom from '../atoms/postsAtom';
 
+
+import { gql, useMutation } from "@apollo/client";
+import { likeUnLikePost } from "../apollo/mutations.js";
+
 const Actions = ({ post }) => {
   const user = useRecoilValue(userAtom);
   const [liked, setLiked] = useState(post.likes.includes(user?._id));
@@ -30,7 +34,8 @@ const Actions = ({ post }) => {
 
   const showToast = useShowToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const LIKE_UNLIKE_POST = gql ` ${likeUnLikePost}`;
+  const REPLY_TO_POST = gql ` ${replyToPost}`;
   const handleLikeAndUnlike = async () => {
     if (!user)
       return showToast(
@@ -40,43 +45,39 @@ const Actions = ({ post }) => {
       );
     if (isLiking) return;
     setIsLiking(true);
-    try {
-      const res = await fetch('/api/posts/like/' + post._id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+
+    const response =  useMutation(LIKE_UNLIKE_POST, {variables:{ postId: post._id  },
+      onCompleted: (data) => {
+        console.log(' LIKE_UNLIKE_POST onCompleted : ')
+        setIsLoading(false);
+      },
+      onError: (error) => {
+        setIsLoading(false);
+        return showToast('Error', error, 'error');
+      } 
+    })
+    console.log(data);
+    if (!liked) {
+      // add the id of the current user to post.likes array
+      const updatedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return { ...p, likes: [...p.likes, user._id] };
+        }
+        return p;
       });
-      const data = await res.json();
-      if (data.error) return showToast('Error', data.error, 'error');
-
-      console.log(data);
-      if (!liked) {
-        // add the id of the current user to post.likes array
-        const updatedPosts = posts.map((p) => {
-          if (p._id === post._id) {
-            return { ...p, likes: [...p.likes, user._id] };
-          }
-          return p;
-        });
-        setPosts(updatedPosts);
-      } else {
-        // remove the id of the current user from post.likes array
-        const updatedPosts = posts.map((p) => {
-          if (p._id === post._id) {
-            return { ...p, likes: p.likes.filter((id) => id !== user._id) };
-          }
-          return p;
-        });
-        setPosts(updatedPosts);
-      }
-
-      setLiked(!liked);
-    } catch (error) {
-      showToast('Error', error.message, 'error');
-    } finally {
-      setIsLiking(false);
+      setPosts(updatedPosts);
+    } else {
+      // remove the id of the current user from post.likes array
+      const updatedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return { ...p, likes: p.likes.filter((id) => id !== user._id) };
+        }
+        return p;
+      });
+      setPosts(updatedPosts);
     }
+
+    setLiked(!liked);
   };
 
   const handleReply = async () => {
@@ -88,31 +89,23 @@ const Actions = ({ post }) => {
       );
     if (isReplying) return;
     setIsReplying(true);
-    try {
-      const res = await fetch('/api/posts/reply/' + post._id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: reply }),
-      });
-      const data = await res.json();
-      if (data.error) return showToast('Error', data.error, 'error');
 
-      const updatedPosts = posts.map((p) => {
-        if (p._id === post._id) {
-          return { ...p, replies: [...p.replies, data] };
-        }
-        return p;
-      });
+
+    const response =  useMutation(REPLY_TO_POST, {variables:{ postId: post._id ,  text: reply  },
+      onCompleted: (data) => {
+        console.log(' REPLY_TO_POST onCompleted : ')
+        showToast('Success', 'Reply posted successfully', 'success');
+        setIsReplying(false)
+      },
+      onError: (error) => {
+        setIsReplying(false)
+        return showToast('Error', error, 'error');
+      } 
+    })
+    if(response?.data){
       setPosts(updatedPosts);
-      showToast('Success', 'Reply posted successfully', 'success');
       onClose();
       setReply('');
-    } catch (error) {
-      showToast('Error', error.message, 'error');
-    } finally {
-      setIsReplying(false);
     }
   };
 

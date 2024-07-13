@@ -5,6 +5,14 @@ import { useRecoilState } from 'recoil';
 import postsAtom from '../atoms/postsAtom';
 import useShowToast from '../hooks/useShowToast';
 import SuggestedUsers from '../components/SuggestedUsers';
+import { GetFeedPosts } from "../apollo/queries";
+import { gql, useQuery } from "@apollo/client";
+
+//useMutation(LOGOUT, { onCompleted, onError });
+
+const getFeedPosts = gql`
+  ${GetFeedPosts}
+`;
 
 const HomePage = () => {
   const showToast = useShowToast();
@@ -14,28 +22,36 @@ const HomePage = () => {
     const fetchFeedPost = async () => {
       setIsLoading(true);
       setPosts([]);
-      try {
-        const res = await fetch(`/api/posts/feed`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const data = await res.json();
-        if (data.error) {
-          showToast('Error', data.error, 'error');
-
-          return;
+      const { posts:Posts, isLoading, error } = useQuery(getFeedPosts,
+      {
+        fetchPolicy: "no-cache" ,
+        onCompleted: (data) => {
+          setPosts(data);
+          setIsLoading(false);
         }
-        setPosts(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error.message);
-        showToast('Error', error.message, 'error');
-      } finally {
-        setIsLoading(false);
-      }
+      })
+    //   try {
+    //     const res = await fetch(`/api/posts/feed`, {
+    //       method: 'GET',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //     });
+
+    //     const data = await res.json();
+    //     if (data.error) {
+    //       showToast('Error', data.error, 'error');
+
+    //       return;
+    //     }
+    //     setPosts(data);
+    //     setIsLoading(false);
+    //   } catch (error) {
+    //     console.log(error.message);
+    //     showToast('Error', error.message, 'error');
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
     };
 
     fetchFeedPost();

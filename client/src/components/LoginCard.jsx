@@ -19,6 +19,9 @@ import React, { useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import authScreenAtom from '../atoms/authAtom.js';
 import userAtom from '../atoms/userAtom.js';
+import { gql, useMutation } from "@apollo/client";
+import { loginUser } from "../apollo/mutations.js";
+
 
 function LoginCard() {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,49 +31,72 @@ function LoginCard() {
     username: '',
     password: '',
   });
-  const setUser = useSetRecoilState(userAtom);
+
+  const [, setUser] = useRecoilState(userAtom);
   const [isLoading, setIsLoading] = useState();
   const toast = useToast();
 
+
+
+  const LOGIN_USER = gql` ${loginUser}`;
+
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
       setIsLoading(true);
-      const res = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response =  useMutation(LOGIN_USER, {variables:{ username, password  },
+        onCompleted: (data) => {
+          console.log(' LOGIN_USER onCompleted : ')
+          setIsLoading(false);
+          toast({title: 'Successfully Logged in',description: '',status: 'success',duration: 3000,isClosable: true});          
         },
-        body: JSON.stringify(inputs),
-      });
-
-      const data = await res.json();
-      if (data.error) {
-        toast({
-          title: 'Error',
-          description: data.error,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      } else {
-        toast({
-          title: 'Successfully Logged in',
-          description: '',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
+        onError: (error) => {
+          setIsLoading(false);
+          toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
+        } 
+      })
+      if(response?.data){
+        localStorage.setItem('user', JSON.stringify(data));
+        setUser(response?.data?.loginUser);
+        localStorage.setItem('token', JSON.stringify(data.jwtToken));
       }
 
-      localStorage.setItem('user', JSON.stringify(data));
-      setUser(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+
+    //   const res = await fetch('/api/users/login', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(inputs),
+    //   });
+
+    //   const data = await res.json();
+    //   if (data.error) {
+    //     toast({
+    //       title: 'Error',
+    //       description: data.error,
+    //       status: 'error',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //     return;
+    //   } else {
+    //     toast({
+    //       title: 'Successfully Logged in',
+    //       description: '',
+    //       status: 'success',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //   }
+
+    //   localStorage.setItem('user', JSON.stringify(data));
+    //   setUser(data);
+    // } catch (error) {
+    //   console.log(error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   return (

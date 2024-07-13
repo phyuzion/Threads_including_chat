@@ -9,6 +9,10 @@ import './index.css';
 import { RecoilRoot } from 'recoil';
 import { SocketContextProvider } from './context/SocketContext.jsx';
 
+import { ApolloProvider } from '@apollo/client';
+import setupApolloClient from './apollo/apolloindex.js'
+
+//const client = setupApolloClient();
 const styles = {
   global: (props) => ({
     body: {
@@ -33,15 +37,19 @@ const theme = extendTheme({ config, styles, colors });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
+  <ApolloProvider client={setupApolloClient()}>
   <RecoilRoot>
     <BrowserRouter>
       <ChakraProvider theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <SocketContextProvider>
+
+        {/* <SocketContextProvider> */}
           <App />
-        </SocketContextProvider>
+        {/* </SocketContextProvider> */}
+
       </ChakraProvider>
     </BrowserRouter>
   </RecoilRoot>
+  </ApolloProvider>
   // </React.StrictMode>
 );

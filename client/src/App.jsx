@@ -12,10 +12,12 @@ import UpdateProfilePage from './pages/UpdateProfilePage';
 import UserPage from './pages/UserPage';
 import ChatPage from './pages/ChatPage';
 import SettingsPage from './pages/SettingsPage';
+import setupApolloClient from "./apollo/apolloindex.js";
 
 function App() {
   const user = useRecoilValue(userAtom);
   const { pathname } = useLocation();
+  const client = setupApolloClient();
   return (
     <Box position={'relative'} w={'full'}>
       <Container maxW={pathname !== '/' ? '720px' : '950px'}>

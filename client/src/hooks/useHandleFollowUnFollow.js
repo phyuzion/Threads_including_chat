@@ -3,10 +3,14 @@ import useShowToast from './useShowToast';
 
 import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
+import { gql, useMutation } from "@apollo/client";
+import { followUnFollow } from "../apollo/mutations.js";
+
 const useHandleFollowUnFollow = (user) => {
   const currentUser = useRecoilValue(userAtom);
   const [following, setFollowing] = useState(user?.followers.includes(currentUser?._id));
   const [isFlwBtnLoading, SetIsFlwBtnLoading] = useState();
+  const FOLLOW_UNFOLLOW = gql` ${followUnFollow}`;
 
   const showToast = useShowToast();
 
@@ -24,18 +28,21 @@ const useHandleFollowUnFollow = (user) => {
       },
     });
 
-    const data = await res.json();
-
-    if (data.error) {
-      showToast('Error', data.error, 'error');
-    }
+    const response =  useMutation(FOLLOW_UNFOLLOW, {variables:{ followId:  user?._id },
+      onCompleted: (data) => {
+        console.log(' FOLLOW_UNFOLLOW onCompleted : ')
+      },
+      onError: (error) => {
+        showToast('Error', error, 'error');
+      } 
+    })
 
     if (following) {
-      showToast('UnFollowed', data.message, 'info');
+      showToast('UnFollowed', `${user?._id}`, 'info');
       user?.followers.pop();
     }
     if (!following) {
-      showToast('Followed', data.message, 'info');
+      showToast('Followed', `${user?._id}` , 'info');
 
       user?.followers.push(currentUser?._id);
     }

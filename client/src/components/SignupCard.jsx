@@ -20,6 +20,9 @@ import React, { useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import authScreenAtom from '../atoms/authAtom.js';
 import userAtom from '../atoms/userAtom.js';
+import { gql, useMutation } from "@apollo/client";
+import { signupUser } from "../apollo/mutations.js";
+
 
 function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,48 +34,63 @@ function SignupCard() {
     password: '',
   });
   const setUser = useSetRecoilState(userAtom);
+  const SIGNUP_USER = gql` ${signupUser}`;
   const toast = useToast();
   const [isLoading, setIsLoading] = useState();
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    try {
+    //try {
       setIsLoading(true);
-      const res = await fetch('/api/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response =  useMutation(SIGNUP_USER, {variables:{inputs },
+        onCompleted: (data) => {
+          console.log(' SIGNUP_USER onCompleted : data ',data)
+          setIsLoading(false);
+          toast({title: 'Successfully Signed in',description: '',status: 'success',duration: 3000,isClosable: true});          
         },
-        body: JSON.stringify(inputs),
-      });
+        onError: (error) => {
+          setIsLoading(false);
+          toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
+        } 
+      })
+      localStorage.setItem('user', JSON.stringify(response?.data?.signupUser));
+      setUser(response?.data?.signupUser);      
 
-      const data = await res.json();
-      console.log(data);
-      if (data.error) {
-        toast({
-          title: 'Error',
-          description: data.error,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      } else {
-        toast({
-          title: 'Successfully Signed in',
-          description: '',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+    //   const res = await fetch('/api/users/signup', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(inputs),
+    //   });
 
-      localStorage.setItem('user', JSON.stringify(data));
-      setUser(data);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
+    //   const data = await res.json();
+    //   console.log(data);
+    //   if (data.error) {
+    //     toast({
+    //       title: 'Error',
+    //       description: data.error,
+    //       status: 'error',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //     return;
+    //   } else {
+    //     toast({
+    //       title: 'Successfully Signed in',
+    //       description: '',
+    //       status: 'success',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //   }
+
+    //   localStorage.setItem('user', JSON.stringify(data));
+    //   setUser(data);
+    //   setIsLoading(false);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (

@@ -26,6 +26,10 @@ import userAtom from '../atoms/userAtom.js';
 import postsAtom from '../atoms/postsAtom.js';
 import { useLocation, useParams } from 'react-router-dom';
 
+import { gql, useMutation } from "@apollo/client";
+import { Create_Post } from "../apollo/mutations.js";
+
+
 const CreatePost = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [postText, setPostText] = useState('');
@@ -37,34 +41,17 @@ const CreatePost = () => {
   const [posts, setPosts] = useRecoilState(postsAtom);
   const { username } = useParams();
   const { pathname } = useLocation();
+  const CREATE_POST = gql` ${Create_Post}`;
 
   const handleTextChange = (e) => {
     setPostText(e.target.value);
   };
   const handleCreatePost = async () => {
-    try {
-      setIsCreatePostLoading(true);
-      const res = await fetch('/api/posts/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          postedBy: user._id,
-          text: postText,
-          img: previewImage,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) {
-        toast({
-          title: 'Error',
-          description: data.error,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else if (data) {
+
+    const response =  useMutation(CREATE_POST, {variables:{ text: postText, imageUrl: "" ,videoUrl: ""  },
+      onCompleted: (data) => {
+        console.log(' CREATE_POST onCompleted : ')
+        setIsCreatePostLoading(false);
         toast({
           title: 'Post Created',
           description: data.message,
@@ -72,24 +59,76 @@ const CreatePost = () => {
           duration: 3000,
           isClosable: true,
         });
-      }
+      },
+      onError: (error) => {
+        setIsCreatePostLoading(false);
+        toast({
+          title: 'Error',
+          description: data.error,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+        toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
+      } 
+    })
 
-      onClose();
-      setIsCreatePostLoading(false);
-      if (username === user.username || pathname === '/') {
-        setPosts([data.post, ...posts]);
-      }
-      setPostText('');
-      setPreviewImage('');
-    } catch (error) {
-      toast({
-        title: 'Failed To Create Post',
-        description: error.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+    onClose();
+    setIsCreatePostLoading(false);
+    if (username === user.username || pathname === '/') {
+      setPosts([response.data.post, ...posts]);
     }
+    setPostText('');
+    setPreviewImage('');
+
+    // try {
+    //   setIsCreatePostLoading(true);
+    //   const res = await fetch('/api/posts/create', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       postedBy: user._id,
+    //       text: postText,
+    //       img: previewImage,
+    //     }),
+    //   });
+    //   const data = await res.json();
+    //   if (data.error) {
+    //     toast({
+    //       title: 'Error',
+    //       description: data.error,
+    //       status: 'error',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //   } else if (data) {
+    //     toast({
+    //       title: 'Post Created',
+    //       description: data.message,
+    //       status: 'success',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //   }
+
+    //   onClose();
+    //   setIsCreatePostLoading(false);
+    //   if (username === user.username || pathname === '/') {
+    //     setPosts([data.post, ...posts]);
+    //   }
+    //   setPostText('');
+    //   setPreviewImage('');
+    // } catch (error) {
+    //   toast({
+    //     title: 'Failed To Create Post',
+    //     description: error.message,
+    //     status: 'error',
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    // }
   };
 
   return (

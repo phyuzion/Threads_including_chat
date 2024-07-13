@@ -9,34 +9,37 @@ import Actions from './Actions';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import postsAtom from '../atoms/postsAtom';
+import { gql, useMutation } from "@apollo/client";
+import { DeletePost } from "../apollo/mutations.js";
 
 function Post({ post }) {
   const [postedByUser, setPostedByUser] = useState(null);
   const currentUser = useRecoilValue(userAtom);
   const [posts, setPosts] = useRecoilState(postsAtom);
+  const DELETE_POST = gql` ${DeletePost}`;
 
   const showToast = useShowToast();
 
   useEffect(() => {
     const getUser = async () => {
-      try {
-        const res = await fetch(`/api/users/profile/${post.postedBy}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+      // try {
+      //   const res = await fetch(`/api/users/profile/${post.postedBy}`, {
+      //     method: 'GET',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //   });
 
-        const data = await res.json();
-        if (data.error) {
-          showToast('Error', data.error, 'error');
-          return;
-        }
-        setPostedByUser(data);
-      } catch (error) {
-        showToast('Error', error.message, 'error');
-        return;
-      }
+      //   const data = await res.json();
+      //   if (data.error) {
+      //     showToast('Error', data.error, 'error');
+      //     return;
+      //   }
+      //   setPostedByUser(data);
+      // } catch (error) {
+      //   showToast('Error', error.message, 'error');
+      //   return;
+      // }
     };
 
     getUser();
@@ -47,24 +50,27 @@ function Post({ post }) {
       e.preventDefault();
       if (!window.confirm('Are you sure you want to delete this post')) return;
 
-      const res = await fetch(`/api/posts/${post._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
+      // const res = await fetch(`/api/posts/${post._id}`, {
+      //   method: 'DELETE',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // });
+      const response =  useMutation(DELETE_POST, {variables:{ postId: post._id  },
+        onCompleted: (data) => {
+          console.log(' DELETE_POST onCompleted : ')
+          showToast('Success', `Post deleted : ${post._id}`, 'success');
         },
-      });
-
-      const data = await res.json();
-      if (data.error) {
-        showToast('Error', data.error, 'error');
-        return;
-      }
-      showToast('Success', 'Post deleted', 'success');
+        onError: (error) => {
+          showToast('Error', data.error, 'error');
+          return;        } 
+      })
       setPosts(
         posts.filter((p) => {
           return p._id !== post._id;
         })
       );
+
     } catch (error) {
       showToast('Error', error.message, 'error');
     }
