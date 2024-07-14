@@ -97,9 +97,11 @@ module.exports = {
             const { username, password } = args;
 
             try {
+                console.log('login username : ',username)
                 const user = await User.findOne({ username });
-
+                console.log('login user : ',user)
                 const isPasswordsCorrect = await bcrypt.compare(password, user?.password || '');
+                console.log('login isPasswordsCorrect : ',isPasswordsCorrect)
                 if (!user || !isPasswordsCorrect) {
                   throwForbiddenError()
                 }
