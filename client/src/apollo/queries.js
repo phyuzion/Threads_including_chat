@@ -15,6 +15,7 @@ getFeedPosts {
       userProfilePic
       username
     }
+    createdAt
   }
 }`
 

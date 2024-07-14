@@ -72,6 +72,7 @@ async function startApolloServer() {
         return
       }
       await isAuthenticated(req)
+
       return { req, res }
     },
      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],

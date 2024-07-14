@@ -20,6 +20,7 @@ const s3 = new aws.S3({
 });
 
 const generateFileNameWithFolder = (req,filename) => {
+  console.log('filename:  ',filename)
         const uuid = short.generate(); //v4();
         const ext = path.extname(filename);
         const userNameHash = generateHash(req.user.username)
@@ -33,6 +34,7 @@ const upload = multer({
       bucket: config.SPACES_BUCKET,
       acl: 'public-read',
       key: function (request, file, cb) {
+        console.log('req body: ',request.body);
         console.log('File:', file)
         const fileName = generateFileNameWithFolder(request,file.originalname)
         request.fileName = fileName
@@ -42,7 +44,9 @@ const upload = multer({
   }).array('file', 1);
 
 router.post("/",async (req, res , next) => { 
+    console.log(' req.file: ',req.file)
     upload(req, res, function (error) {
+      //console.log(req)
         if (error) {
           console.log(error);
           return res.status(400);

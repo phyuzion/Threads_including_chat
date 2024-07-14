@@ -9,19 +9,20 @@ import {
   import { useRecoilValue } from 'recoil';
   import { setContext } from '@apollo/client/link/context';
   const setupApolloClient = () => {
-    
+
     const httpLink = createHttpLink({
-      uri: `${import.meta.env.REACT_APP_SERVER_URL}`,
+      uri: `${import.meta.env.VITE_REACT_APP_SERVER_URL}`,
     });
     
     const authLink = setContext((_, { headers }) => {
       // get the authentication token from local storage if it exists
-      const token = localStorage.getItem('token');
+      const user = (localStorage.getItem('user') != 'undefined') ? JSON.parse(localStorage.getItem('user')) : null;
+      console.log(' authLink : ',user )
       // return the headers to the context so httpLink can read them
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : "",
+          Authorization: user?.loginUser?.jwtToken ? `Bearer ${user.loginUser.jwtToken}` : "",
         }
       }
     });

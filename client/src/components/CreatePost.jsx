@@ -42,93 +42,54 @@ const CreatePost = () => {
   const { username } = useParams();
   const { pathname } = useLocation();
   const CREATE_POST = gql` ${Create_Post}`;
+  const [CREATE_POST_COMMAND] = useMutation(CREATE_POST);
+  const [file, setFile] = useState()
+
+  const UPLOAD_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`
 
   const handleTextChange = (e) => {
     setPostText(e.target.value);
   };
+
+  const handleImagesChange = (e) => {
+    setFile(e.target.files[0])
+    handleImageChange(e)
+  };
   const handleCreatePost = async () => {
 
-    const response =  useMutation(CREATE_POST, {variables:{ text: postText, imageUrl: "" ,videoUrl: ""  },
-      onCompleted: (data) => {
-        console.log(' CREATE_POST onCompleted : ')
+    try {
+      setIsCreatePostLoading(true);
+      //upload image
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      console.log(' File: ',file)
+      const user_ = (localStorage.getItem('user') != 'undefined') ? JSON.parse(localStorage.getItem('user')) : null;
+      const res = await fetch(UPLOAD_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': user_?.loginUser.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : "", 
+        },
+        body: formData,
+      });      
+      const data = await res.json();
+      console.log(' upload response data : ',data)
+      // Create Post
+      const response = await CREATE_POST_COMMAND({ variables:{text: postText, imgUrl: data.url}})
+      if(response?.data){ 
         setIsCreatePostLoading(false);
-        toast({
-          title: 'Post Created',
-          description: data.message,
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: (error) => {
-        setIsCreatePostLoading(false);
-        toast({
-          title: 'Error',
-          description: data.error,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-        toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
-      } 
-    })
-
-    onClose();
-    setIsCreatePostLoading(false);
-    if (username === user.username || pathname === '/') {
-      setPosts([response.data.post, ...posts]);
+      }
+      if (username === user.username || pathname === '/') {
+        //let data_ = response?data?.createPost
+        setPosts([response?.data?.createPost, ...posts]);
+      }
+      onClose();
+      setPostText('');
+      setPreviewImage('');
+    } catch (error) {
+      console.log(' create post : ',error)
     }
-    setPostText('');
-    setPreviewImage('');
 
-    // try {
-    //   setIsCreatePostLoading(true);
-    //   const res = await fetch('/api/posts/create', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       postedBy: user._id,
-    //       text: postText,
-    //       img: previewImage,
-    //     }),
-    //   });
-    //   const data = await res.json();
-    //   if (data.error) {
-    //     toast({
-    //       title: 'Error',
-    //       description: data.error,
-    //       status: 'error',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //   } else if (data) {
-    //     toast({
-    //       title: 'Post Created',
-    //       description: data.message,
-    //       status: 'success',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //   }
-
-    //   onClose();
-    //   setIsCreatePostLoading(false);
-    //   if (username === user.username || pathname === '/') {
-    //     setPosts([data.post, ...posts]);
-    //   }
-    //   setPostText('');
-    //   setPreviewImage('');
-    // } catch (error) {
-    //   toast({
-    //     title: 'Failed To Create Post',
-    //     description: error.message,
-    //     status: 'error',
-    //     duration: 3000,
-    //     isClosable: true,
-    //   });
-    // }
   };
 
   return (
@@ -160,7 +121,8 @@ const CreatePost = () => {
               <Text size={'xs'} color={'gray.800'} textAlign={'right'} fontWeight={'bold'} m={1}>
                 {postText.length}/500
               </Text>
-              <Input type='file' hidden ref={postMediaRef} onChange={handleImageChange} />
+              {/* <Input type='file' hidden ref={postMediaRef} onChange={handleImageChange} /> */}
+              <Input filename={file}  type='file' hidden ref={postMediaRef} onChange={handleImagesChange} />
 
               <BsFileImageFill
                 style={{ marginLeft: '5px', cursor: 'pointer' }}

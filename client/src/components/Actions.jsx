@@ -22,7 +22,8 @@ import postsAtom from '../atoms/postsAtom';
 
 
 import { gql, useMutation } from "@apollo/client";
-import { likeUnLikePost } from "../apollo/mutations.js";
+import { likeUnLikePost,replyToPost } from "../apollo/mutations.js";
+
 
 const Actions = ({ post }) => {
   const user = useRecoilValue(userAtom);

@@ -11,6 +11,7 @@ module.exports = {
             try {
                 const userId = req.user._id;
                 const usersFollowedByClient = await User.findById(userId).select('following');
+                
                 const users = await User.aggregate([
                   {
                     $match: {
@@ -25,9 +26,17 @@ module.exports = {
                 const filteredUsers = users.filter(
                   (user) => !usersFollowedByClient.following.includes(user._id.toString())
                 );
-                const suggestedUsers = filteredUsers.slice(0, 4);
-                suggestedUsers.forEach((user) => (user.password = null));
-                return transformUsers(suggestedUsers)
+                console.log(' filteredUsers : ',filteredUsers)
+                if(filteredUsers && filteredUsers.length > 0 ) {
+                  const suggestedUsers = filteredUsers.slice(0, 4);
+                  suggestedUsers.forEach((user) => (user.password = null));
+                  return transformUsers(suggestedUsers)
+
+                } else {
+                  console.log(' suggestedUsers does not exist')
+                  return []
+                }
+
               } catch (error) {
                 console.log(error.message);
                 throwServerError(error)
@@ -59,6 +68,7 @@ module.exports = {
         },
 
         signupUser : async (_,args,{req, res}) => {
+          console.log('args ; ',args)
             try {
                 const { name, username, password, email } = args;
                 const user = await User.findOne({ $or: [{ email }, { username }] });
@@ -73,7 +83,9 @@ module.exports = {
                   username,
                   password: hashedPassword,
                 });
+                console.log('signup newUser : ',newUser)
                 const user_ = await newUser.save();
+                console.log('signup : ',user_)
                 return transformUser(user_)
               } catch (error) {
                 console.log('Error at Signup: ', error.message);

@@ -8,25 +8,23 @@ const useLogout = () => {
   const setUser = useSetRecoilState(userAtom);
   const showToast = useShowToast();
   const LOGOUT_USER = gql` ${logoutUser}`;
+  const [LOGOUT_USER_COMMAND] = useMutation(LOGOUT_USER);
   const logout = async () => {
     try {
-      const response =  useMutation(LOGOUT_USER, {variables:{ },
-        onCompleted: (data) => {
-          console.log(' LOGOUT_USER onCompleted : ')
-          setIsLoading(false);
-          toast({title: 'Successfully Logged out',description: '',status: 'success',duration: 3000,isClosable: true});          
-        },
-        onError: (error) => {
-          setIsLoading(false);
-          toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
-        } 
-    })
+      console.log('logout.... ')
+      const response = await LOGOUT_USER_COMMAND({})
       if(response?.data){
+        console.log(' data : ',response.data)
         localStorage.removeItem('user');
         setUser(null);
+        //localStorage.setItem('token', JSON.stringify(data.jwtToken));
+      } else {
+        localStorage.removeItem('user');
+        setUser(null);       
       }
     } catch (error) {
-      console.log(error);
+      localStorage.removeItem('user');
+      setUser(null);   
     }
   };
 

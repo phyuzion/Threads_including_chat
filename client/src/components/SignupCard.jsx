@@ -23,10 +23,13 @@ import userAtom from '../atoms/userAtom.js';
 import { gql, useMutation } from "@apollo/client";
 import { signupUser } from "../apollo/mutations.js";
 
+const SIGNUP_USER = gql` ${signupUser}`;
+
 
 function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
   const [_, setAuthSceen] = useRecoilState(authScreenAtom);
+  const [SIGNUP_USER_COMMAND] = useMutation(SIGNUP_USER);
   const [inputs, setInputs] = useState({
     name: '',
     username: '',
@@ -34,63 +37,25 @@ function SignupCard() {
     password: '',
   });
   const setUser = useSetRecoilState(userAtom);
-  const SIGNUP_USER = gql` ${signupUser}`;
+
   const toast = useToast();
   const [isLoading, setIsLoading] = useState();
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    //try {
+    try {
       setIsLoading(true);
-      const response =  useMutation(SIGNUP_USER, {variables:{inputs },
-        onCompleted: (data) => {
-          console.log(' SIGNUP_USER onCompleted : data ',data)
-          setIsLoading(false);
-          toast({title: 'Successfully Signed in',description: '',status: 'success',duration: 3000,isClosable: true});          
-        },
-        onError: (error) => {
-          setIsLoading(false);
-          toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
-        } 
-      })
-      localStorage.setItem('user', JSON.stringify(response?.data?.signupUser));
-      setUser(response?.data?.signupUser);      
+      console.log('inputs: ',inputs)
+      const response = await SIGNUP_USER_COMMAND({ variables: inputs})
+      console.log('reponse.data')
+      // localStorage.setItem('user', JSON.stringify(response?.data?.signupUser));
+      // setUser(response?.data?.signupUser);     
+      setAuthSceen('login')
 
-    //   const res = await fetch('/api/users/signup', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(inputs),
-    //   });
 
-    //   const data = await res.json();
-    //   console.log(data);
-    //   if (data.error) {
-    //     toast({
-    //       title: 'Error',
-    //       description: data.error,
-    //       status: 'error',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //     return;
-    //   } else {
-    //     toast({
-    //       title: 'Successfully Signed in',
-    //       description: '',
-    //       status: 'success',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //   }
-
-    //   localStorage.setItem('user', JSON.stringify(data));
-    //   setUser(data);
-    //   setIsLoading(false);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

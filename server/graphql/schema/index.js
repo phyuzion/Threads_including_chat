@@ -20,6 +20,7 @@ type Post {
     video: String
     likes: [String]
     replies: [Reply]
+    createdAt: String
 }
 
 type uploadURLs {
@@ -35,6 +36,7 @@ type User {
     password: String
     jwtToken: String
 }
+
 type Query {
     getPost(postId: String): Post
     getUserPosts(username: String): [Post]

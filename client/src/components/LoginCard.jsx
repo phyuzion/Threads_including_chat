@@ -39,27 +39,30 @@ function LoginCard() {
 
 
   const LOGIN_USER = gql` ${loginUser}`;
-
+  const [LOGIN_USER_COMMAND] = useMutation(LOGIN_USER, { loginCompleted, loginError });
+  async function loginCompleted({ data }) {
+    console.log(' LOGIN_USER onCompleted : ')
+  }
+  function loginError(errors) {
+    console.log("🚀 ~ loginError ~ errors:", errors)
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    try{
       setIsLoading(true);
-      const response =  useMutation(LOGIN_USER, {variables:{ username, password  },
-        onCompleted: (data) => {
-          console.log(' LOGIN_USER onCompleted : ')
-          setIsLoading(false);
-          toast({title: 'Successfully Logged in',description: '',status: 'success',duration: 3000,isClosable: true});          
-        },
-        onError: (error) => {
-          setIsLoading(false);
-          toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
-        } 
-      })
+      console.log(' inputs: ',inputs)
+      const response = await LOGIN_USER_COMMAND({ variables:inputs})//useMutation(LOGIN_USER, {variables:{ inputs  },
       if(response?.data){
-        localStorage.setItem('user', JSON.stringify(data));
+        console.log(' data : ',response.data)
+        localStorage.setItem('user', JSON.stringify(response.data));
         setUser(response?.data?.loginUser);
-        localStorage.setItem('token', JSON.stringify(data.jwtToken));
+        //localStorage.setItem('token', JSON.stringify(data.jwtToken));
       }
+    } catch(error) {
+      console.log(error.stack)
+    }
+
 
 
     //   const res = await fetch('/api/users/login', {

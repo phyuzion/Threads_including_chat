@@ -13,6 +13,7 @@ export const Create_Post = `mutation CreatePost($text: String, $imgUrl: String, 
       userProfilePic
       username
     }
+    createdAt
   }
 }
   `

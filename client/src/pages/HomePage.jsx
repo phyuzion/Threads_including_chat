@@ -1,3 +1,4 @@
+import { gql, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from 'react';
 import { useToast, Flex, Spinner, Box } from '@chakra-ui/react';
 import Post from '../components/Post';
@@ -6,56 +7,52 @@ import postsAtom from '../atoms/postsAtom';
 import useShowToast from '../hooks/useShowToast';
 import SuggestedUsers from '../components/SuggestedUsers';
 import { GetFeedPosts } from "../apollo/queries";
-import { gql, useQuery } from "@apollo/client";
+
 
 //useMutation(LOGOUT, { onCompleted, onError });
 
-const getFeedPosts = gql`
+const GET_FEED_POST = gql`
   ${GetFeedPosts}
 `;
 
 const HomePage = () => {
-  const showToast = useShowToast();
+  //const showToast = useShowToast();
   const [posts, setPosts] = useRecoilState(postsAtom);
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const fetchFeedPost = async () => {
-      setIsLoading(true);
-      setPosts([]);
-      const { posts:Posts, isLoading, error } = useQuery(getFeedPosts,
-      {
-        fetchPolicy: "no-cache" ,
-        onCompleted: (data) => {
-          setPosts(data);
-          setIsLoading(false);
-        }
-      })
-    //   try {
-    //     const res = await fetch(`/api/posts/feed`, {
-    //       method: 'GET',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //     });
+  const { loading, error, data } =  useQuery(GET_FEED_POST,{
+    onCompleted,
+    onError
+  });
+  //console.log(' data returned : ',data)
+  function onCompleted(data) {
+    // const parsedData = JSON.parse(data)
+    console.log(' data returned : ',data.getFeedPosts[0])
+    setIsLoading(false)
+    setPosts(data.getFeedPosts)
+  }
 
-    //     const data = await res.json();
-    //     if (data.error) {
-    //       showToast('Error', data.error, 'error');
+  function onError(error) {
+    setIsLoading(false)
+    console.log('error ', error)
+  }
+  //const {data} = useQuery(GET_FEED_POST);
+  // const [result] = useQuery({
+  //   query: FILMS_QUERY,
+  // });
+  // useEffect(() => {
+  //   try{
+  //     const { data, loading, error } = useQuery(GET_FEED_POST);
+  //     if(data){
+  //       setPosts(data);
+  //       setIsLoading(false);        
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }finally {
+  //     setIsLoading(false);
+  //   }
 
-    //       return;
-    //     }
-    //     setPosts(data);
-    //     setIsLoading(false);
-    //   } catch (error) {
-    //     console.log(error.message);
-    //     showToast('Error', error.message, 'error');
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    };
-
-    fetchFeedPost();
-  }, [showToast]);
+  // }, []);
 
   return (
     <Flex gap={10} alignItems={'flex-start'}>
@@ -64,7 +61,7 @@ const HomePage = () => {
           <Flex justifyContent={'center'}>
             <Spinner size={'xl'} />
           </Flex>
-        ) : posts.length == 0 ? (
+        ) : (!posts || posts.length == 0) ? (
           <Flex justifyContent={'center'} mt={20}>
             <h1>You must follow someone to view posts</h1>
           </Flex>

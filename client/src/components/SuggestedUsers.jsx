@@ -2,37 +2,58 @@ import { Box, Flex, Skeleton, SkeletonCircle, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { SuggestedUser } from './SuggestedUser';
 import useShowToast from '../hooks/useShowToast';
+import { gql, useQuery } from "@apollo/client";
+import { GetSuggestedUsers } from "../apollo/queries.js";
+
+const GET_SUGGESTED_USERS = gql`
+  ${GetSuggestedUsers}
+`;
 
 const SuggestedUsers = () => {
-  const [loading, setLoading] = useState(true);
-  const [suggestedUsers, setSuggestedUsers] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
   const showToast = useShowToast();
+  const {  loading, error,data } =  useQuery(GET_SUGGESTED_USERS,{
+    onCompleted,
+    onError
+  });
 
-  useEffect(() => {
-    const fetchSuggestedUsers = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/users/suggested', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await res.json();
-        if (data.error) {
-          showToast('Error', data.error, 'error');
-          return;
-        }
+  function onCompleted(data) {
+    console.log('SuggestedUsers data returned : ',data)
+    setIsLoading(false)
+    setSuggestedUsers(data.getSuggestedUsers)
+  }
 
-        setSuggestedUsers(data);
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
-    };
+  function onError(error) {
+    setIsLoading(false)
+    //console.log('error ', error)
+  }
 
-    fetchSuggestedUsers();
-  }, []);
+  // useEffect(() => {
+  //   const fetchSuggestedUsers = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch('/api/users/suggested', {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       if (data.error) {
+  //         showToast('Error', data.error, 'error');
+  //         return;
+  //       }
+
+  //        setSuggestedUsers([]);
+  //     } catch (error) {
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchSuggestedUsers();
+  // }, []);
 
   return (
     <>

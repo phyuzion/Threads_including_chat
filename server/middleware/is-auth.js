@@ -28,6 +28,10 @@ const  isAuthenticated = async (req, res, next) => {
     req.user = null
     const authHeader_ = req.get('Authorization')
     console.log('isAuthenticated authHeader_: ',authHeader_)
-    return await authenticateUser(req,authHeader_)
+    if(authHeader_) {
+      return await authenticateUser(req,authHeader_)
+    }
+    return null
+   
 }
 exports.isAuthenticated = isAuthenticated
