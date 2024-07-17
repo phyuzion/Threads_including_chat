@@ -14,7 +14,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState,useRef,useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import useShowToast from '../hooks/useShowToast';
@@ -26,8 +26,9 @@ import { likeUnLikePost,replyToPost } from "../apollo/mutations.js";
 
 
 const Actions = ({ post }) => {
+  console.log('Actions post: ',post?._id)
   const user = useRecoilValue(userAtom);
-  const [liked, setLiked] = useState(post.likes.includes(user?._id));
+  const [liked, setLiked] = useState(post.likes.includes(user?.loginUser?._id));
   const [posts, setPosts] = useRecoilState(postsAtom);
   const [isLiking, setIsLiking] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
@@ -37,8 +38,12 @@ const Actions = ({ post }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const LIKE_UNLIKE_POST = gql ` ${likeUnLikePost}`;
   const REPLY_TO_POST = gql ` ${replyToPost}`;
-  const handleLikeAndUnlike = async () => {
-    if (!user)
+  const [LIKE_UNLIKE_POST_COMMAND] = useMutation(LIKE_UNLIKE_POST,{fetchPolicy: 'network-only'});
+  //postLiked.current = 
+
+  const handleLikeAndUnlike = async (e) => {
+
+      if (!user)
       return showToast(
         'Error',
         'You must be logged in to like a post',
@@ -47,22 +52,14 @@ const Actions = ({ post }) => {
     if (isLiking) return;
     setIsLiking(true);
 
-    const response =  useMutation(LIKE_UNLIKE_POST, {variables:{ postId: post._id  },
-      onCompleted: (data) => {
-        console.log(' LIKE_UNLIKE_POST onCompleted : ')
-        setIsLoading(false);
-      },
-      onError: (error) => {
-        setIsLoading(false);
-        return showToast('Error', error, 'error');
-      } 
-    })
-    console.log(data);
+    const response =  await LIKE_UNLIKE_POST_COMMAND({variables:{ postId: post._id  }})
+    console.log(response.data.likeUnLikePost);
+    
     if (!liked) {
       // add the id of the current user to post.likes array
       const updatedPosts = posts.map((p) => {
         if (p._id === post._id) {
-          return { ...p, likes: [...p.likes, user._id] };
+          return { ...p, likes: [...p.likes, user?.loginUser?._id] };
         }
         return p;
       });
@@ -71,14 +68,16 @@ const Actions = ({ post }) => {
       // remove the id of the current user from post.likes array
       const updatedPosts = posts.map((p) => {
         if (p._id === post._id) {
-          return { ...p, likes: p.likes.filter((id) => id !== user._id) };
+          return { ...p, likes: p.likes.filter((id) => id !== user.loginUser?._id) };
         }
         return p;
       });
       setPosts(updatedPosts);
     }
-
+    setIsLiking(false);
     setLiked(!liked);
+
+    
   };
 
   const handleReply = async () => {
@@ -111,8 +110,10 @@ const Actions = ({ post }) => {
   };
 
   return (
+
     <Flex flexDirection='column'>
       <Flex gap={3} my={2} onClick={(e) => e.preventDefault()}>
+        {console.log( 'render liked : ',liked)}
         <svg
           aria-label='Like'
           color={liked ? 'rgb(237, 73, 86)' : ''}

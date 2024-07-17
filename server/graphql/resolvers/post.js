@@ -133,31 +133,46 @@ module.exports = {
 
         likeUnLikePost: async (_,args,{req, res}) => {
             const {postId} = args
+            console.log('likeUnLikePost postId: ',postId)
             if(!req.user) {
                 throwForbiddenError()
             }
             try{
                 const post = await Post.findById(postId);
+                console.log('likeUnLikePost post: ',post)
                 if(!post) {
                     throwServerError('Post not found')
                 }
                 const isUserLikedPost = post.likes.includes(req.user._id);
+                let post_
                 if (isUserLikedPost) {
                     // Un-Like
-                    await Post.updateOne(
+                    s  = await Post.findOneAndUpdate(
                       { _id: postId },
                       {
                         $pull: { likes: req.user._id },
+                      },
+                      {
+                        returnOriginal: false
                       }
                     );
               
-                    return true;
+
                   } else {
                     // Like
-                    post.likes.push(req.user._id);
-                    await post.save();
-                    return true;
+                    s = await Post.findOneAndUpdate(
+                        { _id: postId },
+                        {
+                          $push: { likes: req.user._id },
+                        },
+                        {
+                          returnOriginal: false
+                        }
+                      );
+                    
                 } 
+                console.log('liked Post : ',s)
+                return true;
             } catch( error) {
                 throwServerError(error)
             }
