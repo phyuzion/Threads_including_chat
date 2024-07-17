@@ -35,6 +35,8 @@ type User {
     email: String!
     password: String
     jwtToken: String
+    followers: [String]
+    following: [String]
 }
 
 type Query {
@@ -55,7 +57,7 @@ type Mutation {
     signupUser(name: String!, username: String, password: String, email: String): User
     loginUser(username: String!, password: String!): User
     logoutUser: Boolean
-    followUnFollow(followId: String!): Boolean
+    followUnFollow(followId: String!): User
     
     freezeAccount: Boolean!
     

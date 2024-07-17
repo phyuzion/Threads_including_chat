@@ -17,6 +17,11 @@ const transformUser = (user) => {
     return {
         ...user._doc,
         _id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        followers: user.followers,
+        following: user.following,
         password: null,
         jwtToken: null
     }
@@ -40,4 +45,4 @@ exports.transformUser = transformUser
 exports.transformPost = transformPost
 exports.transformPosts = transformPosts
 exports.transformUserWithToken = transformUserWithToken
-exports.transformUsers = transformUserWithToken
+exports.transformUsers = transformUsers

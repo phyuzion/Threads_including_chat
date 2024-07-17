@@ -58,9 +58,9 @@ module.exports = {
                 }).sort({
                   createdAt: -1,
                 });
-                console.log(' getFeedPosts feedPosts: ',feedPosts)
+                //console.log(' getFeedPosts feedPosts: ',feedPosts)
                 const posts_ =  transformPosts(feedPosts)
-                console.log(' getFeedPosts posts_: ',posts_)
+                //console.log(' getFeedPosts posts_: ',posts_)
                 return posts_
               } catch (error) {
                 throwServerError(error)

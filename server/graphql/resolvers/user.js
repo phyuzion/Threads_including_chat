@@ -26,11 +26,11 @@ module.exports = {
                 const filteredUsers = users.filter(
                   (user) => !usersFollowedByClient.following.includes(user._id.toString())
                 );
-                console.log(' filteredUsers : ',filteredUsers)
+                //console.log(' get Suggested users : ',filteredUsers)
                 if(filteredUsers && filteredUsers.length > 0 ) {
-                  const suggestedUsers = filteredUsers.slice(0, 4);
-                  suggestedUsers.forEach((user) => (user.password = null));
-                  return transformUsers(suggestedUsers)
+                  const sugusers =  transformUsers(filteredUsers)
+                  console.log(' sugusers: ',sugusers)
+                  return sugusers
 
                 } else {
                   console.log(' suggestedUsers does not exist')
@@ -139,35 +139,40 @@ module.exports = {
         },
 
         followUnFollow: async (_,args,{req, res}) => {
-            const { id } = args
+            const { followId } = args
             if(!req.user) {
                 throwForbiddenError()
             }
+            console.log('followUnFollow: id: ',followId)
             try {
-                const userToModify = await User.findById(id);
+                const userToModify = await User.findById(followId);
                 const currentUser = await User.findById(req.user._id);
-                if (id == req.user._id.toString()) {
+                if (followId == req.user._id.toString()) {
                     throwServerError('You can not follow/un-follow yourself ');
                 }
                 if (!userToModify || !currentUser) {
                     throwServerError(' User not found' );
                 }   
-                const isFollowing = currentUser.following.includes(id);
-
+                const isFollowing = currentUser.following.includes(followId);
+                console.log('followUnFollow: isFollowing: ',isFollowing)
                 if (isFollowing) {
                   // Un-Following
-                  await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
+                  
                   await User.findByIdAndUpdate(req.user._id, {
-                    $pull: { following: id },
+                    $pull: { following: followId },
                   });
-                  return true
+                  const user_ = await User.findByIdAndUpdate(followId, { $pull: { followers: req.user._id } },{returnOriginal: false});
+                  console.log('unfollow: ',user_)
+                  return transformUser(user_)
                 } else {
                   // Following
-                  await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
-                  await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
-                  return true
+                  await User.findByIdAndUpdate(req.user._id, { $push: { following: followId } });
+                  const user_ =  await User.findByIdAndUpdate(followId, { $push: { followers: req.user._id } }, {returnOriginal: false});
+                  console.log('unfollow: ',user_)
+                  return transformUser(user_)
                 }                             
             } catch(error) {
+              console.log(' isFollowing : ',error)
                 throwServerError(error)
             }
         }

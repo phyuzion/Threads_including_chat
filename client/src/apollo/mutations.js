@@ -58,7 +58,15 @@ export const logoutUser = `mutation Mutation {
   logoutUser
 }`
 export const followUnFollow = `mutation FollowUnFollow($followId: String!) {
-  followUnFollow(followId: $followId)
+  followUnFollow(followId: $followId) {
+    _id
+    name
+    username
+    email
+    followers
+    following
+  
+  }
 }`
 export const freezeAccount = `mutation Mutation {
   freezeAccount

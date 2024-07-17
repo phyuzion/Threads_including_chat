@@ -39,6 +39,8 @@ export const GetSuggestedUsers = `query GetSuggestedUsers {
     name
     username
     email
+    followers
+    following
   }
 }`
 
