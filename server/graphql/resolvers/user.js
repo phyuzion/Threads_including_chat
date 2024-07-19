@@ -2,9 +2,46 @@ const { throwServerError , generateToken, throwForbiddenError} = require("../../
 const { transformUser,transformUserWithToken,transformUsers } = require("../../utils/transform");
 const bcrypt = require('bcryptjs')
 const User = require('../../models/userModel')
+const ObjectId = require('mongodb').ObjectId;
 module.exports = {
     Query: {
+      getProfileByName: async (_,args,{req, res}) => {
+        const {username} = args
+        console.log(' getUserProfileByName userName: ',username)
+        try {
+          const user = await User.findOne({username }).select('-password').select('-updatedAt');
+          console.log('getUserProfileByName user: ',user)
+          if(user) {
+            return user
+          } else {
+            console.log(' getUserProfileByName error: ',error)
+            throwServerError('User not found')
+          }
+          
+        } catch (error) {
+          throwServerError(error)
+        }
+
+      },
+      getUserProfile: async (_,args,{req, res}) => {
+        const {postedBy} = args
+        console.log(' getUserProfile id: ',postedBy)
+        try {
+          const user = await User.findById(postedBy).select('-password').select('-updatedAt');
+          console.log('user: ',user)
+          if(user) {
+            return user
+          } else {
+            console.log(' getUserProfile error: ',error)
+            throwServerError('User not found')
+          }
+          
+        } catch (error) {
+          throwServerError(error)
+        }
+      },
         getSuggestedUsers: async (_,args,{req, res}) => {
+          console.log(' getSuggestedUsers: ')
             if(!req.user) {
                 throwForbiddenError()
             }

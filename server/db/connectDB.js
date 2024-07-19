@@ -14,7 +14,7 @@ const connectDB_ = async () => {
     })
     mongoose.pluralize(null);
   
-    mongoose.set('debug', false);
+    mongoose.set('debug', true);
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {

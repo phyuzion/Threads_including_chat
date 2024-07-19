@@ -9,6 +9,7 @@ const cors = require('cors');
 
 async function startServers() {
   await connectDB_();
+  
   const {io, server, app, httpServer  } =  await startApolloServer()
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true }));

@@ -9,41 +9,31 @@ import Actions from './Actions';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import postsAtom from '../atoms/postsAtom';
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation,useQuery } from "@apollo/client";
 import { DeletePost } from "../apollo/mutations.js";
+import { GetUserProfile } from "../apollo/queries.js";
+
+const GET_USER_PROFILE = gql`
+  ${GetUserProfile}
+`;
 
 function Post({ post }) {
   const [postedByUser, setPostedByUser] = useState(null);
   const currentUser = useRecoilValue(userAtom);
   const [posts, setPosts] = useRecoilState(postsAtom);
   const DELETE_POST = gql` ${DeletePost}`;
-
-  const showToast = useShowToast();
-
-  useEffect(() => {
-    const getUser = async () => {
-      // try {
-      //   const res = await fetch(`/api/users/profile/${post.postedBy}`, {
-      //     method: 'GET',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //   });
-
-      //   const data = await res.json();
-      //   if (data.error) {
-      //     showToast('Error', data.error, 'error');
-      //     return;
-      //   }
-      //   setPostedByUser(data);
-      // } catch (error) {
-      //   showToast('Error', error.message, 'error');
-      //   return;
-      // }
-    };
-
-    getUser();
-  });
+  console.log('GET_USER_PROFILE: post'  ,post.postedBy)
+  const { loading , error , data }= useQuery(GET_USER_PROFILE,{
+    variables: {postedBy: post.postedBy},
+    onCompleted: (result) => {
+      console.log('getUserProfile result: ',result)
+      setPostedByUser(result?.getUserProfile);
+    },
+    onError: (error) => {
+      console.log('getUserProfile error : ',error,' post: ',post)
+    },
+    fetchPolicy: "network-only",
+  })
 
   const handleDelete = async (e) => {
     try {

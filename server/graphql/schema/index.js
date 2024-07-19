@@ -4,7 +4,7 @@ const { gql } = require('apollo-server-express')
 const typeDefs = gql`
 
 type Reply {
-    _id: String!
+    _id: String
     userId: String,
     text: String,
     userProfilePic: String
@@ -44,6 +44,8 @@ type Query {
     getUserPosts(username: String): [Post]
     getFeedPosts: [Post]
     getSuggestedUsers: [User]
+    getUserProfile(postedBy: String!): User
+    getProfileByName(username: String!): User
 }
 type Mutation {
 

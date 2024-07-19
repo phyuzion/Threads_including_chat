@@ -1,45 +1,48 @@
 import { useEffect, useState } from 'react';
 import useShowToast from './useShowToast';
 import { useParams } from 'react-router-dom';
+import { gql, useQuery } from "@apollo/client";
+import { GetProfileByName } from "../apollo/queries.js";
+
+const GET_PROFILE_BY_NAME = gql`
+  ${GetProfileByName}
+`;
 
 const getUserProfile = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const { username } = useParams();
-  const showToast = useShowToast();
+  
 
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`/api/users/profile/${username}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const data = await res.json();
-        if (data.error) {
-          showToast('Error', data.error, 'error');
-          return;
-        }
-        if (data.isFrozen) {
-          setUser(null);
-          return;
-        }
-
-        setUser(data);
-      } catch (error) {
-        console.log(error.message);
-      } finally {
-        setIsLoading(false);
+  //console.log(' getProfileName username: ',username)
+  const { loading , error , data }=  useQuery(GET_PROFILE_BY_NAME,{
+    variables: {username},
+    onCompleted: (result) => {
+      console.log('getProfileName result: ',result)
+      if (result?.getProfileByName?.isFrozen) {
+        setUser(null);
+        return;
       }
-    };
+      setUser(result?.getProfileByName);
+    },
+    onError: (error) => {
+      console.log('getUserProfileName error : ',error,' post: ',post)
+    },
+    fetchPolicy: "network-only",
+  })
+  console.log('getUserProfile loading: ',loading)
+  if(loading) {
+    //setIsLoading(true)
+    return { user, isLoading };
+  }
+  if(error) {
+    console.log('getUserProfile error : ',error)
+   
+  }
 
-    getUser();
-  }, [username, showToast]);
-
+ 
+  console.log(' getUserProfile user: ',user)
   return { user, isLoading };
 };
 

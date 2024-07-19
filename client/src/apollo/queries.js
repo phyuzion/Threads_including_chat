@@ -26,9 +26,14 @@ export const GetPost = `query GetPost($postId: String) {
     text
     img
     video
+    createdAt
     likes
     replies {
-      
+      _id
+      userId
+      text
+      userProfilePic
+      username      
     }
   }
 }`
@@ -43,6 +48,30 @@ export const GetSuggestedUsers = `query GetSuggestedUsers {
     following
   }
 }`
+export const GetProfileByName = `query GetProfileByName($username: String!) {
+  getProfileByName(username: $username) {
+    _id
+    name
+    username
+    email
+    followers
+    following
+  }
+}`
+
+export const GetUserProfile = `query GetUserProfile($postedBy: String!) {
+  getUserProfile(postedBy: $postedBy) {
+    _id
+    name
+    username
+    email
+    password
+    jwtToken
+    followers
+    following
+  }
+}
+`
 
 export const GetUserPosts = `query GetUserPosts {
   getUserPosts {

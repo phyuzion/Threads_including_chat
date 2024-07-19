@@ -26,7 +26,7 @@ import { likeUnLikePost,replyToPost } from "../apollo/mutations.js";
 
 
 const Actions = ({ post }) => {
-  console.log('Actions post: ',post?._id)
+  //console.log('Actions post: ',post?._id)
   const user = useRecoilValue(userAtom);
   const [liked, setLiked] = useState(post.likes.includes(user?.loginUser?._id));
   const [posts, setPosts] = useRecoilState(postsAtom);
@@ -40,7 +40,7 @@ const Actions = ({ post }) => {
   const REPLY_TO_POST = gql ` ${replyToPost}`;
   const [LIKE_UNLIKE_POST_COMMAND] = useMutation(LIKE_UNLIKE_POST,{fetchPolicy: 'network-only'});
   //postLiked.current = 
-
+  const [REPLY_POST_COMMAND] = useMutation(REPLY_TO_POST,{fetchPolicy: 'network-only'});
   const handleLikeAndUnlike = async (e) => {
 
       if (!user)
@@ -91,29 +91,29 @@ const Actions = ({ post }) => {
     setIsReplying(true);
 
 
-    const response =  useMutation(REPLY_TO_POST, {variables:{ postId: post._id ,  text: reply  },
-      onCompleted: (data) => {
-        console.log(' REPLY_TO_POST onCompleted : ')
-        showToast('Success', 'Reply posted successfully', 'success');
-        setIsReplying(false)
-      },
-      onError: (error) => {
-        setIsReplying(false)
-        return showToast('Error', error, 'error');
-      } 
-    })
-    if(response?.data){
+    const response = await REPLY_POST_COMMAND({variables:{ postId: post._id ,  text: reply  }}) 
+    console.log('replies: ',response?.data)
+    if(response?.data?.replyToPost){
+      const updatedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return { ...p, replies: [...p.replies, response?.data?.replyToPost] };
+        }
+        return p;
+      });
       setPosts(updatedPosts);
-      onClose();
-      setReply('');
+      
     }
+
+    onClose();
+    setReply('');
+    setIsReplying(false)
   };
 
   return (
 
     <Flex flexDirection='column'>
       <Flex gap={3} my={2} onClick={(e) => e.preventDefault()}>
-        {console.log( 'render liked : ',liked)}
+        {/* {console.log( 'render liked : ',liked)} */}
         <svg
           aria-label='Like'
           color={liked ? 'rgb(237, 73, 86)' : ''}

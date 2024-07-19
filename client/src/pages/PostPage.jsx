@@ -10,6 +10,14 @@ import Actions from '../components/Actions';
 import Comment from '../components/Comment';
 import getUserProfile from '../hooks/useGetUserProfile';
 import useShowToast from '../hooks/useShowToast';
+import { gql, useMutation,useQuery } from "@apollo/client";
+import { GetPost } from "../apollo/queries.js";
+
+const GET_POST = gql`
+  ${GetPost}
+`;
+
+
 function PostPage() {
   const { postId } = useParams();
   const currentUser = useRecoilValue(userAtom);
@@ -18,30 +26,46 @@ function PostPage() {
   const navigate = useNavigate();
   const showToast = useShowToast();
   const { user, isLoading } = getUserProfile();
+  console.log(' PostPage postId: ',postId)
+  console.log(' PostPage user: ',user)
+  const { loading , error , data }= useQuery(GET_POST,{
+    variables: {postId: postId},
+    onCompleted: (result) => {
+      console.log('getUserProfile result: ',result?.getPost)
+      setPosts([result?.getPost]);
+      
+    },
+    onError: (error) => {
+      console.log('getPost error : ',error)
+      return;
+    },
+    fetchPolicy: "network-only",
+  })
 
-  useEffect(() => {
-    setPosts([]);
-    const getPost = async () => {
-      try {
-        const res = await fetch(`/api/posts/${postId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await res.json();
-        if (data.error) {
-          showToast('Error', data.error, 'error');
-          return;
-        }
-        setPosts([data]);
-      } catch (error) {
-        showToast('Error', error.message, 'error');
-      }
-    };
+  // useEffect(() => {
+  //   console.log('PostPage-----------')
+  //   setPosts([]);
+  //   const getPost = async () => {
+  //     try {
+  //       const res = await fetch(`/api/posts/${postId}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       if (data.error) {
+  //         showToast('Error', data.error, 'error');
+  //         return;
+  //       }
+  //       setPosts([data]);
+  //     } catch (error) {
+  //       showToast('Error', error.message, 'error');
+  //     }
+  //   };
 
-    getPost();
-  }, [postId, showToast]);
+  //   getPost();
+  // }, [postId, showToast]);
 
   const handleDelete = async (e) => {
     try {
@@ -74,6 +98,7 @@ function PostPage() {
     );
 
   if (!currentPost) return null;
+  console.log(' PostPage : ',currentPost)
   return (
     <>
       <Flex gap={3} mb={4} py={5}>

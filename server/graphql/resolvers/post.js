@@ -37,11 +37,13 @@ module.exports = {
                 if (!posts) throwServerError('No posts not found' );
                 return transformPosts(posts)
               } catch (error) {
+                console.log('getUserPost error: ',error)
                 throwServerError(error)
               }
 
         },
         getFeedPosts: async (_,args,{req, res}) => {
+            console.log(' getFeedPosts: ')
             if(!req.user) {
                 throwForbiddenError()
             }
@@ -58,11 +60,12 @@ module.exports = {
                 }).sort({
                   createdAt: -1,
                 });
-                //console.log(' getFeedPosts feedPosts: ',feedPosts)
+                console.log(' getFeedPosts feedPosts: ',feedPosts)
                 const posts_ =  transformPosts(feedPosts)
                 //console.log(' getFeedPosts posts_: ',posts_)
                 return posts_
               } catch (error) {
+                console.log('getFeedPosts error: ',error)
                 throwServerError(error)
               }
         },
@@ -179,6 +182,7 @@ module.exports = {
         } ,
 
         replyToPost: async (_,args,{req, res}) => {
+            console.log(' replyToPost : ', args)
             const { text, postId } = args;
             if(!req.user) {
                 throwForbiddenError()
@@ -194,6 +198,7 @@ module.exports = {
                 const reply = { userId, text, userProfilePic, username };
                 post.replies.push(reply);
                 await post.save();
+                console.log(' reply : ',reply)
                 return reply
             } catch( error) {
                 throwServerError(error)

@@ -9,6 +9,7 @@ const throwForbiddenError = () => {
     });
 }
 const throwServerError = (errorMessage) => {
+  console.log('throwServerError errorMessage: ',errorMessage)
   throw new GraphQLError(errorMessage, {
       extensions: {
         code: 'SERVER_ERROR',

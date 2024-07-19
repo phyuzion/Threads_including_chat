@@ -6,7 +6,8 @@ import { useRecoilState } from 'recoil';
 import postsAtom from '../atoms/postsAtom';
 import useShowToast from '../hooks/useShowToast';
 import SuggestedUsers from '../components/SuggestedUsers';
-import { GetFeedPosts } from "../apollo/queries";
+import { GetFeedPosts } from "../apollo/queries.js";
+
 
 
 //useMutation(LOGOUT, { onCompleted, onError });
@@ -14,7 +15,6 @@ import { GetFeedPosts } from "../apollo/queries";
 const GET_FEED_POST = gql`
   ${GetFeedPosts}
 `;
-
 const HomePage = () => {
   //const showToast = useShowToast();
   const [posts, setPosts] = useRecoilState(postsAtom);
@@ -23,7 +23,7 @@ const HomePage = () => {
     onCompleted,
     onError
   });
-  //console.log(' data returned : ',data)
+  console.log(' data returned : ',data)
   function onCompleted(data) {
     // const parsedData = JSON.parse(data)
     console.log(' data returned : ',data.getFeedPosts[0])
@@ -35,24 +35,7 @@ const HomePage = () => {
     setIsLoading(false)
     console.log('error ', error)
   }
-  //const {data} = useQuery(GET_FEED_POST);
-  // const [result] = useQuery({
-  //   query: FILMS_QUERY,
-  // });
-  // useEffect(() => {
-  //   try{
-  //     const { data, loading, error } = useQuery(GET_FEED_POST);
-  //     if(data){
-  //       setPosts(data);
-  //       setIsLoading(false);        
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }finally {
-  //     setIsLoading(false);
-  //   }
 
-  // }, []);
 
   return (
     <Flex gap={10} alignItems={'flex-start'}>
