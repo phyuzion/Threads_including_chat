@@ -32,7 +32,7 @@ function Header() {
 
       {user && (
         <Flex alignItems={'center'} gap={4}>
-          <NavLink to={`/${user.username}`}>
+          <NavLink to={`/${user?.loginUser?.username}`}>
             <RxAvatar size={24} />
           </NavLink>
           <NavLink to={`/chat`}>
