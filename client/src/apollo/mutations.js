@@ -20,7 +20,7 @@ export const Create_Post = `mutation CreatePost($text: String, $imgUrl: String, 
 
 export const DeletePost = ` mutation DeletePost($postId: String) {
   deletePost(postId: $postId)
-} `
+}`
 
 export const likeUnLikePost = `mutation LikeUnLikePost($postId: String) {
   likeUnLikePost(postId: $postId)

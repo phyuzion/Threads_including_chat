@@ -25,6 +25,7 @@ const getUserProfile = () => {
         return;
       }
       setUser(result?.getProfileByName);
+      setIsLoading(false);
     },
     onError: (error) => {
       console.log('getUserProfileName error : ',error,' post: ',post)
@@ -32,17 +33,17 @@ const getUserProfile = () => {
     fetchPolicy: "network-only",
   })
   console.log('getUserProfile loading: ',loading)
-  if(loading) {
+
     //setIsLoading(true)
-    return { user, isLoading };
-  }
+
+
   if(error) {
     console.log('getUserProfile error : ',error)
    
   }
 
  
-  console.log(' getUserProfile user: ',user)
+  console.log(' getUserProfile user: ',user , ' isLoading : ',isLoading)
   return { user, isLoading };
 };
 

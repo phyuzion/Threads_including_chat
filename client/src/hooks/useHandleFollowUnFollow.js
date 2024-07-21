@@ -30,30 +30,39 @@ const useHandleFollowUnFollow = (user) => {
     // });
 
     SetIsFlwBtnLoading(true);
-    const response =  await FOLLOW_UNFOLLOW_COMMAND( {variables:{ followId:  user?._id }})
-    console.log('response.data:  ',response.data)
-    if(response.data) {
-      if (following) {
-        user = response.data.followUnFollow
-        console.log('user : ',user)
-        //user?.followers.pop();
-      }
-      if (!following) {
-        user = response.data.followUnFollow
-        console.log('user: ',response.data)
-        //user?.followers.push(currentUser?._id);
-        // if(user) {
-        //   const followers = [currentUser?._id]
-        //   user.followers = [...user?.followers, followers];
-        // }
+    try {
 
 
+        const response =  await FOLLOW_UNFOLLOW_COMMAND( {variables:{ followId:  user?._id }})
+        console.log('response.data:  ',response.data)
+        if(response.data) {
+          if (following) {
+            user = response.data.followUnFollow
+            console.log('user : ',user)
+            //user?.followers.pop();
+          }
+          if (!following) {
+            user = response.data.followUnFollow
+            console.log('user: ',response.data)
+            //user?.followers.push(currentUser?._id);
+            // if(user) {
+            //   const followers = [currentUser?._id]
+            //   user.followers = [...user?.followers, followers];
+            // }
+
+
+          }
+          setFollowing(!following);
+          SetIsFlwBtnLoading(false);
+        } else {
+          console.log(' SERVER ERROR')
+          
+        }
+      } catch (error) {
+        showToast('Error', error.message, 'error');
+      } finally {
+        SetIsFlwBtnLoading(false);
       }
-      setFollowing(!following);
-      SetIsFlwBtnLoading(false);
-    } else {
-      console.log(' SERVER ERROR')
-    }
 
   };
 

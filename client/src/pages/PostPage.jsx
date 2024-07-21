@@ -12,6 +12,7 @@ import getUserProfile from '../hooks/useGetUserProfile';
 import useShowToast from '../hooks/useShowToast';
 import { gql, useMutation,useQuery } from "@apollo/client";
 import { GetPost } from "../apollo/queries.js";
+import { DeletePost } from "../apollo/mutations.js";
 
 const GET_POST = gql`
   ${GetPost}
@@ -21,6 +22,7 @@ const GET_POST = gql`
 function PostPage() {
   const { postId } = useParams();
   const currentUser = useRecoilValue(userAtom);
+  console.log(' PostPage currentUser: ',currentUser)
   const [posts, setPosts] = useRecoilState(postsAtom);
   const currentPost = posts[0];
   const navigate = useNavigate();
@@ -28,6 +30,8 @@ function PostPage() {
   const { user, isLoading } = getUserProfile();
   console.log(' PostPage postId: ',postId)
   console.log(' PostPage user: ',user)
+  const DELETE_POST = gql` ${DeletePost}`;
+  const [DELETE_POST_COMMAND] = useMutation(DELETE_POST);
   const { loading , error , data }= useQuery(GET_POST,{
     variables: {postId: postId},
     onCompleted: (result) => {
@@ -42,54 +46,26 @@ function PostPage() {
     fetchPolicy: "network-only",
   })
 
-  // useEffect(() => {
-  //   console.log('PostPage-----------')
-  //   setPosts([]);
-  //   const getPost = async () => {
-  //     try {
-  //       const res = await fetch(`/api/posts/${postId}`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       });
-  //       const data = await res.json();
-  //       if (data.error) {
-  //         showToast('Error', data.error, 'error');
-  //         return;
-  //       }
-  //       setPosts([data]);
-  //     } catch (error) {
-  //       showToast('Error', error.message, 'error');
-  //     }
-  //   };
 
-  //   getPost();
-  // }, [postId, showToast]);
 
   const handleDelete = async (e) => {
     try {
       if (!window.confirm('Are you sure you want to delete this post')) return;
 
-      const res = await fetch(`/api/posts/${currentPost._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await DELETE_POST_COMMAND({ variables:{postId: currentPost._id}})
+      if(response?.data?.deletePost){ 
+        navigate(`/${user.username}`);
+      }
 
-      const data = await res.json();
-      if (data.error) {
-        showToast('Error', data.error, 'error');
+      if (response?.data?.error) {
+        console.log('Error: ',response?.data?.error)
         return;
       }
-      showToast('Success', 'Post deleted', 'success');
-      navigate(`/${user.username}`);
     } catch (error) {
-      showToast('Error', error.message, 'error');
+      console.log('Error: ',error.message)
     }
   };
-
+  console.log('Post Page user: ',user,' isLoading: ',isLoading)
   if (!user && isLoading)
     return (
       <Flex justifyContent={'center'}>
@@ -115,8 +91,8 @@ function PostPage() {
               <Text fontSize={'sm'} color={'gray.light'}>
                 {formatDistanceToNowStrict(new Date(currentPost.createdAt))}
               </Text>
-
-              {currentUser?._id == currentPost.postedBy && (
+              {console.log(' Post page : currentUser?._id : ',currentUser?._id, ' currentPost.postedBy: ',currentPost.postedBy)}
+              {currentUser?.loginUser._id == currentPost.postedBy && (
                 <DeleteIcon onClick={handleDelete} ml={2} cursor={'pointer'} />
               )}
             </Flex>
