@@ -28,7 +28,7 @@ async function startServers() {
   //   }
   //   next()
   // })
-  app.set('trust proxy', true);
+  //app.set('trust proxy', true);
   const httpServer = http.createServer(app)
   app.use(cookieParser());
   app.use(express.json({ limit: '50mb' }));
