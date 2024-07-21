@@ -12,9 +12,9 @@ const mongoose = require('mongoose')
 async function startServers() {
 
   const app = express();
-  app.use(cors());
+ // app.use(cors());
   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://ess-lux.net/')
+    res.setHeader('Access-Control-Allow-Origin', 'https://ess-lux.net')
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Accept-Encoding, Content-Length, X-Requested-With,Authorization,Origin, Content-Type, X-Auth-Token, X-VERIFY')
     res.setHeader('Access-Control-Allow-Credentials', 'true')
