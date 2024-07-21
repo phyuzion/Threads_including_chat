@@ -12,18 +12,23 @@ const mongoose = require('mongoose')
 async function startServers() {
 
   const app = express();
+  app.use(cors({
+    credentials: true,
+    origin: 'https://ess-lux.net'
+  }));
  // app.use(cors());
-  app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://ess-lux.net')
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
-    res.setHeader('Access-Control-Allow-Headers', 'Accept-Encoding, Content-Length, X-Requested-With,Authorization,Origin, Content-Type, X-Auth-Token, X-VERIFY')
-    res.setHeader('Access-Control-Allow-Credentials', 'true')
+  // app.use((req, res, next) => {
+  //   res.setHeader('Access-Control-Allow-Origin', 'https://ess-lux.net')
+  //   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
+  //   res.setHeader('Access-Control-Allow-Headers', 'Accept-Encoding, Content-Length, X-Requested-With,Authorization,Origin, Content-Type, X-Auth-Token, X-VERIFY')
+  //   res.setHeader('Access-Control-Allow-Credentials', 'true')
     
-    if (req.method === 'OPTIONS') {
-      return res.sendStatus(200)
-    }
-    next()
-  })
+  //   if (req.method === 'OPTIONS') {
+  //     return res.sendStatus(200)
+  //   }
+  //   next()
+  // })
+  app.set('trust proxy', true);
   const httpServer = http.createServer(app)
   app.use(cookieParser());
   app.use(express.json({ limit: '50mb' }));
