@@ -14,7 +14,7 @@ async function startServers() {
   const app = express();
   app.use(cors({
     credentials: true,
-    origin: 'https://ess-lux.net/'
+    origin: '*'
   }));
  // app.use(cors());
   // app.use((req, res, next) => {
