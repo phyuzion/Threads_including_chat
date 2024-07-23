@@ -111,6 +111,7 @@ const CreatePost = () => {
           <ModalHeader>Create Post</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            {/* iss.song need to add rich editor & video viewer, also need to remake video button */}
             <FormControl>
               <Textarea
                 placeholder='Write your post details here'
@@ -141,6 +142,7 @@ const CreatePost = () => {
 
           <ModalFooter>
             <Button colorScheme='blue' mr={2} onClick={handleCreatePost} isLoading={isCreatePostLoading}>
+              {/* iss.song AT ONCLICK, noting than you must add something popup */}
               Post
             </Button>
           </ModalFooter>

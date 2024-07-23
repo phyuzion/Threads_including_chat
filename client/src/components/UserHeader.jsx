@@ -42,9 +42,9 @@ function UserHeader({ user }) {
           </Text>
           <Flex alignItems={'center'} gap={4}>
             <Text size={'sm'}>{user?.username}</Text>
-            <Text size={'xs'} bg={'gray.light'} p={1} borderRadius={8}>
-              threads.net
-            </Text>
+          </Flex>
+          <Flex alignItems={'center'} gap={4}>
+            <Text size={'sm'}>Address : </Text>
           </Flex>
         </Box>
         <Box>
@@ -55,15 +55,8 @@ function UserHeader({ user }) {
       <Flex justifyContent={'space-between'} w={'full'}>
         <Flex gap={2} alignItems={'center'}>
           <Text color={'gray.light'}>{user?.followers.length} Followers</Text>
-          <Box w={1} p={1} borderRadius={'full'} bg={'gray.light'}></Box>
-          <Link href={`https://instagram.com/${user?.username}`} target='_blank' color={'gray.light'}>
-            instagram.com
-          </Link>
         </Flex>
         <Flex alignItems={'center'} gap={2}>
-          <Box className='icon-container'>
-            <BsInstagram size={24} cursor={'pointer'}></BsInstagram>
-          </Box>
           <Box className='icon-container'>
             <Menu>
               <MenuButton>

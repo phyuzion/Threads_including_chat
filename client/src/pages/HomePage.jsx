@@ -47,6 +47,7 @@ const HomePage = () => {
         ) : (!posts || posts.length == 0) ? (
           <Flex justifyContent={'center'} mt={20}>
             <h1>You must follow someone to view posts</h1>
+            {/* iss.song here need to change to... latest 10 show here. if follow, follow first and show latest 10*/}
           </Flex>
         ) : (
           posts.map((post) => {

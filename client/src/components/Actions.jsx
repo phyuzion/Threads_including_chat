@@ -153,8 +153,7 @@ const Actions = ({ post }) => {
           ></path>
         </svg>
 
-        <RepostSVG />
-        <ShareSVG />
+        {/*iss.song make Star button. or delete.. */}
       </Flex>
 
       <Flex gap={2} alignItems={'center'}>

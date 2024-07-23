@@ -76,7 +76,10 @@ function Post({ post }) {
           <Box w='1px' h={'full'} bg={'gray.light'} my={2}></Box>
           <Box position={'relative'} w={'full'}>
             {post.replies.length === 0 && <Text textAlign={'center'}>🤔</Text>}
-            {post.replies[0] && (
+            
+              {/* iss.song has issue for under Icon must change to replier's icon*/}
+            {
+            post.replies[0] && (
               <Avatar
                 size='xs'
                 name='John doe'

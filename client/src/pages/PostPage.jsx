@@ -115,6 +115,7 @@ function PostPage() {
               <Text color={'gray.light'}>Get the app to like, reply and post.</Text>
             </Flex>
             <Button>Get</Button>
+            {/*iss.song here add Get is, change to give star.*/}
           </Flex>
         </Flex>
       </Flex>
