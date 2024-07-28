@@ -23,16 +23,19 @@ import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow.js';
 
 function UserHeader({ user }) {
   const toast = useToast();
+  const currentUser = useRecoilValue(userAtom);
+
+  console.log("Current User:", currentUser?.username, "Profile User:", user?.username);
+ //current User name can not check here.
+
   const CopyUrl = async () => {
     const currentURL = window.location.href;
     await navigator.clipboard.writeText(currentURL);
-    console.log(currentURL);
     toast({ title: 'Coppied!', status: 'success' });
   };
 
-  const currentUser = useRecoilValue(userAtom);
-
   const { following, isFlwBtnLoading, handelFollowUnFollow } = useHandleFollowUnFollow(user);
+
   return (
     <VStack alignItems={'start'}>
       <Flex justifyContent={'space-between'} w={'full'}>
@@ -45,6 +48,9 @@ function UserHeader({ user }) {
           </Flex>
           <Flex alignItems={'center'} gap={4}>
             <Text size={'sm'}>Address : </Text>
+          </Flex>
+          <Flex alignItems={'center'} gap={4}>
+            <Text size={'sm'}>Star : </Text>
           </Flex>
         </Box>
         <Box>
@@ -72,32 +78,15 @@ function UserHeader({ user }) {
         </Flex>
       </Flex>
 
-      {currentUser?._id === user?._id && (
+      {currentUser?.username === user?.username ? (
         <NavLink to='/edit-profile'>
           <Button>Edit Profile</Button>
         </NavLink>
-      )}
-      {currentUser?._id !== user?._id && (
-        <Button onClick={handelFollowUnFollow} size={'sm'} isLoading={isFlwBtnLoading}>
-          {following ? 'Un-Follow' : 'Follow'}
+      ) : (
+        <Button onClick={handelFollowUnFollow} isLoading={isFlwBtnLoading}>
+          {following ? 'Unfollow' : 'Follow'}
         </Button>
       )}
-
-      <Flex w={'full'}>
-        <Flex flex={1} borderBottom={'1.5px solid white'} justifyContent={'center'} pb='3' cursor={'pointer'}>
-          <Text fontWeight={'bold'}> Threads</Text>
-        </Flex>
-        <Flex
-          flex={1}
-          borderBottom={'1px solid gray'}
-          justifyContent={'center'}
-          color={'gray.light'}
-          pb='3'
-          cursor={'pointer'}
-        >
-          <Text fontWeight={'bold'}> Replies</Text>
-        </Flex>
-      </Flex>
     </VStack>
   );
 }

@@ -19,9 +19,17 @@ function App() {
   const { pathname } = useLocation();
   const client = setupApolloClient();
   return (
-    <Box position={'relative'} w={'full'}>
-      <Container maxW={pathname !== '/' ? '720px' : '950px'}>
-        <Header />
+    <Box
+      position={'relative'}
+      w={'full'}
+      maxW="1000px"
+      mx="auto"
+      >  
+      <Box px={4}>
+      <Header />
+      </Box>
+      <Box w={'full'}>
+        <Container maxW={pathname !== '/' ? '720px' : '950px'} mx="auto">
         <Routes>
           <Route
             path='/'
@@ -53,7 +61,8 @@ function App() {
           <Route path='/chat' element={user ? <ChatPage /> : <Navigate to={'/auth'} />} />
           <Route path='/settings' element={user ? <SettingsPage /> : <Navigate to={'/auth'} />} />
         </Routes>
-      </Container>
+        </Container>
+      </Box>
     </Box>
   );
 }

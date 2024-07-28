@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import {
   Modal,
   ModalOverlay,
@@ -14,94 +14,102 @@ import {
   Textarea,
   Input,
   Text,
-  CloseButton,
   Flex,
   FormControl,
+  Box,
   useToast,
+  VStack
 } from '@chakra-ui/react';
 import usePreviewImage from '../hooks/usePreviewImage';
+import usePreviewVideo from '../hooks/usePreviewVideo';
 import { BsFileImageFill } from 'react-icons/bs';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import userAtom from '../atoms/userAtom.js';
-import postsAtom from '../atoms/postsAtom.js';
-import { useLocation, useParams } from 'react-router-dom';
-
+import { IoMdVideocam } from 'react-icons/io';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import userAtom from '../atoms/userAtom';
+import postsAtom from '../atoms/postsAtom';
 import { gql, useMutation } from "@apollo/client";
-import { Create_Post } from "../apollo/mutations.js";
+import { Create_Post } from "../apollo/mutations";
 
 
 const CreatePost = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [postText, setPostText] = useState('');
-  const postMediaRef = useRef();
+  const imageInputRef = useRef();
+  const videoInputRef = useRef();
   const { handleImageChange, previewImage, setPreviewImage } = usePreviewImage();
+  const { handleVideoChange, previewVideo, setPreviewVideo } = usePreviewVideo();
   const user = useRecoilValue(userAtom);
   const toast = useToast();
-  const [isCreatePostLoading, setIsCreatePostLoading] = useState();
+  const [isCreatePostLoading, setIsCreatePostLoading] = useState(false);
   const [posts, setPosts] = useRecoilState(postsAtom);
-  const { username } = useParams();
-  const { pathname } = useLocation();
   const CREATE_POST = gql` ${Create_Post}`;
   const [CREATE_POST_COMMAND] = useMutation(CREATE_POST);
-  const [file, setFile] = useState()
-
-  const UPLOAD_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`
+  const UPLOAD_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
 
   const handleTextChange = (e) => {
     setPostText(e.target.value);
   };
 
-  const handleImagesChange = (e) => {
-    setFile(e.target.files[0])
-    handleImageChange(e)
-  };
   const handleCreatePost = async () => {
+    if (!postText.trim() && !previewImage && !previewVideo) {
+      toast({
+        title: "Content Required",
+        description: "Please provide text, image, or video before posting.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
 
     try {
       setIsCreatePostLoading(true);
-      //upload image
-      
+      const fileToUpload = previewImage ? imageInputRef.current.files[0] : videoInputRef.current.files[0];
+
       const formData = new FormData();
-      formData.append('file', file);
-      console.log(' File: ',file)
-      const user_ = (localStorage.getItem('user') != 'undefined') ? JSON.parse(localStorage.getItem('user')) : null;
+      formData.append('file', fileToUpload);
+
+      const user_ = JSON.parse(localStorage.getItem('user') || '{}');
       const res = await fetch(UPLOAD_URL, {
         method: 'POST',
         headers: {
-          'Authorization': user_?.loginUser.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : "", 
+          'Authorization': user_?.loginUser?.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : ""
         },
         body: formData,
-      });      
-      const data = await res.json();
-      console.log(' upload response data : ',data)
-      // Create Post
-      const response = await CREATE_POST_COMMAND({ variables:{text: postText, imgUrl: data.url}})
-      if(response?.data){ 
-        setIsCreatePostLoading(false);
-      }
-      if (username === user.username || pathname === '/') {
-        //let data_ = response?data?.createPost
-        setPosts([response?.data?.createPost, ...posts]);
-      }
-      onClose();
-      setPostText('');
-      setPreviewImage('');
-    } catch (error) {
-      console.log(' create post : ',error)
-    }
+      });
 
+      const data = await res.json();
+      const response = await CREATE_POST_COMMAND({
+        variables: {
+          text: postText,
+          imgUrl: data.url
+        }
+      });
+
+      if (response.data) {
+        setPosts([response.data.createPost, ...posts]);
+        onClose();
+        setPostText('');
+        setPreviewImage(null);
+        setPreviewVideo(null);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create post.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      console.error('Create post:', error);
+    } finally {
+      setIsCreatePostLoading(false);
+    }
   };
 
   return (
     <div>
-      <Button
-        position={'fixed'}
-        bottom={10}
-        right={10}
-        bg={useColorModeValue('gray.300', 'gray.dark')}
-        leftIcon={<AddIcon />}
-        onClick={onOpen}
-      >
+      <Button position={'fixed'} bottom={10} right={10} bg={useColorModeValue('gray.300', 'gray.dark')} leftIcon={<AddIcon />} onClick={onOpen}>
         Post
       </Button>
 
@@ -111,40 +119,42 @@ const CreatePost = () => {
           <ModalHeader>Create Post</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* iss.song need to add rich editor & video viewer, also need to remake video button */}
-            <FormControl>
+            <VStack spacing={4}>
               <Textarea
                 placeholder='Write your post details here'
-                onChange={handleTextChange}
                 value={postText}
-                maxLength={500}
+                onChange={handleTextChange}
+                size="lg"
+                resize="none"
               />
-              <Text size={'xs'} color={'gray.800'} textAlign={'right'} fontWeight={'bold'} m={1}>
-                {postText.length}/500
-              </Text>
-              {/* <Input type='file' hidden ref={postMediaRef} onChange={handleImageChange} /> */}
-              <Input filename={file}  type='file' hidden ref={postMediaRef} onChange={handleImagesChange} />
-
-              <BsFileImageFill
-                style={{ marginLeft: '5px', cursor: 'pointer' }}
-                size={16}
-                onClick={() => postMediaRef.current.click()}
-              />
-
+              <Flex alignItems={'center'} justifyContent={'center'} gap={2}>
+                <Input type='file' hidden ref={imageInputRef} onChange={handleImageChange} accept="image/*" />
+                <Input type='file' hidden ref={videoInputRef} onChange={handleVideoChange} accept="video/*" />
+                <Box display='flex' alignItems='center' bg='gray.500' borderRadius='md' p={2} cursor='pointer' onClick={() => imageInputRef.current.click()}>
+                  <BsFileImageFill size={20} />
+                  <Text ml={2}>Image</Text>
+                </Box>
+                <Box display='flex' alignItems='center' bg='gray.500' borderRadius='md' p={2} cursor='pointer' onClick={() => videoInputRef.current.click()}>
+                  <IoMdVideocam size={24} />
+                  <Text ml={2}>Video</Text>
+                </Box>
+              </Flex>
               {previewImage && (
                 <Flex m={'5px'} w={'full'} position={'relative'}>
-                  <img src={previewImage} />
-                  <CloseButton onClick={() => setPreviewImage('')} position={'absolute'} top={2} right={2} />
+                  <img src={previewImage} alt="Preview" />
+                  <Button size='sm' onClick={() => setPreviewImage(null)} position={'absolute'} top={2} right={2}><CloseIcon /></Button>
                 </Flex>
               )}
-            </FormControl>
+              {previewVideo && (
+                <Flex m={'5px'} w={'full'} position={'relative'}>
+                  <video width="100%" controls src={previewVideo} />
+                  <Button size='sm' onClick={() => setPreviewVideo(null)} position={'absolute'} top={2} right={2}><CloseIcon /></Button>
+                </Flex>
+              )}
+            </VStack>
           </ModalBody>
-
           <ModalFooter>
-            <Button colorScheme='blue' mr={2} onClick={handleCreatePost} isLoading={isCreatePostLoading}>
-              {/* iss.song AT ONCLICK, noting than you must add something popup */}
-              Post
-            </Button>
+            <Button colorScheme='blue' mr={3} onClick={handleCreatePost} isLoading={isCreatePostLoading}>Post</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

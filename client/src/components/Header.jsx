@@ -16,34 +16,43 @@ function Header() {
   const logout = useLogout();
 
   return (
-    <Flex alignItems={'center'} justifyContent={user ? 'space-between' : 'center'} mt={6} mb={12}>
+    <Flex alignItems={'center'} justifyContent={user ? 'space-between' : 'center'} mt={6} mb={12} width="100%">
       {user && (
         <NavLink to={'/'}>
-          <AiFillHome size={24} />
+           <Image
+            alt='Home'
+            w={10}
+            h={10}
+            src={'/ess-logo.png'}
+          />
         </NavLink>
       )}
-      <Image
-        cursor={'pointer'}
-        alt='logo'
-        w={6}
-        src={colorMode == 'dark' ? '/light-logo.svg' : '/dark-logo.svg'}
-        onClick={toggleColorMode}
-      />
 
       {user && (
         <Flex alignItems={'center'} gap={4}>
           <NavLink to={`/${user?.loginUser?.username}`}>
-            <RxAvatar size={24} />
+            <RxAvatar size={30} />
           </NavLink>
           <NavLink to={`/chat`}>
-            <BsFillChatDotsFill size={20} />
+            <BsFillChatDotsFill size={30} />
           </NavLink>
           <NavLink to={`/settings`}>
-            <MdOutlineSettings size={20} />
+            <MdOutlineSettings size={30} />
           </NavLink>
-          <Button onClick={logout} size={'xs'}>
-            <FiLogOut />
+          <Button
+            onClick={logout}
+            size={'m'} // Medium 크기
+            sx={{
+              padding: '8px', // 패딩 조정
+              height: '40px', // 높이 조정
+              display: 'flex', // Flexbox 사용
+              alignItems: 'center', // 아이템 세로 중앙 정렬
+              justifyContent: 'center' // 아이템 가로 중앙 정렬
+            }}
+            >
+          <FiLogOut size={24}/>
           </Button>
+
         </Flex>
       )}
     </Flex>

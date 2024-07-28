@@ -17,7 +17,12 @@ const styles = {
   global: (props) => ({
     body: {
       color: mode('gray.800', 'WhiteAlpha.900')(props),
-      bg: mode('gray.100', '#101010')(props),
+      bg: mode('white', 'transparent')(props),
+      backgroundImage: "url('/ess-bg.png')", // 배경 이미지 추가
+      backgroundSize: '100% auto', // 이미지 사이즈 조정
+      backgroundPosition: 'center top', // 이미지 위치 조정
+      backgroundRepeat: 'repeat', // 이미지 반복 없음
+      backgroundAttachment: 'fixed'
     },
   }),
 };
