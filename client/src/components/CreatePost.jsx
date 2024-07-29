@@ -50,6 +50,21 @@ const CreatePost = () => {
     setPostText(e.target.value);
   };
 
+  const extractHashtags = (text) => {
+    const regex = /#(\w+)/g;
+    let matches;
+    const hashtags = [];
+    let cleanedText = text;
+
+    while ((matches = regex.exec(text)) !== null) {
+      hashtags.push(matches[1]);
+    }
+
+    cleanedText = cleanedText.replace(regex, '').trim();
+
+    return { cleanedText, hashtags };
+  };
+
   const handleCreatePost = async () => {
     if (!postText.trim() && !previewImage && !previewVideo) {
       toast({
@@ -61,6 +76,11 @@ const CreatePost = () => {
       });
       return;
     }
+
+    const { cleanedText, hashtags } = extractHashtags(postText);
+
+    console.log("입력된 텍스트:", cleanedText);
+    console.log("해시태그 리스트:", hashtags);
 
     try {
       setIsCreatePostLoading(true);
@@ -81,7 +101,7 @@ const CreatePost = () => {
       const data = await res.json();
       const response = await CREATE_POST_COMMAND({
         variables: {
-          text: postText,
+          text: cleanedText,
           imgUrl: data.url
         }
       });
