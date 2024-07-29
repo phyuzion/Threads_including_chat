@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { DeleteIcon } from '@chakra-ui/icons';
 import { Avatar, Box, Flex, Image, Text, Link as ChakraLink } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
-import useShowToast from '../hooks/useShowToast';
 import Actions from './Actions';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
-import { gql, useMutation, useQuery } from "@apollo/client";
-import { DeletePost } from "../apollo/mutations.js";
+import { gql, useQuery } from "@apollo/client";
 import { GetUserProfile } from "../apollo/queries.js";
 
 const GET_USER_PROFILE = gql`
@@ -18,7 +15,6 @@ const GET_USER_PROFILE = gql`
 function Post({ post }) {
   const [postedByUser, setPostedByUser] = useState(null);
   const currentUser = useRecoilValue(userAtom);
-  const DELETE_POST = gql` ${DeletePost}`;
 
   const { loading, error, data } = useQuery(GET_USER_PROFILE, {
     variables: { postedBy: post.postedBy },
@@ -30,21 +26,6 @@ function Post({ post }) {
     },
     fetchPolicy: "network-only",
   });
-
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    if (!window.confirm('Are you sure you want to delete this post?')) return;
-
-    useMutation(DELETE_POST, {
-      variables: { postId: post._id },
-      onCompleted: () => {
-        showToast('Success', `Post deleted: ${post._id}`, 'success');
-      },
-      onError: (error) => {
-        showToast('Error', error.message, 'error');
-      }
-    });
-  };
 
   const handleHashtagClick = (hashtag) => {
     console.log(`Hashtag clicked: ${hashtag}`);
@@ -72,9 +53,6 @@ function Post({ post }) {
             <Text fontSize={'sm'} color={'gray.light'}>
               {formatDistanceToNowStrict(new Date(post.createdAt))}
             </Text>
-            {currentUser?._id === post.postedBy && (
-              <DeleteIcon onClick={handleDelete} ml={2} cursor={'pointer'} />
-            )}
           </Flex>
         </Flex>
         <Link to={`/${postedByUser?.username}/post/${post._id}`}>
