@@ -94,12 +94,15 @@ const CreatePost = () => {
       });
 
       const data = await res.json();
+
       const response = await CREATE_POST_COMMAND({
         variables: {
           text: JSON.stringify(cleanedText),
-          imgUrl: data.url,
-          //Sujith, Please add hashtag and make mutation sir.
-        },
+          imgUrl: (previewImage) ? data.url : "",
+          videoUrl: (!previewImage) ?  data.url : "",
+          hashtags: hashtags
+        }
+
       });
 
       if (response.data) {

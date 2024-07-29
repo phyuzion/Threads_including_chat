@@ -1,20 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState,useRef } from 'react';
 import { Avatar, Box, Flex, Image, Text, Link as ChakraLink } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import Actions from './Actions';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState,useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
-import { gql, useQuery } from "@apollo/client";
-import { GetUserProfile } from "../apollo/queries.js";
+import postsAtom from '../atoms/postsAtom.js';
+import { gql, useQuery,useLazyQuery } from "@apollo/client";
+import { GetUserProfile,GetPostsByHashtag } from "../apollo/queries.js";
 
 const GET_USER_PROFILE = gql`
   ${GetUserProfile}
 `;
 
+const GET_POSTS_BY_HASHTAG= gql`
+  ${GetPostsByHashtag}
+`;
+
 function Post({ post }) {
   const [postedByUser, setPostedByUser] = useState(null);
   const currentUser = useRecoilValue(userAtom);
+  const [posts, setPosts] = useRecoilState(postsAtom);
+  const hashRef = useRef("");
+  const navigate = useNavigate();
+  const hashtagClick = (tag) => {
+    console.log('hashtagClick tag: ',tag)
+    hashRef.current = tag
+    console.log('hashtagClick ref: ',hashRef.current)
+    handleHashtagClick()
+  }
+
+  const [handleHashtagClick,{loading1, error1, datahashtag} ] = useLazyQuery(GET_POSTS_BY_HASHTAG,{
+    variables: { hashtag : hashRef.current , skip: 0 ,  limit :10 },
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
+    onCompleted: (datahashtag) => {
+      console.log('datahashtag:  ',datahashtag)
+      if(datahashtag?.getPostsByHashTag) {
+        setPosts(datahashtag?.getPostsByHashTag);
+        navigate('/');
+      }
+    },
+    onError: (error) => {
+      console.error('getUserProfile error:', error, ' post:', post);
+    },
+
+  })
+
+
+
 
   const { loading, error, data } = useQuery(GET_USER_PROFILE, {
     variables: { postedBy: post.postedBy },
@@ -27,9 +61,9 @@ function Post({ post }) {
     fetchPolicy: "network-only",
   });
 
-  const handleHashtagClick = (hashtag) => {
-    console.log(`Hashtag clicked: ${hashtag}`);
-  };
+
+
+
 
   return (
     <Flex gap={3} mb={4} pt={5} pb={2}>
@@ -70,8 +104,9 @@ function Post({ post }) {
         </Link>
         <Box>
           <Text fontSize={'sm'} flexWrap='wrap'>
-            <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test1')}>#test1</ChakraLink>{' '}
-            <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test2')}>#test2</ChakraLink>
+          {post.hashtags?.map((tag) => (
+            <ChakraLink color="blue.500" onClick={() => hashtagClick(tag)}>#{tag}</ChakraLink>
+          ))}            
           </Text>
         </Box>
         <Flex gap={3} my={1} alignItems={'center'}>

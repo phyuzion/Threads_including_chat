@@ -1,5 +1,5 @@
-export const Create_Post = `mutation CreatePost($text: String, $imgUrl: String, $videoUrl: String) {
-  createPost(text: $text, imgUrl: $imgUrl, videoUrl: $videoUrl) {
+export const Create_Post = `mutation Mutation($text: String, $imgUrl: String, $videoUrl: String, $hashtags: [String]) {
+  createPost(text: $text, imgUrl: $imgUrl, videoUrl: $videoUrl, hashtags: $hashtags) {
     _id
     postedBy
     text
@@ -13,6 +13,7 @@ export const Create_Post = `mutation CreatePost($text: String, $imgUrl: String, 
       userProfilePic
       username
     }
+    hashtags
     createdAt
   }
 }

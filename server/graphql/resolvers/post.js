@@ -1,11 +1,23 @@
 const { throwServerError, throwForbiddenError } = require("../../utils/helpers/genrateTokenAndSetCookie")
 const { transformPost,transformPosts } = require('../../utils/transform')
-
+const mongoose = require('mongoose')
 const Post = require('../../models/postModel')
 const User = require('../../models/userModel')
-
+const { updateHashTags, getHashtagPosts } = require('../helpers/hashtags')
+const config = require('../../config')
 module.exports = {
     Query: {
+        getPostsByHashTag: async (_,args,{req, res}) => {
+          const { hashtag,skip,limit } = args
+          if(!req.user) {
+            throwForbiddenError()
+          }     
+          try {
+              return await getHashtagPosts(hashtag,skip,limit)
+          } catch (error) {
+                throwServerError(error)
+          }    
+        },
         getPost: async (_,args,{req, res}) => {
             const { postId } = args
             if(!req.user) {
@@ -60,9 +72,9 @@ module.exports = {
                 }).sort({
                   createdAt: -1,
                 });
-                console.log(' getFeedPosts feedPosts: ',feedPosts)
+                //console.log(' getFeedPosts feedPosts: ',feedPosts)
                 const posts_ =  transformPosts(feedPosts)
-                //console.log(' getFeedPosts posts_: ',posts_)
+                console.log(' getFeedPosts posts_: ',posts_)
                 return posts_
               } catch (error) {
                 console.log('getFeedPosts error: ',error)
@@ -78,8 +90,14 @@ module.exports = {
                 throwForbiddenError()
             }
 
-            const { text, imgUrl , videoUrl } = args
+            const { text, imgUrl , videoUrl, hashtags } = args
             const userId = req.user._id.toString()
+            let session
+            if (config.DB_TYPE == "ATLAS") {
+              session = await mongoose.startSession();
+              await session.startTransaction();
+            }
+
             try {
                 if (!text) {
                     throwServerError('text field is required')
@@ -92,13 +110,31 @@ module.exports = {
                     postedBy: userId,
                     text,
                     img: imgUrl,
-                    video: videoUrl
+                    video: videoUrl,
+                    hashtags: hashtags
                   });
                 const post_ =   await newPost.save();     
+
+                
+                
+                const result = await updateHashTags(hashtags,post_._id,post_.postedBy,session)
+                console.log(' hastags inserted: ',result)
+                if (config.DB_TYPE == "ATLAS") {
+                  await session.commitTransaction()
+                }
+                
                 return transformPost(post_)           
             
             } catch(error) {
+              if (config.DB_TYPE == "ATLAS") {
+                await session.abortTransaction();
+               }
                 throwServerError(error)
+            } finally {
+              if (config.DB_TYPE == "ATLAS") {
+                await session.endSession()
+              }
+              
             }
 
         },

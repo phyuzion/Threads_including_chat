@@ -2,10 +2,29 @@ import { Box, Flex, Link as ChakraLink, Text, Avatar, Image } from '@chakra-ui/r
 import React from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import Actions from './Actions';
+import postsAtom from '../atoms/postsAtom';
+import { gql, useQuery } from "@apollo/client";
+import { GetPostsByHashtag } from "../apollo/queries.js";
+import { useRecoilValue } from 'recoil';
+
+const GET_POSTS_BY_HASHTAG= gql`
+  ${GetPostsByHashtag}
+`;
 
 function UserPost({ postTitle, postImg, postVideo, likes, replies }) {
   const handleHashtagClick = (hashtag) => {
     console.log(`Hashtag clicked: ${hashtag}`);
+    const { loading, error, data } = useQuery(GET_POSTS_BY_HASHTAG, {
+      variables: { hashtag: hashtag, skip: 0, limit :10 },
+      onCompleted: (result) => {
+        setPosts(result?.getPostsByHashTag);
+        navigate('/');
+      },
+      onError: (error) => {
+        console.error('getPostsByHashTag error:', error, ' post:', post);
+      },
+      fetchPolicy: "network-only",
+    });
   };
 
   return (
@@ -51,8 +70,9 @@ function UserPost({ postTitle, postImg, postVideo, likes, replies }) {
           )}
           <Flex justifyContent={'flex-start'} flexWrap='wrap'>
             <Text fontSize={'sm'}>
-              <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test1')}>#test1</ChakraLink>{' '}
-              <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test2')}>#test2</ChakraLink>
+            {post.hashtags?.map((tag) => (
+            <ChakraLink color="blue.500" onClick={() => handleHashtagClick(tag)}>#tag</ChakraLink>
+          ))}     
             </Text>
           </Flex>
           <Flex gap={3} my={1} alignItems={'center'}>

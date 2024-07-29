@@ -58,9 +58,12 @@ function LoginCard() {
       if(response?.data){
         console.log(' data : ',response.data)
         localStorage.setItem('user', JSON.stringify(response.data));
-        setUser(response?.data?.loginUser);
+
+        setUser(response?.data);
         await client.clearStore(); // Clear Apollo Client cache
         await client.resetStore(); // Reset Apollo Client cache
+
+
       }
     } catch(error) {
       console.log(error.stack)

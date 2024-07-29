@@ -12,5 +12,6 @@ module.exports = {
   DEBUG_DB: process.env.DEBUG_DB,
   HOST: process.env.HOST,
   PORT: process.env.PORT,
-  SECRET_KEY: "Thread clone secret Key 213213231"
+  SECRET_KEY: "Thread clone secret Key 213213231",
+  DB_TYPE: process.env.DB_TYPE
 }

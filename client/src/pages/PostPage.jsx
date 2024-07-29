@@ -13,6 +13,11 @@ import useShowToast from '../hooks/useShowToast';
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GetPost } from "../apollo/queries.js";
 import { DeletePost } from "../apollo/mutations.js";
+import { GetPostsByHashtag } from "../apollo/queries.js";
+
+const GET_POSTS_BY_HASHTAG= gql`
+  ${GetPostsByHashtag}
+`;
 
 const GET_POST = gql`
   ${GetPost}
@@ -71,7 +76,17 @@ function PostPage() {
   };
 
   const handleHashtagClick = (hashtag) => {
-    console.log(`Hashtag clicked: ${hashtag}`);
+    const { loading, error, data } = useQuery(GET_POSTS_BY_HASHTAG, {
+      variables: { hashtag: hashtag, skip: 0, limit :10 },
+      onCompleted: (result) => {
+        setPosts(result?.getPostsByHashTag);
+        navigate('/');
+      },
+      onError: (error) => {
+        console.error('getPostsByHashTag error:', error, ' post:', post);
+      },
+      fetchPolicy: "network-only",
+    });
   };
 
   return (
@@ -106,8 +121,9 @@ function PostPage() {
           )}
           <Flex justifyContent={'flex-start'} flexWrap='wrap'>
             <Text fontSize={'sm'}>
-              <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test1')}>#test1</ChakraLink>{' '}
-              <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test2')}>#test2</ChakraLink>
+            {currentPost.hashtags?.map((tag) => (
+            <ChakraLink color="blue.500" onClick={() => handleHashtagClick(tag)}>tag</ChakraLink>
+          ))}
             </Text>
           </Flex>
           <Flex gap={3} my={1} alignItems={'center'}>

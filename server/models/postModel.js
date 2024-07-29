@@ -13,6 +13,9 @@ const postSchema = new Schema(
       type: String,
       maxLength: 500,
     },
+    hashtags: {
+      type: [String],
+    },
     img: {
       type: String,
     },

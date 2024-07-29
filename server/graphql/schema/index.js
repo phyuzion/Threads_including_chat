@@ -20,6 +20,7 @@ type Post {
     video: String
     likes: [String]
     replies: [Reply]
+    hashtags: [String]
     createdAt: String
 }
 
@@ -46,10 +47,11 @@ type Query {
     getSuggestedUsers: [User]
     getUserProfile(postedBy: String!): User
     getProfileByName(username: String!): User
+    getPostsByHashTag(hashtag: String!, skip: Int! , limit: Int!): [Post]
 }
 type Mutation {
 
-    createPost(text: String,imgUrl: String, videoUrl: String): Post
+    createPost(text: String,imgUrl: String, videoUrl: String,hashtags: [String]): Post
     generateUrlsForUpload(userId: String, imageUpload: Boolean, videoUpload: Boolean): uploadURLs
     deletePost(postId: String): Boolean!
     likeUnLikePost(postId: String): Boolean!
