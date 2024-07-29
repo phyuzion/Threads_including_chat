@@ -4,32 +4,27 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton,
+  ModalFooter,
   Button,
-  useColorModeValue,
-  useDisclosure,
   Textarea,
   Input,
   Text,
   Flex,
-  FormControl,
   Box,
   useToast,
-  VStack
+  VStack,
+  useDisclosure,
 } from '@chakra-ui/react';
-import usePreviewImage from '../hooks/usePreviewImage';
-import usePreviewVideo from '../hooks/usePreviewVideo';
 import { BsFileImageFill } from 'react-icons/bs';
 import { IoMdVideocam } from 'react-icons/io';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import postsAtom from '../atoms/postsAtom';
-import { gql, useMutation } from "@apollo/client";
-import { Create_Post } from "../apollo/mutations";
-
+import { gql, useMutation } from '@apollo/client';
+import { Create_Post } from '../apollo/mutations';
+import usePreviewImage from '../hooks/usePreviewImage';
+import usePreviewVideo from '../hooks/usePreviewVideo';
 
 const CreatePost = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -42,7 +37,7 @@ const CreatePost = () => {
   const toast = useToast();
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false);
   const [posts, setPosts] = useRecoilState(postsAtom);
-  const CREATE_POST = gql` ${Create_Post}`;
+  const CREATE_POST = gql`${Create_Post}`;
   const [CREATE_POST_COMMAND] = useMutation(CREATE_POST);
   const UPLOAD_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
 
@@ -68,9 +63,9 @@ const CreatePost = () => {
   const handleCreatePost = async () => {
     if (!postText.trim() && !previewImage && !previewVideo) {
       toast({
-        title: "Content Required",
-        description: "Please provide text, image, or video before posting.",
-        status: "warning",
+        title: 'Content Required',
+        description: 'Please provide text, image, or video before posting.',
+        status: 'warning',
         duration: 5000,
         isClosable: true,
       });
@@ -79,8 +74,8 @@ const CreatePost = () => {
 
     const { cleanedText, hashtags } = extractHashtags(postText);
 
-    console.log("입력된 텍스트:", cleanedText);
-    console.log("해시태그 리스트:", hashtags);
+    console.log('Input Text', cleanedText);
+    console.log('Input hashtags', hashtags);
 
     try {
       setIsCreatePostLoading(true);
@@ -93,7 +88,7 @@ const CreatePost = () => {
       const res = await fetch(UPLOAD_URL, {
         method: 'POST',
         headers: {
-          'Authorization': user_?.loginUser?.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : ""
+          Authorization: user_?.loginUser?.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : '',
         },
         body: formData,
       });
@@ -102,8 +97,9 @@ const CreatePost = () => {
       const response = await CREATE_POST_COMMAND({
         variables: {
           text: cleanedText,
-          imgUrl: data.url
-        }
+          imgUrl: data.url,
+          //Sujith, Please add hashtag and make mutation sir.
+        },
       });
 
       if (response.data) {
@@ -115,9 +111,9 @@ const CreatePost = () => {
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create post.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to create post.',
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
@@ -129,52 +125,104 @@ const CreatePost = () => {
 
   return (
     <div>
-      <Button position={'fixed'} bottom={10} right={10} bg={useColorModeValue('gray.300', 'gray.dark')} leftIcon={<AddIcon />} onClick={onOpen}>
+      <Button
+        position={'fixed'}
+        bottom={10}
+        right={10}
+        bg={'gray.dark'}
+        color={'white'}
+        leftIcon={<AddIcon />}
+        onClick={onOpen}
+      >
         Post
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create Post</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+        <ModalContent bg={'gray.dark'} borderRadius="md" boxShadow="xl">
+          <ModalBody p={6}>
             <VStack spacing={4}>
               <Textarea
                 placeholder='Write your post details here'
                 value={postText}
                 onChange={handleTextChange}
-                size="lg"
-                resize="none"
+                size='lg'
+                resize='none'
+                color={'white'}
               />
               <Flex alignItems={'center'} justifyContent={'center'} gap={2}>
-                <Input type='file' hidden ref={imageInputRef} onChange={handleImageChange} accept="image/*" />
-                <Input type='file' hidden ref={videoInputRef} onChange={handleVideoChange} accept="video/*" />
-                <Box display='flex' alignItems='center' bg='gray.500' borderRadius='md' p={2} cursor='pointer' onClick={() => imageInputRef.current.click()}>
-                  <BsFileImageFill size={20} />
-                  <Text ml={2}>Image</Text>
+                <Input type='file' hidden ref={imageInputRef} onChange={handleImageChange} accept='image/*' />
+                <Input type='file' hidden ref={videoInputRef} onChange={handleVideoChange} accept='video/*' />
+                <Box
+                  display='flex'
+                  alignItems='center'
+                  bg='gray.600'
+                  borderRadius='md'
+                  p={2}
+                  cursor='pointer'
+                  onClick={() => imageInputRef.current.click()}
+                >
+                  <BsFileImageFill size={20} color='white' />
+                  <Text ml={2} color='white'>
+                    Image
+                  </Text>
                 </Box>
-                <Box display='flex' alignItems='center' bg='gray.500' borderRadius='md' p={2} cursor='pointer' onClick={() => videoInputRef.current.click()}>
-                  <IoMdVideocam size={24} />
-                  <Text ml={2}>Video</Text>
+                <Box
+                  display='flex'
+                  alignItems='center'
+                  bg='gray.600'
+                  borderRadius='md'
+                  p={2}
+                  cursor='pointer'
+                  onClick={() => videoInputRef.current.click()}
+                >
+                  <IoMdVideocam size={24} color='white' />
+                  <Text ml={2} color='white'>
+                    Video
+                  </Text>
                 </Box>
               </Flex>
               {previewImage && (
                 <Flex m={'5px'} w={'full'} position={'relative'}>
-                  <img src={previewImage} alt="Preview" />
-                  <Button size='sm' onClick={() => setPreviewImage(null)} position={'absolute'} top={2} right={2}><CloseIcon /></Button>
+                  <img src={previewImage} alt='Preview' />
+                  <Button size='sm' onClick={() => setPreviewImage(null)} position={'absolute'} top={2} right={2}>
+                    <CloseIcon />
+                  </Button>
                 </Flex>
               )}
               {previewVideo && (
                 <Flex m={'5px'} w={'full'} position={'relative'}>
-                  <video width="100%" controls src={previewVideo} />
-                  <Button size='sm' onClick={() => setPreviewVideo(null)} position={'absolute'} top={2} right={2}><CloseIcon /></Button>
+                  <video width='100%' controls src={previewVideo} />
+                  <Button size='sm' onClick={() => setPreviewVideo(null)} position={'absolute'} top={2} right={2}>
+                    <CloseIcon />
+                  </Button>
                 </Flex>
               )}
             </VStack>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={handleCreatePost} isLoading={isCreatePostLoading}>Post</Button>
+          <ModalFooter bg={'gray.dark'}>
+            <Button
+              bg={'red.400'}
+              color={'white'}
+              _hover={{
+                bg: 'red.500',
+              }}
+              mr={3}
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              bg={'blue.400'}
+              color={'white'}
+              _hover={{
+                bg: 'blue.500',
+              }}
+              onClick={handleCreatePost}
+              isLoading={isCreatePostLoading}
+            >
+              Post
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
