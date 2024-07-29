@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Avatar,
   Box,
   Flex,
-  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -13,25 +12,23 @@ import {
   Button,
   VStack,
   useToast,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { BsInstagram } from 'react-icons/bs';
 import { CgMoreO } from 'react-icons/cg';
-import { NavLink } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom.js';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow.js';
+import UpdateProfilePage from '../pages/UpdateProfilePage';
 
 function UserHeader({ user }) {
   const toast = useToast();
   const currentUser = useRecoilValue(userAtom);
-
-  console.log("Current User:", currentUser?.username, "Profile User:", user?.username);
- //current User name can not check here.
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const CopyUrl = async () => {
     const currentURL = window.location.href;
     await navigator.clipboard.writeText(currentURL);
-    toast({ title: 'Coppied!', status: 'success' });
+    toast({ title: 'Copied!', status: 'success' });
   };
 
   const { following, isFlwBtnLoading, handelFollowUnFollow } = useHandleFollowUnFollow(user);
@@ -47,10 +44,10 @@ function UserHeader({ user }) {
             <Text size={'sm'}>{user?.username}</Text>
           </Flex>
           <Flex alignItems={'center'} gap={4}>
-            <Text size={'sm'}>Address : </Text>
+            <Text size={'sm'}>Address: </Text>
           </Flex>
           <Flex alignItems={'center'} gap={4}>
-            <Text size={'sm'}>Star : </Text>
+            <Text size={'sm'}>Star: </Text>
           </Flex>
         </Box>
         <Box>
@@ -78,10 +75,11 @@ function UserHeader({ user }) {
         </Flex>
       </Flex>
 
-      {currentUser?.username === user?.username ? (
-        <NavLink to='/edit-profile'>
-          <Button>Edit Profile</Button>
-        </NavLink>
+      {currentUser?.loginUser?._id === user?._id ? (
+        <>
+          <Button onClick={onOpen}>Edit Profile</Button>
+          <UpdateProfilePage isOpen={isOpen} onClose={onClose} />
+        </>
       ) : (
         <Button onClick={handelFollowUnFollow} isLoading={isFlwBtnLoading}>
           {following ? 'Unfollow' : 'Follow'}
