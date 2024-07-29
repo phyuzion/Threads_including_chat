@@ -60,7 +60,7 @@ function PostPage() {
 
   return (
     <>
-      <Flex gap={3} mb={4} py={5}>
+      <Flex gap={3} mb={4} pt={5} pb={2}>
         <Flex flex={1} flexDirection={'column'} gap={2}>
           <Flex w={'full'} justifyContent={'space-between'}>
             <Flex alignItems={'center'}>
@@ -96,14 +96,6 @@ function PostPage() {
           </Flex>
           <Flex gap={3} my={1} alignItems={'center'}>
             <Actions post={currentPost} />
-          </Flex>
-          <Divider my={4} />
-          <Flex justifyContent={'space-between'}>
-            <Flex gap={2} alignItems={'center'}>
-              <Text fontSize={'2xl'}>👋</Text>
-              <Text color={'gray.light'}>Get the app to like, reply and post.</Text>
-            </Flex>
-            <Button>Get</Button>
           </Flex>
         </Flex>
       </Flex>
