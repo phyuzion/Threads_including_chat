@@ -46,6 +46,10 @@ function Post({ post }) {
     });
   };
 
+  const handleHashtagClick = (hashtag) => {
+    console.log(`Hashtag clicked: ${hashtag}`);
+  };
+
   return (
     <Flex gap={3} mb={4} py={5}>
       <Flex flexDirection={'column'} alignItems={'center'}>
@@ -86,6 +90,12 @@ function Post({ post }) {
             </Box>
           )}
         </Link>
+        <Box>
+          <Text fontSize={'sm'} flexWrap='wrap'>
+            <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test1')}>#test1</ChakraLink>{' '}
+            <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test2')}>#test2</ChakraLink>
+          </Text>
+        </Box>
         <Flex gap={3} my={1} alignItems={'center'}>
           <Actions post={post} />
         </Flex>

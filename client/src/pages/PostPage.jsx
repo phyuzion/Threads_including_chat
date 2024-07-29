@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Avatar, Box, Button, Divider, Flex, Image, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { Avatar, Box, Button, Divider, Flex, Image, Spinner, Text, useDisclosure, Link as ChakraLink } from '@chakra-ui/react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -54,6 +54,10 @@ function PostPage() {
     }
   };
 
+  const handleHashtagClick = (hashtag) => {
+    console.log(`Hashtag clicked: ${hashtag}`);
+  };
+
   return (
     <>
       <Flex gap={3} mb={4} py={5}>
@@ -84,6 +88,12 @@ function PostPage() {
               <video controls src={currentPost.video} w={'full'} onError={(e) => e.target.style.display = 'none'} />
             </Box>
           )}
+          <Flex justifyContent={'flex-start'} flexWrap='wrap'>
+            <Text fontSize={'sm'}>
+              <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test1')}>#test1</ChakraLink>{' '}
+              <ChakraLink color="blue.500" onClick={() => handleHashtagClick('#test2')}>#test2</ChakraLink>
+            </Text>
+          </Flex>
           <Flex gap={3} my={1} alignItems={'center'}>
             <Actions post={currentPost} />
           </Flex>
