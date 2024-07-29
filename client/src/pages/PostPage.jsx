@@ -18,6 +18,10 @@ const GET_POST = gql`
   ${GetPost}
 `;
 
+const DELETE_POST = gql`
+  ${DeletePost}
+`;
+
 function PostPage() {
   const { postId } = useParams();
   const currentUser = useRecoilValue(userAtom);
@@ -26,8 +30,26 @@ function PostPage() {
   const navigate = useNavigate();
   const showToast = useShowToast();
   const { user, isLoading } = getUserProfile(currentUser?._id);
-  const DELETE_POST = gql` ${DeletePost}`;
-  const [DELETE_POST_COMMAND] = useMutation(DELETE_POST);
+
+  const [DELETE_POST_COMMAND] = useMutation(DELETE_POST, {
+    update(cache, { data: { deletePost } }) {
+      cache.modify({
+        fields: {
+          getFeedPosts(existingPosts = [], { readField }) {
+            return existingPosts.filter(postRef => readField('_id', postRef) !== postId);
+          }
+        }
+      });
+    },
+    onCompleted: () => {
+      setPosts(posts.filter(p => p._id !== postId));
+      showToast('Success', 'Post deleted successfully', 'success');
+      navigate('/');
+    },
+    onError: (error) => {
+      showToast('Error', error.message, 'error');
+    }
+  });
 
   if (!user && isLoading) {
     return (
@@ -42,15 +64,9 @@ function PostPage() {
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     try {
-      const response = await DELETE_POST_COMMAND({ variables: { postId: currentPost._id } });
-      if (response?.data?.deletePost) {
-        showToast('Success', 'Post deleted successfully', 'success');
-        navigate('/');
-      } else if (response.errors) {
-        showToast('Error', response.errors[0].message, 'error');
-      }
+      await DELETE_POST_COMMAND({ variables: { postId: currentPost._id } });
     } catch (error) {
-      showToast('Error', error.message, 'error');
+      console.error('Delete post error:', error);
     }
   };
 
@@ -72,7 +88,7 @@ function PostPage() {
               <Text fontSize={'sm'} color={'gray.light'}>
                 {formatDistanceToNowStrict(new Date(currentPost.createdAt))}
               </Text>
-              {currentUser?.loginUser._id === currentPost.postedBy && (
+              {currentUser?.loginUser?._id === currentPost.postedBy && (
                 <DeleteIcon onClick={handleDelete} ml={2} cursor={'pointer'} />
               )}
             </Flex>
