@@ -14,86 +14,63 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useState,useRef,useEffect } from 'react';
+import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import useShowToast from '../hooks/useShowToast';
 import postsAtom from '../atoms/postsAtom';
-
-
 import { gql, useMutation } from "@apollo/client";
-import { likeUnLikePost,replyToPost } from "../apollo/mutations.js";
-
+import { likeUnLikePost, replyToPost } from "../apollo/mutations.js";
 
 const Actions = ({ post }) => {
-  //console.log('Actions post: ',post?._id)
   const user = useRecoilValue(userAtom);
   const [liked, setLiked] = useState(post.likes.includes(user?.loginUser?._id));
   const [posts, setPosts] = useRecoilState(postsAtom);
   const [isLiking, setIsLiking] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [reply, setReply] = useState('');
+  const [stars, setStars] = useState(post.stars || 0);
 
   const showToast = useShowToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const LIKE_UNLIKE_POST = gql ` ${likeUnLikePost}`;
-  const REPLY_TO_POST = gql ` ${replyToPost}`;
-  const [LIKE_UNLIKE_POST_COMMAND] = useMutation(LIKE_UNLIKE_POST,{fetchPolicy: 'network-only'});
-  //postLiked.current = 
-  const [REPLY_POST_COMMAND] = useMutation(REPLY_TO_POST,{fetchPolicy: 'network-only'});
-  const handleLikeAndUnlike = async (e) => {
+  const LIKE_UNLIKE_POST = gql`${likeUnLikePost}`;
+  const REPLY_TO_POST = gql`${replyToPost}`;
+  const [LIKE_UNLIKE_POST_COMMAND] = useMutation(LIKE_UNLIKE_POST, { fetchPolicy: 'network-only' });
+  const [REPLY_POST_COMMAND] = useMutation(REPLY_TO_POST, { fetchPolicy: 'network-only' });
 
-      if (!user)
-      return showToast(
-        'Error',
-        'You must be logged in to like a post',
-        'error'
-      );
+  const handleLikeAndUnlike = async () => {
+    if (!user) {
+      return showToast('Error', 'You must be logged in to like a post', 'error');
+    }
     if (isLiking) return;
     setIsLiking(true);
 
-    const response =  await LIKE_UNLIKE_POST_COMMAND({variables:{ postId: post._id  }})
+    const response = await LIKE_UNLIKE_POST_COMMAND({ variables: { postId: post._id } });
     console.log(response.data.likeUnLikePost);
-    
-    if (!liked) {
-      // add the id of the current user to post.likes array
-      const updatedPosts = posts.map((p) => {
-        if (p._id === post._id) {
-          return { ...p, likes: [...p.likes, user?.loginUser?._id] };
-        }
-        return p;
-      });
-      setPosts(updatedPosts);
-    } else {
-      // remove the id of the current user from post.likes array
-      const updatedPosts = posts.map((p) => {
-        if (p._id === post._id) {
-          return { ...p, likes: p.likes.filter((id) => id !== user.loginUser?._id) };
-        }
-        return p;
-      });
-      setPosts(updatedPosts);
-    }
+
+    const updatedPosts = posts.map((p) => {
+      if (p._id === post._id) {
+        return liked
+          ? { ...p, likes: p.likes.filter((id) => id !== user.loginUser?._id) }
+          : { ...p, likes: [...p.likes, user.loginUser?._id] };
+      }
+      return p;
+    });
+    setPosts(updatedPosts);
     setIsLiking(false);
     setLiked(!liked);
-
-    
   };
 
   const handleReply = async () => {
-    if (!user)
-      return showToast(
-        'Error',
-        'You must be logged in to reply to a post',
-        'error'
-      );
+    if (!user) {
+      return showToast('Error', 'You must be logged in to reply to a post', 'error');
+    }
     if (isReplying) return;
     setIsReplying(true);
 
-
-    const response = await REPLY_POST_COMMAND({variables:{ postId: post._id ,  text: reply  }}) 
-    console.log('replies: ',response?.data)
-    if(response?.data?.replyToPost){
+    const response = await REPLY_POST_COMMAND({ variables: { postId: post._id, text: reply } });
+    console.log('replies: ', response?.data);
+    if (response?.data?.replyToPost) {
       const updatedPosts = posts.map((p) => {
         if (p._id === post._id) {
           return { ...p, replies: [...p.replies, response?.data?.replyToPost] };
@@ -101,19 +78,30 @@ const Actions = ({ post }) => {
         return p;
       });
       setPosts(updatedPosts);
-      
     }
 
     onClose();
     setReply('');
-    setIsReplying(false)
+    setIsReplying(false);
+  };
+
+  const handleStarClick = () => {
+    setStars(stars + 1);
+  };
+
+  const formatNumber = (num) => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'm';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'k';
+    } else {
+      return num;
+    }
   };
 
   return (
-
-    <Flex flexDirection='column'>
-      <Flex gap={3} my={2} onClick={(e) => e.preventDefault()}>
-        {/* {console.log( 'render liked : ',liked)} */}
+    <Flex flexDirection='column' w='full' position='relative'>
+      <Flex gap={3} my={2} w='full' alignItems='center'>
         <svg
           aria-label='Like'
           color={liked ? 'rgb(237, 73, 86)' : ''}
@@ -153,7 +141,27 @@ const Actions = ({ post }) => {
           ></path>
         </svg>
 
-        {/*iss.song make Star button. or delete.. */}
+        <Box marginLeft="auto" display='flex' alignItems='center'>
+          <Text mr={1} color={'white'} fontSize='sm'>
+            {formatNumber(stars)}
+          </Text>
+          <Button onClick={handleStarClick} bg='transparent' p={0} minW='auto' _hover={{ bg: 'transparent' }}>
+            <svg
+              aria-label='Star'
+              color='gold'
+              fill='gold'
+              height='24'
+              role='img'
+              viewBox='0 0 24 24'
+              width='24'
+            >
+              <title>Star</title>
+              <path
+                d='M12 .587l3.668 7.431 8.215 1.191-5.941 5.788 1.402 8.192L12 18.897l-7.344 3.86 1.402-8.192-5.941-5.788 8.215-1.191z'
+              />
+            </svg>
+          </Button>
+        </Box>
       </Flex>
 
       <Flex gap={2} alignItems={'center'}>
