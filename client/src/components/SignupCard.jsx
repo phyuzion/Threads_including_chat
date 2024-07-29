@@ -5,7 +5,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  HStack,
   Heading,
   Input,
   InputGroup,
@@ -31,7 +30,6 @@ function SignupCard() {
   const [_, setAuthSceen] = useRecoilState(authScreenAtom);
   const [SIGNUP_USER_COMMAND] = useMutation(SIGNUP_USER);
   const [inputs, setInputs] = useState({
-    name: '',
     username: '',
     email: '',
     password: '',
@@ -69,28 +67,15 @@ function SignupCard() {
           </Stack>
           <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={8}>
             <Stack spacing={4}>
-              <HStack>
-                <Box>
-                  <FormControl isRequired>
-                    <FormLabel>Full Name</FormLabel>
-                    <Input
-                      type='text'
-                      onChange={(e) => setInputs({ ...inputs, name: e.target.value })}
-                      value={inputs.name}
-                    />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl>
-                    <FormLabel>Username</FormLabel>
-                    <Input
-                      type='text'
-                      onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
-                      value={inputs.username}
-                    />
-                  </FormControl>
-                </Box>
-              </HStack>
+              
+              <FormControl isRequired>
+                <FormLabel>User name</FormLabel>
+                <Input
+                  type='text'
+                  onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
+                  value={inputs.username}
+                />
+              </FormControl>
               <FormControl isRequired>
                 <FormLabel>Email address</FormLabel>
                 <Input
@@ -130,6 +115,21 @@ function SignupCard() {
                   isLoading={isLoading}
                 >
                   Sign up
+                </Button>
+              </Stack>
+              <Stack spacing={10} pt={2}>
+                <Button
+                  loadingText='Signing In...'
+                  size='lg'
+                  bg={'blue.400'}
+                  color={'white'}
+                  _hover={{
+                    bg: 'blue.500',
+                  }}
+                  type={'submit'}
+                  isLoading={isLoading}
+                >
+                  temporary button
                 </Button>
               </Stack>
               <Stack pt={6}>
