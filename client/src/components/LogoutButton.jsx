@@ -3,59 +3,36 @@ import React from 'react';
 import { useSetRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import { FiLogOut } from 'react-icons/fi';
+import { gql, useMutation, useApolloClient } from "@apollo/client";
+import { logoutUser } from "../apollo/mutations";
 
-import { gql, useMutation } from "@apollo/client";
-import { logoutUser } from "../apollo/mutations.js";
-
+const LOGOUT_USER = gql`${logoutUser}`;
 
 const LogoutButton = () => {
   const setUser = useSetRecoilState(userAtom);
   const toast = useToast();
-  const LOGOUT_USER = gql` ${logoutUser}`;
-
-  const handleLogout = async () => {
-
-    const response =  useMutation(LOGOUT_USER, {variables:{ },
-      onCompleted: (data) => {
-        console.log(' LOGOUT_USER onCompleted : ')
-        setIsLoading(false);
-        toast({title: 'Successfully Logged out',description: '',status: 'success',duration: 3000,isClosable: true});          
-      },
-      onError: (error) => {
-        setIsLoading(false);
-        toast({ title: 'Error', description: error, status: 'error', duration: 3000,isClosable: true });
-      } 
-  })
-    if(response?.data){
+  const client = useApolloClient();
+  
+  const [LOGOUT_USER_COMMAND] = useMutation(LOGOUT_USER, {
+    onCompleted: async (data) => {
+      console.log('LOGOUT_USER onCompleted: ', data);
       localStorage.removeItem('user');
       setUser(null);
+      await client.clearStore(); // Clear Apollo Client cache
+      await client.resetStore(); // Reset Apollo Client cache
+      toast({ title: 'Successfully Logged out', description: '', status: 'success', duration: 3000, isClosable: true });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: error.message, status: 'error', duration: 3000, isClosable: true });
     }
+  });
 
-  //   try {
-  //     const res = await fetch('/api/users/logout', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     });
-
-  //     const data = await res.json();
-  //     if (data.error) {
-  //       toast({
-  //         title: 'Error',
-  //         description: data.error,
-  //         status: 'error',
-  //         duration: 3000,
-  //         isClosable: true,
-  //       });
-  //       return;
-  //     }
-
-  //     localStorage.removeItem('user');
-  //     setUser(null);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
+  const handleLogout = async () => {
+    try {
+      await LOGOUT_USER_COMMAND();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (

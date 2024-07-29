@@ -16,33 +16,35 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import authScreenAtom from '../atoms/authAtom.js';
 import userAtom from '../atoms/userAtom.js';
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useApolloClient } from "@apollo/client";
 import { loginUser } from "../apollo/mutations.js";
-
 
 function LoginCard() {
   const [showPassword, setShowPassword] = useState(false);
   const [_, setAuthSceen] = useRecoilState(authScreenAtom);
-
   const [inputs, setInputs] = useState({
     username: '',
     password: '',
   });
-
   const [, setUser] = useRecoilState(userAtom);
   const [isLoading, setIsLoading] = useState();
   const toast = useToast();
-
-
+  const client = useApolloClient(); // Apollo Client instance
 
   const LOGIN_USER = gql` ${loginUser}`;
   const [LOGIN_USER_COMMAND] = useMutation(LOGIN_USER, { loginCompleted, loginError });
+
   async function loginCompleted({ data }) {
     console.log(' LOGIN_USER onCompleted : ')
+    localStorage.setItem('user', JSON.stringify(data));
+    setUser(data.loginUser);
+    await client.clearStore(); // Clear Apollo Client cache
+    await client.resetStore(); // Reset Apollo Client cache
   }
+
   function loginError(errors) {
     console.log("🚀 ~ loginError ~ errors:", errors)
   }
@@ -52,54 +54,19 @@ function LoginCard() {
     try{
       setIsLoading(true);
       console.log(' inputs: ',inputs)
-      const response = await LOGIN_USER_COMMAND({ variables:inputs})//useMutation(LOGIN_USER, {variables:{ inputs  },
+      const response = await LOGIN_USER_COMMAND({ variables: inputs });
       if(response?.data){
         console.log(' data : ',response.data)
         localStorage.setItem('user', JSON.stringify(response.data));
         setUser(response?.data?.loginUser);
-        //localStorage.setItem('token', JSON.stringify(data.jwtToken));
+        await client.clearStore(); // Clear Apollo Client cache
+        await client.resetStore(); // Reset Apollo Client cache
       }
     } catch(error) {
       console.log(error.stack)
+    } finally {
+      setIsLoading(false);
     }
-
-
-
-    //   const res = await fetch('/api/users/login', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(inputs),
-    //   });
-
-    //   const data = await res.json();
-    //   if (data.error) {
-    //     toast({
-    //       title: 'Error',
-    //       description: data.error,
-    //       status: 'error',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //     return;
-    //   } else {
-    //     toast({
-    //       title: 'Successfully Logged in',
-    //       description: '',
-    //       status: 'success',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //   }
-
-    //   localStorage.setItem('user', JSON.stringify(data));
-    //   setUser(data);
-    // } catch (error) {
-    //   console.log(error);
-    // } finally {
-    //   setIsLoading(false);
-    // }
   };
 
   return (
@@ -141,7 +108,7 @@ function LoginCard() {
               </FormControl>
               <Stack spacing={10} pt={2}>
                 <Button
-                  loadingText='Loging In...'
+                  loadingText='Logging In...'
                   size='lg'
                   bg={'blue.400'}
                   color={'white'}
