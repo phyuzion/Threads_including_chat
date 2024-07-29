@@ -10,7 +10,7 @@ function UserPost({ postTitle, postImg, postVideo, likes, replies }) {
 
   return (
     <Link to={'/mark/post/1'}>
-      <Flex gap={3} mb={4} py={5}>
+      <Flex gap={3} mb={4} pt={5} pb={2}>
         <Flex flexDirection={'column'} alignItems={'center'}>
           <Avatar size={'md'} name={'Mark Zuckerberg'} src='/zuck-avatar.png' />
           <Box w='1px' h={'full'} bg={'gray.light'} my={2}></Box>

@@ -51,7 +51,7 @@ function Post({ post }) {
   };
 
   return (
-    <Flex gap={3} mb={4} py={5}>
+    <Flex gap={3} mb={4} pt={5} pb={2}>
       <Flex flexDirection={'column'} alignItems={'center'}>
         <Link to={`/${postedByUser?.username}`}>
           <Avatar size={'md'} name={postedByUser?.name} src={postedByUser?.profilePic} />
