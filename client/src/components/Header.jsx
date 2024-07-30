@@ -126,9 +126,6 @@ function Header() {
           <Menu>
             <MenuButton as={IconButton} aria-label='Menu' icon={<GiHamburgerMenu size={30} />} variant='ghost' />
             <MenuList>
-              <NavLink to='/settings'>
-                <MenuItem icon={<MdOutlineSettings size={20} />}>Settings</MenuItem>
-              </NavLink>
               <MenuItem icon={<FiLogOut size={20} />} onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>
