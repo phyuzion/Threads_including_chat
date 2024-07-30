@@ -13,6 +13,7 @@ import {
   VStack,
   useToast,
   useDisclosure,
+  Divider,
 } from '@chakra-ui/react';
 import { CgMoreO } from 'react-icons/cg';
 import { useRecoilValue } from 'recoil';
@@ -34,57 +35,54 @@ function UserHeader({ user }) {
   const { following, isFlwBtnLoading, handelFollowUnFollow } = useHandleFollowUnFollow(user);
 
   return (
-    <VStack alignItems={'start'}>
-      <Flex justifyContent={'space-between'} w={'full'}>
+    <VStack alignItems={'start'} w="full" p={4} spacing={4}>
+      <Flex justifyContent={'space-between'} w="full" alignItems="center">
         <Box>
-          <Text fontSize={'2xl'} fontWeight={'bold'}>
-            {user?.name}
+          <Text fontSize="2xl" fontWeight="bold">
+            {user?.username}
           </Text>
-          <Flex alignItems={'center'} gap={4}>
-            <Text size={'sm'}>{user?.username}</Text>
+          <Text>{user?.bio}</Text>
+          <Flex alignItems="center" gap={4}>
+            <Text size="sm">Address: </Text>
           </Flex>
-          <Flex alignItems={'center'} gap={4}>
-            <Text size={'sm'}>Address: </Text>
-          </Flex>
-          <Flex alignItems={'center'} gap={4}>
-            <Text size={'sm'}>Star: </Text>
+          <Flex alignItems="center" gap={4}>
+            <Text size="sm">Star: </Text>
           </Flex>
         </Box>
-        <Box>
-          <Avatar name={user?.name} size={{ base: 'md', md: 'xl' }} src={user?.profilePic}></Avatar>
-        </Box>
-      </Flex>
-      <Text>{user?.bio}</Text>
-      <Flex justifyContent={'space-between'} w={'full'}>
-        <Flex gap={2} alignItems={'center'}>
-          <Text color={'gray.light'}>{user?.followers.length} Followers</Text>
-        </Flex>
-        <Flex alignItems={'center'} gap={2}>
-          <Box className='icon-container'>
-            <Menu>
-              <MenuButton>
-                <CgMoreO size={24} cursor={'pointer'}></CgMoreO>
-              </MenuButton>
-              <Portal>
-                <MenuList bg={'gray.dark'}>
-                  <MenuItem onClick={CopyUrl}>Copy Link</MenuItem>
-                </MenuList>
-              </Portal>
-            </Menu>
+        <Box textAlign="center">
+          <Avatar name={user?.name} size={{ base: '2xl', md: '2xl' }} src={user?.profilePic} mb={4} />
+          <Box mt={2}>
+            {currentUser?.loginUser?._id === user?._id ? (
+              <>
+                <Button onClick={onOpen} size="sm">
+                  Edit Profile
+                </Button>
+                <UpdateProfilePage isOpen={isOpen} onClose={onClose} />
+              </>
+            ) : (
+              <Button onClick={handelFollowUnFollow} isLoading={isFlwBtnLoading} size="sm">
+                {following ? 'Unfollow' : 'Follow'}
+              </Button>
+            )}
           </Box>
-        </Flex>
+        </Box>
       </Flex>
-
-      {currentUser?.loginUser?._id === user?._id ? (
-        <>
-          <Button onClick={onOpen}>Edit Profile</Button>
-          <UpdateProfilePage isOpen={isOpen} onClose={onClose} />
-        </>
-      ) : (
-        <Button onClick={handelFollowUnFollow} isLoading={isFlwBtnLoading}>
-          {following ? 'Unfollow' : 'Follow'}
-        </Button>
-      )}
+      <Flex justifyContent="space-between" w="full" alignItems="center">
+        <Text color="gray.light">{user?.followers.length} Followers</Text>
+        <Box>
+          <Menu>
+            <MenuButton>
+              <CgMoreO size={24} cursor="pointer" />
+            </MenuButton>
+            <Portal>
+              <MenuList bg="gray.dark">
+                <MenuItem onClick={CopyUrl}>Copy Link</MenuItem>
+              </MenuList>
+            </Portal>
+          </Menu>
+        </Box>
+      </Flex>
+      <Divider />
     </VStack>
   );
 }

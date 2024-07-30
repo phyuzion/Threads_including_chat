@@ -5,6 +5,8 @@ import {
   FormControl,
   FormLabel,
   Input,
+  InputGroup,
+  InputRightElement,
   Stack,
   useColorModeValue,
   Avatar,
@@ -14,10 +16,10 @@ import {
   ModalContent,
   ModalBody,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
-
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useRecoilState } from 'recoil';
-import { useToast } from '@chakra-ui/react';
 import userAtom from '../atoms/userAtom';
 import usePreviewImage from '../hooks/usePreviewImage';
 import { useNavigate } from 'react-router-dom';
@@ -25,11 +27,12 @@ import { useNavigate } from 'react-router-dom';
 const UpdateProfilePage = ({ isOpen, onClose }) => {
   const [user, setUser] = useRecoilState(userAtom);
   const [inputs, setInputs] = useState({
-    username: user.username,
-    email: user.email,
+    username: user.username || '',
+    email: user.email || '',
     password: '',
   });
-  const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState();
+  const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const profilePicRef = useRef();
   const { handleImageChange, previewImage } = usePreviewImage();
   const toast = useToast();
@@ -71,6 +74,8 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitBtnLoading(false);
     }
   };
 
@@ -108,12 +113,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
         <ModalBody p={0} m={0}>
           <form onSubmit={handleUpdateProfile} style={{ width: '100%' }}>
             <Flex align={'center'} justify={'center'} p={0} w={'100%'}>
-              <Stack
-                spacing={4}
-                w={'full'}
-                bg={'gray.dark'}
-                p={6}
-              >
+              <Stack spacing={4} w={'full'} bg={'gray.dark'} p={6}>
                 <FormControl>
                   <Stack direction={['column', 'row']} spacing={6}>
                     <Center>
@@ -143,7 +143,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>email</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <Input
                     placeholder='your-email@example.com'
                     _placeholder={{ color: 'gray.500' }}
@@ -154,13 +154,23 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                 </FormControl>
                 <FormControl>
                   <FormLabel>Password</FormLabel>
-                  <Input
-                    placeholder='password'
-                    _placeholder={{ color: 'gray.500' }}
-                    type='password'
-                    value={inputs.password}
-                    onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
-                  />
+                  <InputGroup>
+                    <Input
+                      placeholder='password'
+                      _placeholder={{ color: 'gray.500' }}
+                      type={showPassword ? 'text' : 'password'}
+                      value={inputs.password}
+                      onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
+                    />
+                    <InputRightElement h={'full'}>
+                      <Button
+                        variant={'ghost'}
+                        onClick={() => setShowPassword((showPassword) => !showPassword)}
+                      >
+                        {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                 </FormControl>
                 <Stack spacing={6} direction={['column', 'row']}>
                   <Button
