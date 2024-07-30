@@ -51,7 +51,7 @@ function Post({ post, user: propUser, handleDelete }) {
 
   useQuery(GET_USER_PROFILE, {
     variables: { postedBy: post.postedBy },
-    skip: !!propUser, // propUser가 제공된 경우 쿼리를 건너뜁니다.
+    skip: !!propUser,
     onCompleted: (result) => {
       setPostedByUser(result?.getUserProfile);
     },
