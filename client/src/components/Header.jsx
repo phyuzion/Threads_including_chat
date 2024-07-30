@@ -72,7 +72,7 @@ function Header() {
               <InputGroup size='lg'>
                 <Input
                   ref={inputRef}
-                  placeholder='Search...'
+                  placeholder='Search hashtag'
                   size='lg'
                   height='40px'
                   borderColor='white'
@@ -100,7 +100,7 @@ function Header() {
           ) : searchActive ? (
             <Flex alignItems={'center'} gap={2} bg='gray.dark' borderRadius='md' height='40px' px={2}>
               <Flex alignItems='center' flex={1} pl={4}>
-                <Text fontSize='lg' color='white' isTruncated>{searchQuery}</Text>
+                <Text fontSize='lg' color='white' isTruncated>{'#'+searchQuery}</Text>
               </Flex>
               <IconButton
                 aria-label='Clear search'

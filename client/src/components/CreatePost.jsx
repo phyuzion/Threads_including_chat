@@ -42,7 +42,7 @@ const CreatePost = () => {
   const UPLOAD_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
 
   const handleTextChange = (e) => {
-    setPostText(e.target.value);
+    setPostText(e.target.value.slice(0, 500));
   };
 
   const extractHashtags = (text) => {
@@ -152,7 +152,11 @@ const CreatePost = () => {
                 size='lg'
                 resize='none'
                 color={'white'}
+                maxLength={500}
               />
+              <Flex justifyContent='flex-end' width='100%'>
+                <Text color='gray.400'>{postText.length}/500</Text>
+              </Flex>
               <Flex alignItems={'center'} justifyContent={'center'} gap={2}>
                 <Input type='file' hidden ref={imageInputRef} onChange={handleImageChange} accept='image/*' />
                 <Input type='file' hidden ref={videoInputRef} onChange={handleVideoChange} accept='video/*' />
