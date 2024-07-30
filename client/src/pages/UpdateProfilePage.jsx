@@ -30,7 +30,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
 
   const UPDATE_USER = gql`${updateUser}`;
   const [UPDATE_USER_COMMAND] = useMutation(UPDATE_USER);
-  const PROFILE_URL = `${import.meta.env.VITE_MEDIA_PROFILE_URL}`;
+  const PROFILE_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
   const [user, setUser] = useRecoilState(userAtom);
   console.log(' UpdateProfilePage user: ',user)
   const [inputs, setInputs] = useState({
@@ -51,10 +51,13 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
     try {
       setIsSubmitBtnLoading(true);
       let previewUrl = null
+
       if(previewImage) {
         console.log('handleUpdateProfile previewImage available')
+
+        const fileToUpload = profilePicRef.current.files[0];
         const formData = new FormData();
-        formData.append('file', previewImage);  
+        formData.append('file', fileToUpload);  
         const user_ = JSON.parse(localStorage.getItem('user') || '{}');
         const res = await fetch(PROFILE_URL, {
           method: 'POST',
