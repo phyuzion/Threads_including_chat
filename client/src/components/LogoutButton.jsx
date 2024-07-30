@@ -1,6 +1,7 @@
 import { Button, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { useSetRecoilState } from 'recoil';
+import { useNavigate } from 'react-router-dom';
 import userAtom from '../atoms/userAtom';
 import { FiLogOut } from 'react-icons/fi';
 import { gql, useMutation, useApolloClient } from "@apollo/client";
@@ -12,6 +13,7 @@ const LogoutButton = () => {
   const setUser = useSetRecoilState(userAtom);
   const toast = useToast();
   const client = useApolloClient();
+  const navigate = useNavigate();
   
   const [LOGOUT_USER_COMMAND] = useMutation(LOGOUT_USER, {
     onCompleted: async (data) => {
@@ -21,6 +23,7 @@ const LogoutButton = () => {
       await client.clearStore(); // Clear Apollo Client cache
       await client.resetStore(); // Reset Apollo Client cache
       toast({ title: 'Successfully Logged out', description: '', status: 'success', duration: 3000, isClosable: true });
+      navigate('/auth', { replace: true }); // after logout, send to auth page
     },
     onError: (error) => {
       toast({ title: 'Error', description: error.message, status: 'error', duration: 3000, isClosable: true });
