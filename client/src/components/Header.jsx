@@ -10,6 +10,7 @@ import { BsFillChatDotsFill } from 'react-icons/bs';
 import { MdOutlineSettings } from 'react-icons/md';
 import { FiLogOut } from 'react-icons/fi';
 import useLogout from '../hooks/useLogout.js';
+import useHashtagSearch from '../hooks/useHashtagSearch';
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -18,12 +19,14 @@ function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef(null);
+  const { searchHashtag } = useHashtagSearch();
 
   const handleSearch = () => {
-    console.log(searchQuery);
-    // iss.song searchQuery value is search value
-    setSearchOpen(false);
-    setSearchQuery('');
+    if (searchQuery.trim()) {
+      searchHashtag(searchQuery.trim());
+      setSearchOpen(false);
+      setSearchQuery('');
+    }
   };
 
   const handleKeyPress = (event) => {
@@ -41,12 +44,16 @@ function Header() {
     }, 100); 
   };
 
+  const handleHomeClick = () => {
+    window.location.href = '/';
+  };
+
   console.log('Header user -> ',user)
   return (
     <Flex alignItems={'center'} justifyContent={user ? 'space-between' : 'center'} mt={6} mb={12} width="100%">
       {user && (
-        <NavLink to={'/'}>
-           <Image
+        <NavLink to={'/'} onClick={handleHomeClick}>
+          <Image
             alt='Home'
             w={10}
             h={10}

@@ -1,57 +1,29 @@
 import React, { useState, useRef } from 'react';
 import { Avatar, Box, Flex, Image, Text, Link as ChakraLink } from '@chakra-ui/react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import Actions from './Actions';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
-import postsAtom from '../atoms/postsAtom.js';
-import { gql, useQuery, useLazyQuery } from "@apollo/client";
-import { GetUserProfile, GetPostsByHashtag } from "../apollo/queries.js";
+import { gql, useQuery } from "@apollo/client";
+import { GetUserProfile } from "../apollo/queries.js";
 import { DeleteIcon } from '@chakra-ui/icons';
+import useHashtagSearch from '../hooks/useHashtagSearch';
 
 const GET_USER_PROFILE = gql`
   ${GetUserProfile}
 `;
 
-const GET_POSTS_BY_HASHTAG = gql`
-  ${GetPostsByHashtag}
-`;
-
 function Post({ post, user: propUser, handleDelete }) {
   const [postedByUser, setPostedByUser] = useState(propUser || null);
   const currentUser = useRecoilValue(userAtom);
-  const [posts, setPosts] = useRecoilState(postsAtom);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const hashRef = useRef("");
-  const navigate = useNavigate();
-  const hashtagClick = (tag) => {
-    console.log('hashtagClick tag: ', tag);
-    hashRef.current = tag;
-    console.log('hashtagClick ref: ', hashRef.current);
-    handleHashtagClick();
-  };
-
-  const [handleHashtagClick, { loading1, error1, datahashtag }] = useLazyQuery(GET_POSTS_BY_HASHTAG, {
-    variables: { hashtag: hashRef.current, skip: 0, limit: 10 },
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'network-only',
-    onCompleted: (datahashtag) => {
-      console.log('datahashtag:  ', datahashtag);
-      if (datahashtag?.getPostsByHashTag) {
-        setPosts(datahashtag?.getPostsByHashTag);
-        navigate('/');
-      }
-    },
-    onError: (error) => {
-      console.error('getUserProfile error:', error, ' post:', post);
-    },
-  });
+  const { searchHashtag } = useHashtagSearch();
 
   useQuery(GET_USER_PROFILE, {
     variables: { postedBy: post.postedBy },
-    skip: !!propUser,
+    skip: !!propUser, // if propUser exist.. skip
     onCompleted: (result) => {
       setPostedByUser(result?.getUserProfile);
     },
@@ -130,7 +102,7 @@ function Post({ post, user: propUser, handleDelete }) {
         <Box>
           <Text fontSize={'sm'} flexWrap='wrap'>
             {post.hashtags?.map((tag) => (
-              <ChakraLink key={tag} color="blue.500" onClick={() => hashtagClick(tag)}>#{tag}</ChakraLink>
+              <ChakraLink key={tag} color="blue.500" onClick={() => searchHashtag(tag)}>#{tag}</ChakraLink>
             ))}
           </Text>
         </Box>
