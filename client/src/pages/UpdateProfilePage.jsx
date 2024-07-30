@@ -34,9 +34,9 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
   const [user, setUser] = useRecoilState(userAtom);
   console.log(' UpdateProfilePage user: ',user)
   const [inputs, setInputs] = useState({
-    username: user?.loginUser?.username || '',
     email: user?.loginUser?.email || '',
-    password: user?.loginUser?.password,
+    password: user?.loginUser?.password || '',
+    passwordConfirm: user?.loginUser?.password || '',
   });
   const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -44,10 +44,21 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
   const { handleImageChange, previewImage } = usePreviewImage();
   const toast = useToast();
   const navigate = useNavigate();
+  const passwordIsValid = inputs.password.length >= 8 && inputs.password === inputs.passwordConfirm;
+
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-
+    if (inputs.password.length > 0 && !passwordIsValid) {
+      toast({
+        title: 'Password Error',
+        description: 'Passwords do not match or are too short.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
     try {
       setIsSubmitBtnLoading(true);
       let previewUrl = null
@@ -72,13 +83,17 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
         console.log(' updateProfile previewUrl: ',previewUrl)
       }
 
-      const response = await UPDATE_USER_COMMAND({
-        variables: {
-          email: inputs.email,
-          password: inputs.password,
-          profilePic: (previewUrl) ? previewUrl : null,
-        }
-      });
+
+      const variables = {
+        email: inputs.email,
+        profilePic: previewUrl ? previewUrl : user.profilePic
+      };
+      if (inputs.password) {
+        variables.password = inputs.password;
+      }
+
+      const response = await UPDATE_USER_COMMAND({variables});
+
       if (response?.data) { 
         toast({
           title: 'Success',
@@ -135,6 +150,11 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
     }
   };
 
+
+  const handleInputChange = (field, value) => {
+    setInputs(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -144,32 +164,22 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
             <Flex align={'center'} justify={'center'} p={0} w={'100%'}>
               <Stack spacing={4} w={'full'} bg={'gray.dark'} p={6}>
                 <FormControl>
-                  <Stack direction={['column', 'row']} spacing={6}>
                     <Center>
-                      <Avatar size='xl' src={previewImage || user.profilePic}></Avatar>
+                      <Avatar size={{ base: '2xl', md: '2xl' }} src={previewImage || user.profilePic}></Avatar>
                     </Center>
-                    <Center w='full'>
-                      <Button
-                        w='full'
-                        onClick={() => {
-                          profilePicRef.current.click();
-                        }}
-                      >
-                        Change Profile Pic
-                      </Button>
-                      <Input type='file' hidden ref={profilePicRef} onChange={handleProfilePicChange} accept="image/*" />
-                    </Center>
-                  </Stack>
                 </FormControl>
                 <FormControl>
-                  <FormLabel>User name</FormLabel>
-                  <Input
-                    placeholder='johndoe'
-                    _placeholder={{ color: 'gray.500' }}
-                    type='text'
-                    value={inputs.username}
-                    onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
-                  />
+                  <Center w='full'>
+                    <Button
+                      w='full'
+                      onClick={() => {
+                        profilePicRef.current.click();
+                      }}
+                    >
+                      Change Profile Pic
+                    </Button>
+                    <Input type='file' hidden ref={profilePicRef} onChange={handleProfilePicChange} accept="image/*" />
+                  </Center>
                 </FormControl>
                 <FormControl>
                   <FormLabel>Email</FormLabel>
@@ -178,29 +188,41 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                     _placeholder={{ color: 'gray.500' }}
                     type='email'
                     value={inputs.email}
-                    onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
                   />
                 </FormControl>
-                <FormControl>
+                  
+                <FormControl isInvalid={!passwordIsValid && inputs.password.length > 0}>
                   <FormLabel>Password</FormLabel>
                   <InputGroup>
                     <Input
-                      placeholder='password'
-                      _placeholder={{ color: 'gray.500' }}
                       type={showPassword ? 'text' : 'password'}
                       value={inputs.password}
-                      onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
                     />
-                    <InputRightElement h={'full'}>
-                      <Button
-                        variant={'ghost'}
-                        onClick={() => setShowPassword((showPassword) => !showPassword)}
-                      >
+                    <InputRightElement>
+                      <Button onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                       </Button>
                     </InputRightElement>
                   </InputGroup>
                 </FormControl>
+                <FormControl isInvalid={!passwordIsValid && inputs.passwordConfirm.length > 0}>
+                  <FormLabel>Password Check</FormLabel>
+                  <InputGroup>
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={inputs.passwordConfirm}
+                    onChange={(e) => handleInputChange('passwordConfirm', e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                  </InputGroup>
+                </FormControl>
+              
                 <Stack spacing={6} direction={['column', 'row']}>
                   <Button
                     bg={'red.400'}
@@ -222,6 +244,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                     }}
                     type='submit'
                     isLoading={isSubmitBtnLoading}
+                    disabled={!passwordIsValid && inputs.password.length > 0}
                   >
                     Submit
                   </Button>
