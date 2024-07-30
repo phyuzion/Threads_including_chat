@@ -30,11 +30,10 @@ const generateTokenAndSetCookie = (userId, res) => {
   return token;
 };
 
-const generateToken = (userId, name , email) => {
+const generateToken = (userId,  email) => {
   const token = jwt.sign(
     { 
       userId : userId,
-      name: name,
       email: email
     },
     `${config.SECRET_KEY}`, {

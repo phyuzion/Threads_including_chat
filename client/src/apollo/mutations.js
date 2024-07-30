@@ -35,10 +35,9 @@ export const replyToPost = `mutation ReplyToPost($postId: String!, $text: String
     username
   }
 }`
-export const signupUser = ` mutation SignupUser($name: String!, $username: String, $password: String, $email: String) {
-  signupUser(name: $name, username: $username, password: $password, email: $email) {
+export const signupUser = ` mutation SignupUser($username: String, $password: String, $email: String) {
+  signupUser(username: $username, password: $password, email: $email) {
     _id
-    name
     username
     email
     
@@ -48,7 +47,6 @@ export const signupUser = ` mutation SignupUser($name: String!, $username: Strin
 export const loginUser = ` mutation LoginUser($username: String!, $password: String!) {
   loginUser(username: $username, password: $password) {
     _id
-    name
     username
     email
     jwtToken
@@ -61,7 +59,6 @@ export const logoutUser = `mutation Mutation {
 export const followUnFollow = `mutation FollowUnFollow($followId: String!) {
   followUnFollow(followId: $followId) {
     _id
-    name
     username
     email
     followers

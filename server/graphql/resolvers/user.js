@@ -107,7 +107,7 @@ module.exports = {
         signupUser : async (_,args,{req, res}) => {
           console.log('args ; ',args)
             try {
-                const { name, username, password, email } = args;
+                const { username, password, email } = args;
                 const user = await User.findOne({ $or: [{ email }, { username }] });
                 if (user) {
                   throwServerError('User already exits')
@@ -115,7 +115,6 @@ module.exports = {
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(password, salt);
                 const newUser = new User({
-                  name,
                   email,
                   username,
                   password: hashedPassword,
@@ -143,7 +142,7 @@ module.exports = {
                   throwForbiddenError()
                 }
               
-                const token = generateToken(user._id, user.name , user.email);
+                const token = generateToken(user._id, user.email);
                 if (user.isFrozen) {
                     user.isFrozen = false;
                     

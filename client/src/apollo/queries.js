@@ -62,7 +62,6 @@ export const GetPost = `query GetPost($postId: String) {
 export const GetSuggestedUsers = `query GetSuggestedUsers {
   getSuggestedUsers {
     _id
-    name
     username
     email
     followers
@@ -72,7 +71,6 @@ export const GetSuggestedUsers = `query GetSuggestedUsers {
 export const GetProfileByName = `query GetProfileByName($username: String!) {
   getProfileByName(username: $username) {
     _id
-    name
     username
     email
     followers
@@ -83,7 +81,6 @@ export const GetProfileByName = `query GetProfileByName($username: String!) {
 export const GetUserProfile = `query GetUserProfile($postedBy: String!) {
   getUserProfile(postedBy: $postedBy) {
     _id
-    name
     username
     email
     password

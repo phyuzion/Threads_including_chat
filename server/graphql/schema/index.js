@@ -31,7 +31,6 @@ type uploadURLs {
 }
 type User {
     _id: String
-    name: String!
     username: String!
     email: String!
     password: String
@@ -58,7 +57,7 @@ type Mutation {
     replyToPost(postId: String!, text: String!): Reply
 
 
-    signupUser(name: String!, username: String, password: String, email: String): User
+    signupUser(username: String, password: String, email: String): User
     loginUser(username: String!, password: String!): User
     logoutUser: Boolean
     followUnFollow(followId: String!): User

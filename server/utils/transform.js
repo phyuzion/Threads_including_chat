@@ -17,7 +17,6 @@ const transformUser = (user) => {
     return {
         ...user._doc,
         _id: user._id,
-        name: user.name,
         username: user.username,
         email: user.email,
         followers: user.followers,
