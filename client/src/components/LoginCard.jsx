@@ -24,21 +24,25 @@ import { loginUser } from "../apollo/mutations.js";
 
 function LoginCard() {
   const [showPassword, setShowPassword] = useState(false);
-  const [_, setAuthSceen] = useRecoilState(authScreenAtom);
+  const [_, setAuthScreen] = useRecoilState(authScreenAtom);
   const [inputs, setInputs] = useState({
     username: '',
     password: '',
   });
   const [, setUser] = useRecoilState(userAtom);
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const client = useApolloClient(); // Apollo Client instance
 
-  const LOGIN_USER = gql` ${loginUser}`;
-  const [LOGIN_USER_COMMAND] = useMutation(LOGIN_USER, { loginCompleted, loginError });
+  const LOGIN_USER = gql`${loginUser}`;
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
+  };
 
   async function loginCompleted({ data }) {
-    console.log(' LOGIN_USER onCompleted : ')
+    console.log(' LOGIN_USER onCompleted : ');
     localStorage.setItem('user', JSON.stringify(data));
     setUser(data.loginUser);
     await client.clearStore(); // Clear Apollo Client cache
@@ -46,27 +50,44 @@ function LoginCard() {
   }
 
   function loginError(errors) {
-    console.log("🚀 ~ loginError ~ errors:", errors)
+    console.log("🚀 ~ loginError ~ errors:", errors);
+    toast({
+      title: 'Login failed',
+      description: "Invalid username or password.",
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
   }
+
+  const [LOGIN_USER_COMMAND] = useMutation(LOGIN_USER, {
+    onCompleted: loginCompleted,
+    onError: loginError,
+  });
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try{
+    try {
       setIsLoading(true);
-      console.log(' inputs: ',inputs)
+      console.log(' inputs: ', inputs);
       const response = await LOGIN_USER_COMMAND({ variables: inputs });
-      if(response?.data){
-        console.log(' data : ',response.data)
+      if (response?.data) {
+        console.log(' data : ', response.data);
         localStorage.setItem('user', JSON.stringify(response.data));
 
         setUser(response?.data);
         await client.clearStore(); // Clear Apollo Client cache
         await client.resetStore(); // Reset Apollo Client cache
-
-
       }
-    } catch(error) {
-      console.log(error.stack)
+    } catch (error) {
+      console.log(error.stack);
+      toast({
+        title: 'An error occurred',
+        description: "Unable to login. Please try again later.",
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +108,8 @@ function LoginCard() {
                 <FormLabel>Username</FormLabel>
                 <Input
                   type={'text'}
-                  onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
+                  name="username"
+                  onChange={handleInputChange}
                   value={inputs.username}
                 />
               </FormControl>
@@ -96,7 +118,8 @@ function LoginCard() {
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
+                    name="password"
+                    onChange={handleInputChange}
                     value={inputs.password}
                   />
                   <InputRightElement h={'full'}>
@@ -127,7 +150,7 @@ function LoginCard() {
               <Stack pt={6}>
                 <Text align={'center'}>
                   Create Account?{' '}
-                  <Link color={'blue.400'} onClick={() => setAuthSceen('signup')}>
+                  <Link color={'blue.400'} onClick={() => setAuthScreen('signup')}>
                     Sign-up
                   </Link>
                 </Text>
