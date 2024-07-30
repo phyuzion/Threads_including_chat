@@ -35,10 +35,12 @@ async function startServers() {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.static('public'))
   const mediaUploadRouter = require("./routes/Upload.js");
+  const mediaProfileRouter = require("./routes/ProfilePic.js");
 
 
   
   app.use(path+"/upload",authenticate, mediaUploadRouter);
+  app.use(path+"/profilepic",authenticate, mediaProfileRouter);
   const conn = await mongoose.connect(config.CONNECTION_STRING, {
     // authSource: config.AUTH_SOURCE,
     // user: config.DB_USER,

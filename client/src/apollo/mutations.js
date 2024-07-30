@@ -70,3 +70,17 @@ export const freezeAccount = `mutation Mutation {
   freezeAccount
 }`
 
+export const updateUser = `mutation Mutation($email: String, $password: String, $profilePic: String) {
+  updateUser(email: $email, password: $password, profilePic: $profilePic) {
+    _id
+    username
+    email
+    password
+    jwtToken
+    followers
+    following
+    profileUrl
+  }
+}
+`
+

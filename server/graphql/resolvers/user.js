@@ -81,6 +81,37 @@ module.exports = {
         }
     },
     Mutation: {
+      updateUser: async (_,args,{req, res}) => {
+        if(!req.user) {
+          throwForbiddenError()
+        }        
+        const { email, password, profilePic } = args
+        let user = await User.findById(req.user._id);
+        if (!user)
+          throwServerError('User not found')
+
+        if (password) {
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+          user.password = hashedPassword;
+        }
+        user.profilePic = profilePic || user.profilePic
+        user.email = email || user.email;
+        user = await user.save();
+        await Post.updateMany(
+          {
+            'replies.userId': user._id,
+          },
+          {
+            $set: {
+              'replies.$[reply].userProfilePic': user.profilePic,
+            },
+          },
+          { arrayFilters: [{ 'reply.userId': user._id }] }
+        );
+        return transformUser(user)
+
+      },
         logoutUser: async (_,args,{req, res}) => {
             if(!req.user) {
                 throwForbiddenError()

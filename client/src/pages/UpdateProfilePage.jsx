@@ -23,13 +23,20 @@ import { useRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import usePreviewImage from '../hooks/usePreviewImage';
 import { useNavigate } from 'react-router-dom';
+import { gql, useMutation } from '@apollo/client';
+import { updateUser } from '../apollo/mutations';
 
 const UpdateProfilePage = ({ isOpen, onClose }) => {
+
+  const UPDATE_USER = gql`${updateUser}`;
+  const [UPDATE_USER_COMMAND] = useMutation(UPDATE_USER);
+  const PROFILE_URL = `${import.meta.env.VITE_MEDIA_PROFILE_URL}`;
   const [user, setUser] = useRecoilState(userAtom);
+  console.log(' UpdateProfilePage user: ',user)
   const [inputs, setInputs] = useState({
-    username: user.username || '',
-    email: user.email || '',
-    password: '',
+    username: user?.loginUser?.username || '',
+    email: user?.loginUser?.email || '',
+    password: user?.loginUser?.password,
   });
   const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -43,30 +50,49 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
 
     try {
       setIsSubmitBtnLoading(true);
-      const res = await fetch(`/api/users/update/${user._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...inputs, profilePic: previewImage }),
+      let previewUrl = null
+      if(previewImage) {
+        console.log('handleUpdateProfile previewImage available')
+        const formData = new FormData();
+        formData.append('file', previewImage);  
+        const user_ = JSON.parse(localStorage.getItem('user') || '{}');
+        const res = await fetch(PROFILE_URL, {
+          method: 'POST',
+          headers: {
+            Authorization: user_?.loginUser?.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : '',
+          },
+          body: formData,
+        });   
+        
+        const data = await res.json();
+        previewUrl = data?.url
+        console.log(' updateProfile previewUrl: ',previewUrl)
+      }
+
+      const response = await UPDATE_USER_COMMAND({
+        variables: {
+          email: inputs.email,
+          password: inputs.password,
+          profilePic: (previewUrl) ? previewUrl : null,
+        }
       });
-      const data = await res.json();
-      if (data) {
+      if (response?.data) { 
         toast({
           title: 'Success',
-          description: data.message,
+          description: 'Update User Successful',
           status: 'success',
           duration: 3000,
           isClosable: true,
         });
-        setUser(data.user);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(response?.data?.updateUser);
+        localStorage.setItem('user', JSON.stringify(response?.data?.updateUser));
         setIsSubmitBtnLoading(false);
 
         navigate(`/${user.username}`);
-        onClose(); // Close the modal after successful update
+        onClose(); // Close the modal after successful update        
       }
     } catch (error) {
+      console.log('handleUpdateProfile error: ',error)
       toast({
         title: 'Failed To Update Profile',
         description: error.message,
