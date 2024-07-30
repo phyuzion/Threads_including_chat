@@ -2,6 +2,7 @@ const { throwServerError , generateToken, throwForbiddenError} = require("../../
 const { transformUser,transformUserWithToken,transformUsers } = require("../../utils/transform");
 const bcrypt = require('bcryptjs')
 const User = require('../../models/userModel')
+const Post = require('../../models/postModel')
 const ObjectId = require('mongodb').ObjectId;
 module.exports = {
     Query: {
@@ -14,7 +15,7 @@ module.exports = {
           if(user) {
             return user
           } else {
-            console.log(' getUserProfileByName error: ',error)
+            
             throwServerError('User not found')
           }
           

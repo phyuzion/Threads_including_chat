@@ -105,7 +105,7 @@ const CreatePost = () => {
 
       });
 
-      if (response.data) {
+      if (response?.data) {
         setPosts([response.data.createPost, ...posts]);
         onClose();
         setPostText('');

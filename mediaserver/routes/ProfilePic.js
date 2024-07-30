@@ -45,6 +45,11 @@ const upload = multer({
 
 router.post("/",async (req, res , next) => { 
     console.log(' req.file: ',req.file)
+    if(!req.file ) {
+        return res.status(400).send({
+            message: 'File to upload not valid'
+         });
+    }
     const user = req.user
     console.log(' upload profile pic old pic : ', user.profilePic )
     if(user.profilePic) {
@@ -66,11 +71,18 @@ router.post("/",async (req, res , next) => {
       //console.log(req)
         if (error) {
           console.log(error);
-          return res.status(400);
+          return res.status(400).send({
+            message: error.message
+         });
         }
-        console.log('File uploaded successfully.');
-        const profile_url = `${config.SPACES_CDN}/${req.fileName}`
-        res.json({ url: profile_url });
+        console.log('File uploaded successfully req.fileName: ',req.fileName);
+        if(req.fileName) {
+            const profile_url = `${config.SPACES_CDN}/${req.fileName}`
+            res.json({ url: profile_url });
+        } else {
+            res.json({ url: "" });
+        }
+
       });
 });
 

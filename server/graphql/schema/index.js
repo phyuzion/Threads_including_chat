@@ -37,7 +37,7 @@ type User {
     jwtToken: String
     followers: [String]
     following: [String]
-    profileUrl: String
+    profilePic: String
 }
 
 type Query {

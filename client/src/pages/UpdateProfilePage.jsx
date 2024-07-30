@@ -24,11 +24,11 @@ import userAtom from '../atoms/userAtom';
 import usePreviewImage from '../hooks/usePreviewImage';
 import { useNavigate } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
-import { updateUser } from '../apollo/mutations';
+import { Update_User } from '../apollo/mutations';
 
 const UpdateProfilePage = ({ isOpen, onClose }) => {
 
-  const UPDATE_USER = gql`${updateUser}`;
+  const UPDATE_USER = gql`${Update_User}`;
   const [UPDATE_USER_COMMAND] = useMutation(UPDATE_USER);
   const PROFILE_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
   const [user, setUser] = useRecoilState(userAtom);
@@ -84,15 +84,15 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
       }
 
 
-      const variables = {
-        email: inputs.email,
-        profilePic: previewUrl ? previewUrl : user.profilePic
-      };
-      if (inputs.password) {
-        variables.password = inputs.password;
-      }
 
-      const response = await UPDATE_USER_COMMAND({variables});
+      const response = await UPDATE_USER_COMMAND({
+        variables: {
+          email: (inputs.email) ? inputs.password : null,
+          password: (inputs.password) ? inputs.password : null,
+          profilePic: previewUrl ? previewUrl : null,
+
+        }
+      });
 
       if (response?.data) { 
         toast({
@@ -106,7 +106,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
         localStorage.setItem('user', JSON.stringify(response?.data?.updateUser));
         setIsSubmitBtnLoading(false);
 
-        navigate(`/${user.username}`);
+        navigate(`/${user?.loginUser?.username}`);
         onClose(); // Close the modal after successful update        
       }
     } catch (error) {
@@ -165,7 +165,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
               <Stack spacing={4} w={'full'} bg={'gray.dark'} p={6}>
                 <FormControl>
                     <Center>
-                      <Avatar size={{ base: '2xl', md: '2xl' }} src={previewImage || user.profilePic}></Avatar>
+                      <Avatar size={{ base: '2xl', md: '2xl' }} src={previewImage || user?.loginUser?.profilePic}></Avatar>
                     </Center>
                 </FormControl>
                 <FormControl>

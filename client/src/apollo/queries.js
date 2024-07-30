@@ -66,6 +66,7 @@ export const GetSuggestedUsers = `query GetSuggestedUsers {
     email
     followers
     following
+    profilePic
   }
 }`
 export const GetProfileByName = `query GetProfileByName($username: String!) {
@@ -75,6 +76,7 @@ export const GetProfileByName = `query GetProfileByName($username: String!) {
     email
     followers
     following
+    profilePic
   }
 }`
 
@@ -87,6 +89,7 @@ export const GetUserProfile = `query GetUserProfile($postedBy: String!) {
     jwtToken
     followers
     following
+    profilePic
   }
 }
 `
