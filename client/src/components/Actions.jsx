@@ -39,6 +39,13 @@ const Actions = ({ post }) => {
   const [LIKE_UNLIKE_POST_COMMAND] = useMutation(LIKE_UNLIKE_POST, { fetchPolicy: 'network-only' });
   const [REPLY_POST_COMMAND] = useMutation(REPLY_TO_POST, { fetchPolicy: 'network-only' });
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleReply();
+    }
+  };
+  
   const handleLikeAndUnlike = async () => {
     if (!user) {
       toast({
@@ -195,11 +202,12 @@ const Actions = ({ post }) => {
           <ModalHeader>Write your comment</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={0}>
-            <Textarea
+            <Input
               placeholder='Reply goes here..'
               value={reply}
-              onChange={(e) => setReply(e.target.value.slice(0,100))}
+              onChange={(e) => setReply(e.target.value.slice(0, 100))}
               maxLength={100}
+              onKeyPress={handleKeyPress} // Add key press handler
             />
             <Flex justifyContent='flex-end' width='100%'>
               <Text color='gray.400'>{reply.length}/100</Text>
