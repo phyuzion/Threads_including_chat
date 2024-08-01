@@ -21,8 +21,7 @@ const styles = {
       backgroundPosition: 'center top',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'fixed',
-      fontSize: ['sm', 'md', 'lg'], // 글자 크기
-      padding: [2, 4, 6], // 패딩
+      fontSize: ['sm', 'md', 'lg']
     },
   }),
 };

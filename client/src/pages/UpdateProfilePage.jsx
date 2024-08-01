@@ -27,12 +27,11 @@ import { gql, useMutation } from '@apollo/client';
 import { Update_User } from '../apollo/mutations';
 
 const UpdateProfilePage = ({ isOpen, onClose }) => {
-
   const UPDATE_USER = gql`${Update_User}`;
   const [UPDATE_USER_COMMAND] = useMutation(UPDATE_USER);
   const PROFILE_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
   const [user, setUser] = useRecoilState(userAtom);
-  console.log(' UpdateProfilePage user: ', user)
+  console.log('UpdateProfilePage user:', user);
   const [inputs, setInputs] = useState({
     email: user?.loginUser?.email || '',
     password: user?.loginUser?.password || '',
@@ -161,7 +160,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setInputs(prev => ({ ...prev, [field]: value }));
+    setInputs((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -171,11 +170,11 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
         <ModalBody p={0} m={0}>
           <form onSubmit={handleUpdateProfile} style={{ width: '100%' }}>
             <Flex align={'center'} justify={'center'} p={0} w={'100%'}>
-              <Stack spacing={4} w={'full'} bg={'gray.dark'} p={6}>
+              <Stack spacing={[4, 6]} w={'full'} bg={'gray.dark'} p={[6, 8]}>
                 <FormControl>
-                    <Center>
-                      <Avatar size={{ base: '2xl', md: '2xl' }} src={previewImage || user?.loginUser?.profilePic}></Avatar>
-                    </Center>
+                  <Center>
+                    <Avatar size={{ base: 'xl', md: '2xl' }} src={previewImage || user?.loginUser?.profilePic}></Avatar>
+                  </Center>
                 </FormControl>
                 <FormControl>
                   <Center w='full'>
@@ -191,7 +190,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                   </Center>
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel fontSize={['sm', 'md']}>Email</FormLabel>
                   <Input
                     placeholder='your-email@example.com'
                     _placeholder={{ color: 'gray.500' }}
@@ -200,9 +199,8 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                     onChange={(e) => handleInputChange('email', e.target.value)}
                   />
                 </FormControl>
-                  
                 <FormControl isInvalid={!passwordIsValid && inputs.password.length > 0}>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel fontSize={['sm', 'md']}>Password</FormLabel>
                   <InputGroup>
                     <Input
                       type={showPassword ? 'text' : 'password'}
@@ -217,21 +215,20 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                   </InputGroup>
                 </FormControl>
                 <FormControl isInvalid={!passwordIsValid && inputs.passwordConfirm.length > 0}>
-                  <FormLabel>Password Check</FormLabel>
+                  <FormLabel fontSize={['sm', 'md']}>Password Check</FormLabel>
                   <InputGroup>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    value={inputs.passwordConfirm}
-                    onChange={(e) => handleInputChange('passwordConfirm', e.target.value)}
-                  />
-                  <InputRightElement>
-                    <Button onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      value={inputs.passwordConfirm}
+                      onChange={(e) => handleInputChange('passwordConfirm', e.target.value)}
+                    />
+                    <InputRightElement>
+                      <Button onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                      </Button>
+                    </InputRightElement>
                   </InputGroup>
                 </FormControl>
-              
                 <Stack spacing={6} direction={['column', 'row']}>
                   <Button
                     bg={'red.400'}

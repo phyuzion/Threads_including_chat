@@ -89,17 +89,17 @@ function SignupCard() {
 
   return (
     <form onSubmit={handleSignup}>
-      <Flex minH={'80vh'} align={'center'} justify={'center'}>
-        <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+      <Flex minH={'60vh'} align={'center'} justify={'center'}>
+        <Stack spacing={8} mx={'auto'} maxW={['90%', '80%', '70%', '60%']} py={[4, 6, 8]} px={[4, 6, 8]}>
           <Stack align={'center'}>
-            <Heading fontSize={'4xl'} textAlign={'center'}>
+            <Heading fontSize={['xl', '2xl', '3xl']} textAlign={'center'}>
               Sign up
             </Heading>
           </Stack>
-          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={8}>
+          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={[4, 6, 8]}>
             <Stack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Username</FormLabel>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Username</FormLabel>
                 <Input
                   type='text'
                   name='username'
@@ -108,7 +108,7 @@ function SignupCard() {
                 />
               </FormControl>
               <FormControl isRequired>
-                <FormLabel>Email address</FormLabel>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Email address</FormLabel>
                 <Input
                   type='email'
                   name='email'
@@ -117,7 +117,7 @@ function SignupCard() {
                 />
               </FormControl>
               <FormControl isRequired isInvalid={passwordError}>
-                <FormLabel>Password</FormLabel>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Password</FormLabel>
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
@@ -136,7 +136,7 @@ function SignupCard() {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
-              <Stack spacing={10} pt={2}>
+              <Stack spacing={6} pt={2}>
                 <Button
                   loadingText='Signing Up...'
                   size='lg'
@@ -152,7 +152,7 @@ function SignupCard() {
                 </Button>
               </Stack>
               <Stack pt={6}>
-                <Text align={'center'}>
+                <Text fontSize={['sm', 'md']} align={'center'}>
                   Already a user?{' '}
                   <Link color={'blue.400'} onClick={() => setAuthScreen('login')}>
                     Login

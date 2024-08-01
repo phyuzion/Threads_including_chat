@@ -35,22 +35,22 @@ function UserHeader({ user }) {
   const { following, isFlwBtnLoading, handelFollowUnFollow } = useHandleFollowUnFollow(user);
 
   return (
-    <VStack alignItems={'start'} w="full" p={4} spacing={4}>
-      <Flex justifyContent={'space-between'} w="full" alignItems="center">
-        <Box>
-          <Text fontSize="2xl" fontWeight="bold">
+    <VStack alignItems={'start'} w="full" p={[2, 4]} spacing={[2, 4]}>
+      <Flex justifyContent={'space-between'} w="full" alignItems="center" flexDirection={['column', 'row']}>
+        <Box mb={[4, 0]}>
+          <Text fontSize={['xl', '2xl']} fontWeight="bold">
             {user?.username}
           </Text>
-          <Text>{user?.bio}</Text>
-          <Flex alignItems="center" gap={4}>
-            <Text size="sm">Address: </Text>
+          <Text fontSize={['sm', 'md']}>{user?.bio}</Text>
+          <Flex alignItems="center" gap={[2, 4]}>
+            <Text fontSize={['xs', 'sm']}>Address: </Text>
           </Flex>
-          <Flex alignItems="center" gap={4}>
-            <Text size="sm">Star: </Text>
+          <Flex alignItems="center" gap={[2, 4]}>
+            <Text fontSize={['xs', 'sm']}>Star: </Text>
           </Flex>
         </Box>
         <Box textAlign="center">
-          <Avatar name={user?.name} size={{ base: '2xl', md: '2xl' }} src={user?.profilePic} mb={4} />
+          <Avatar name={user?.name} size={{ base: 'xl', md: '2xl' }} src={user?.profilePic} mb={[2, 4]} />
           <Box mt={2}>
             {currentUser?.loginUser?._id === user?._id ? (
               <>
@@ -68,7 +68,7 @@ function UserHeader({ user }) {
         </Box>
       </Flex>
       <Flex justifyContent="space-between" w="full" alignItems="center">
-        <Text color="gray.light">{user?.followers.length} Followers</Text>
+        <Text fontSize={['sm', 'md']} color="gray.light">{user?.followers.length} Followers</Text>
         <Box>
           <Menu>
             <MenuButton>

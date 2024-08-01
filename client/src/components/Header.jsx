@@ -1,4 +1,20 @@
-import { Box, Button, Flex, Image, Input, useColorMode, IconButton, Menu, MenuButton, MenuList, MenuItem, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Input,
+  useColorMode,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  InputGroup,
+  InputRightElement,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import React, { useState, useRef } from 'react';
 import { RxAvatar } from 'react-icons/rx';
 import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai';
@@ -56,25 +72,27 @@ function Header() {
     window.location.href = '/';
   };
 
+  const iconSize = useBreakpointValue({ base: 25, md: 30, lg: 30 });
+
   console.log('Header user -> ', user);
   return (
-    <Flex alignItems={'center'} justifyContent={user ? 'space-between' : 'center'} mt={6} px="3%" mb={12} width="100%">
+    <Flex alignItems={'center'} justifyContent={user ? 'space-between' : 'center'} mt={[2, 3, 4]} px={['2%', '3%', '5%']} mb={[2, 4, 6]} width="100%">
       {user && (
         <NavLink to={'/'} onClick={handleHomeClick}>
-          <Image alt='Home' w={10} h={10} src={'/ess-logo.png'} />
+          <Image alt='Home' w={[6, 8, 10]} h={[6, 8, 10]} src={'/ess-logo.png'} />
         </NavLink>
       )}
 
       {user && (
-        <Flex alignItems={'center'} gap={4}>
+        <Flex alignItems={'center'} gap={0}>
           {searchOpen ? (
-            <Flex alignItems={'center'} gap={2}>
-              <InputGroup size='lg'>
+            <Flex alignItems={'center'} gap={1}>
+              <InputGroup size='md'>
                 <Input
                   ref={inputRef}
                   placeholder='Search hashtag'
-                  size='lg'
-                  height='40px'
+                  size='md'
+                  height={['30px', '35px', '40px']}
                   borderColor='white'
                   borderWidth='2px'
                   borderRadius='md'
@@ -82,7 +100,7 @@ function Header() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  fontSize='lg'
+                  fontSize={['sm', 'md', 'lg']}
                 />
                 <InputRightElement
                   width='3rem'
@@ -93,18 +111,18 @@ function Header() {
                   cursor='pointer'
                   onClick={() => setSearchOpen(false)}
                 >
-                  <AiOutlineClose size={24} />
+                  <AiOutlineClose size={iconSize} />
                 </InputRightElement>
               </InputGroup>
             </Flex>
           ) : searchActive ? (
-            <Flex alignItems={'center'} gap={2} bg='gray.dark' borderRadius='md' height='40px' px={2}>
-              <Flex alignItems='center' flex={1} pl={4}>
-                <Text fontSize='lg' color='white' isTruncated>{'#'+searchQuery}</Text>
+            <Flex alignItems={'center'} gap={3} bg='gray.dark' borderRadius='md' height={['25px', '30px', '35px']} px={2}>
+              <Flex alignItems='center' flex={1} pl={[2, 3, 4]}>
+                <Text fontSize={['sm', 'md', 'lg']} color='white' isTruncated>{'#'+searchQuery}</Text>
               </Flex>
               <IconButton
                 aria-label='Clear search'
-                icon={<AiOutlineClose size={24} />}
+                icon={<AiOutlineClose size={iconSize} />}
                 onClick={handleClearSearch}
                 variant='ghost'
                 color='white'
@@ -113,18 +131,32 @@ function Header() {
           ) : null}
           <IconButton
             aria-label='Search'
-            icon={<AiOutlineSearch size={30} />}
+            icon={<AiOutlineSearch size={iconSize} />}
             onClick={searchOpen ? handleSearch : handleOpenSearch}
             variant='ghost'
+            size='sm'
+            mx={[0.5, 1, 1.5]}
           />
           <NavLink to={`/${user?.loginUser?.username}`}>
-            <RxAvatar size={30} />
+            <IconButton
+              aria-label='User Profile'
+              icon={<RxAvatar size={iconSize} />}
+              variant='ghost'
+              size='sm'
+              mx={[0.5, 1, 1.5]}
+            />
           </NavLink>
           <NavLink to={`/chat`}>
-            <BsFillChatDotsFill size={30} />
+            <IconButton
+              aria-label='Chat'
+              icon={<BsFillChatDotsFill size={iconSize} />}
+              variant='ghost'
+              size='sm'
+              mx={[0.5, 1, 1.5]}
+            />
           </NavLink>
           <Menu>
-            <MenuButton as={IconButton} aria-label='Menu' icon={<GiHamburgerMenu size={30} />} variant='ghost' />
+            <MenuButton as={IconButton} aria-label='Menu' icon={<GiHamburgerMenu size={iconSize} />} variant='ghost' size='sm' mx={1} />
             <MenuList>
               <MenuItem icon={<FiLogOut size={20} />} onClick={logout}>Logout</MenuItem>
             </MenuList>

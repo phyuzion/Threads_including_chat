@@ -14,7 +14,6 @@ import {
   Text,
   useColorModeValue,
   useToast,
-  useBreakpointValue,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -94,21 +93,19 @@ function LoginCard() {
     }
   };
 
-  const cardWidth = useBreakpointValue({ base: '80%', md: '70%', lg: '60%', xl: '50%' });
-
   return (
     <form onSubmit={handleLogin}>
-      <Flex minH={'80vh'} align={'center'} justify={'center'}>
-        <Stack spacing={8} mx={'auto'} maxW={cardWidth} py={12} px={6}>
+      <Flex minH={'60vh'} align={'center'} justify={'center'}>
+        <Stack spacing={8} mx={'auto'} maxW={['90%', '70%', '60%', '50%']} py={[6, 8, 12]} px={[4, 5, 6]}>
           <Stack align={'center'}>
-            <Heading fontSize={'4xl'} textAlign={'center'}>
+            <Heading fontSize={['xl', '2xl', '3xl']} textAlign={'center'}>
               Login
             </Heading>
           </Stack>
-          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={8}>
+          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={[4, 5, 6]}>
             <Stack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Username</FormLabel>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Username</FormLabel>
                 <Input
                   type={'text'}
                   name="username"
@@ -117,7 +114,7 @@ function LoginCard() {
                 />
               </FormControl>
               <FormControl isRequired>
-                <FormLabel>Password</FormLabel>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Password</FormLabel>
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
@@ -135,7 +132,7 @@ function LoginCard() {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
-              <Stack spacing={10} pt={2}>
+              <Stack spacing={6} pt={2}>
                 <Button
                   loadingText='Logging In...'
                   size='lg'
@@ -151,7 +148,7 @@ function LoginCard() {
                 </Button>
               </Stack>
               <Stack pt={6}>
-                <Text align={'center'}>
+                <Text fontSize={['sm', 'md']} align={'center'}>
                   Create Account?{' '}
                   <Link color={'blue.400'} onClick={() => setAuthScreen('signup')}>
                     Sign-up
