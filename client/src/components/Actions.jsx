@@ -2,7 +2,7 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
+  Textarea,
   Input,
   Modal,
   ModalBody,
@@ -13,11 +13,11 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
-import useShowToast from '../hooks/useShowToast';
 import postsAtom from '../atoms/postsAtom';
 import { gql, useMutation } from "@apollo/client";
 import { likeUnLikePost, replyToPost } from "../apollo/mutations.js";
@@ -31,7 +31,8 @@ const Actions = ({ post }) => {
   const [reply, setReply] = useState('');
   const [stars, setStars] = useState(post.stars || 0);
 
-  const showToast = useShowToast();
+  const toast = useToast();
+  //here must merge
   const { isOpen, onOpen, onClose } = useDisclosure();
   const LIKE_UNLIKE_POST = gql`${likeUnLikePost}`;
   const REPLY_TO_POST = gql`${replyToPost}`;
@@ -40,7 +41,13 @@ const Actions = ({ post }) => {
 
   const handleLikeAndUnlike = async () => {
     if (!user) {
-      return showToast('Error', 'You must be logged in to like a post', 'error');
+      toast({
+        title: 'Error',
+        description: 'You must be logged in to like a post',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
     if (isLiking) return;
     setIsLiking(true);
@@ -62,8 +69,26 @@ const Actions = ({ post }) => {
   };
 
   const handleReply = async () => {
+    if (!reply.trim()) {
+      toast({
+        title: 'Reply Required',
+        description: 'Please provide text before reply.',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     if (!user) {
-      return showToast('Error', 'You must be logged in to reply to a post', 'error');
+      toast({
+        title: 'Error',
+        description: 'You must be logged in to reply to a post',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
     }
     if (isReplying) return;
     setIsReplying(true);
@@ -164,26 +189,31 @@ const Actions = ({ post }) => {
         </Box>
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} iscenterd>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg={'gray.dark'} borderRadius="md" boxShadow="xl">
           <ModalHeader>Write your comment</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <Input
-                placeholder='Reply goes here..'
-                value={reply}
-                onChange={(e) => setReply(e.target.value)}
-              />
-            </FormControl>
+          <ModalBody pb={0}>
+            <Textarea
+              placeholder='Reply goes here..'
+              value={reply}
+              onChange={(e) => setReply(e.target.value.slice(0,100))}
+              maxLength={100}
+            />
+            <Flex justifyContent='flex-end' width='100%'>
+              <Text color='gray.400'>{reply.length}/100</Text>
+            </Flex>
           </ModalBody>
-
           <ModalFooter>
             <Button
-              colorScheme='blue'
+              bg={'blue.400'}
+              color={'white'}
+              _hover={{
+                bg: 'blue.500',
+              }}
               size={'sm'}
-              mr={3}
+              
               isLoading={isReplying}
               onClick={handleReply}
             >
