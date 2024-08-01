@@ -94,8 +94,8 @@ export const GetUserProfile = `query GetUserProfile($postedBy: String!) {
 }
 `
 
-export const GetUserPosts = `query GetUserPosts {
-  getUserPosts {
+export const GetUserPosts = `query GetUserPosts($username: String!) {
+  getUserPosts(username: $username) {
     _id
     postedBy
     text
@@ -110,5 +110,6 @@ export const GetUserPosts = `query GetUserPosts {
       userProfilePic
       username
     }
+    createdAt
   }
 }`
