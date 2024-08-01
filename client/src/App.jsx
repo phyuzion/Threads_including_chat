@@ -45,9 +45,9 @@ function App() {
       <Box px={4}>
         <Header />
       </Box>
-      <Box w={'full'} display="flex" px="8%">
+      <Box w={'full'} display="flex" px="5%">
         <Box flex={isLargerThan800px ? 8 : 1}>
-          <Container maxW={'800px'} mx="auto">
+          <Container maxW={'750px'} mx="auto">
             {!isLargerThan800px && <SideBar />}
             <Routes>
               <Route

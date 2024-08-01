@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
+import { ChakraProvider, ColorModeScript, extendTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
-import { extendTheme } from '@chakra-ui/theme-utils';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import './index.css';
@@ -12,19 +11,21 @@ import { SocketContextProvider } from './context/SocketContext.jsx';
 import { ApolloProvider } from '@apollo/client';
 import setupApolloClient from './apollo/apolloindex.js';
 
-const styles = (bgSize) => ({
+const styles = {
   global: (props) => ({
     body: {
       color: mode('gray.800', 'WhiteAlpha.900')(props),
       bg: mode('white', 'transparent')(props),
       backgroundImage: "url('/ess-bg.png')",
-      backgroundSize: bgSize,
+      backgroundSize: 'cover',
       backgroundPosition: 'center top',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'fixed',
+      fontSize: ['sm', 'md', 'lg'], // 글자 크기
+      padding: [2, 4, 6], // 패딩
     },
   }),
-});
+};
 
 const config = {
   initialColorMode: 'dark',
@@ -38,27 +39,9 @@ const colors = {
   },
 };
 
+const theme = extendTheme({ config, styles, colors });
+
 const ThemeApp = () => {
-  const [bgSize, setBgSize] = useState('100% auto');
-
-  useEffect(() => {
-    const updateBgSize = () => {
-      const ratio = window.innerHeight / window.innerWidth;
-      if (ratio > 1) {
-        setBgSize(`${ratio * 100}% auto`);
-      } else {
-        setBgSize('100% auto');
-      }
-    };
-
-    window.addEventListener('resize', updateBgSize);
-    updateBgSize();
-
-    return () => window.removeEventListener('resize', updateBgSize);
-  }, []);
-
-  const theme = extendTheme({ config, styles: styles(bgSize), colors });
-
   return (
     <ApolloProvider client={setupApolloClient()}>
       <RecoilRoot>
