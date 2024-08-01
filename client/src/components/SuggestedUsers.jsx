@@ -36,7 +36,7 @@ const SuggestedUsers = () => {
   return (
     <>
       <Text mb={2} fontWeight={'bold'}>
-        Following Users
+        Following
       </Text>
       <Flex direction={'column'} gap={4}>
         {/* Placeholder for Follow Users */}
@@ -58,7 +58,7 @@ const SuggestedUsers = () => {
       </Flex>
       <Box mb={4} /> {/* Placeholder for spacing */}
       <Text mb={2} fontWeight={'bold'}>
-        Suggested Users
+        Suggested
       </Text>
       <Flex direction={'column'} gap={4}>
         {loading

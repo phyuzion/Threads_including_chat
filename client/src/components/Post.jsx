@@ -44,7 +44,7 @@ function Post({ post, user: propUser, handleDelete }) {
         <Link to={`/${postedByUser.username}`}>
           <Avatar size={'md'} name={postedByUser.name} src={postedByUser.profilePic} />
         </Link>
-        <Box w='1px' h={'full'} bg={'gray.light'} my={2}></Box>
+        <Box w='1px' h={'full'} bg={'gray.500'} my={2}></Box>
       </Flex>
       <Flex flex={1} flexDirection={'column'} gap={2}>
         <Flex justifyContent={'space-between'}>
@@ -56,7 +56,7 @@ function Post({ post, user: propUser, handleDelete }) {
             </Flex>
           </Link>
           <Flex alignItems={'center'}>
-            <Text fontSize={'sm'} color={'gray.light'}>
+            <Text fontSize={'sm'} color={'gray.500'}>
               {formatDistanceToNowStrict(new Date(post.createdAt))}
             </Text>
             {handleDelete && (
