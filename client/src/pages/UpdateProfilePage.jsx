@@ -32,7 +32,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
   const [UPDATE_USER_COMMAND] = useMutation(UPDATE_USER);
   const PROFILE_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
   const [user, setUser] = useRecoilState(userAtom);
-  console.log(' UpdateProfilePage user: ',user)
+  console.log(' UpdateProfilePage user: ', user)
   const [inputs, setInputs] = useState({
     email: user?.loginUser?.email || '',
     password: user?.loginUser?.password || '',
@@ -45,7 +45,6 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
   const toast = useToast();
   const navigate = useNavigate();
   const passwordIsValid = inputs.password.length >= 8 && inputs.password === inputs.passwordConfirm;
-
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -61,14 +60,14 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
     }
     try {
       setIsSubmitBtnLoading(true);
-      let previewUrl = null
+      let previewUrl = null;
 
-      if(previewImage) {
-        console.log('handleUpdateProfile previewImage available')
+      if (previewImage) {
+        console.log('handleUpdateProfile previewImage available');
 
         const fileToUpload = profilePicRef.current.files[0];
         const formData = new FormData();
-        formData.append('file', fileToUpload);  
+        formData.append('file', fileToUpload);
         const user_ = JSON.parse(localStorage.getItem('user') || '{}');
         const res = await fetch(PROFILE_URL, {
           method: 'POST',
@@ -76,25 +75,22 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
             Authorization: user_?.loginUser?.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : '',
           },
           body: formData,
-        });   
-        
+        });
+
         const data = await res.json();
-        previewUrl = data?.url
-        console.log(' updateProfile previewUrl: ',previewUrl)
+        previewUrl = data?.url;
+        console.log('updateProfile previewUrl:', previewUrl);
       }
-
-
 
       const response = await UPDATE_USER_COMMAND({
         variables: {
-          email: (inputs.email) ? inputs.password : null,
-          password: (inputs.password) ? inputs.password : null,
-          profilePic: previewUrl ? previewUrl : null,
-
-        }
+          email: inputs.email || null,
+          password: inputs.password || null,
+          profilePic: previewUrl || null,
+        },
       });
 
-      if (response?.data) { 
+      if (response?.data) {
         toast({
           title: 'Success',
           description: 'Update User Successful',
@@ -102,15 +98,29 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
           duration: 3000,
           isClosable: true,
         });
-        setUser(response?.data?.updateUser);
-        localStorage.setItem('user', JSON.stringify(response?.data?.updateUser));
+        setUser((prevUser) => ({
+          ...prevUser,
+          loginUser: {
+            ...prevUser.loginUser,
+            email: inputs.email || prevUser.loginUser.email,
+            profilePic: previewUrl || prevUser.loginUser.profilePic,
+          },
+        }));
+        localStorage.setItem('user', JSON.stringify({
+          ...user,
+          loginUser: {
+            ...user.loginUser,
+            email: inputs.email || user.loginUser.email,
+            profilePic: previewUrl || user.loginUser.profilePic,
+          },
+        }));
         setIsSubmitBtnLoading(false);
-
-        navigate(`/${user?.loginUser?.username}`);
-        onClose(); // Close the modal after successful update        
+        onClose(); // Close the modal after successful update
+        navigate(`/${user?.loginUser?.username}`); // Navigate to UserPage after update
+        window.location.reload();
       }
     } catch (error) {
-      console.log('handleUpdateProfile error: ',error)
+      console.log('handleUpdateProfile error:', error);
       toast({
         title: 'Failed To Update Profile',
         description: error.message,
@@ -149,7 +159,6 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
       handleImageChange(e);
     }
   };
-
 
   const handleInputChange = (field, value) => {
     setInputs(prev => ({ ...prev, [field]: value }));
