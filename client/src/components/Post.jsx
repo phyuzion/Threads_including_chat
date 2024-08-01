@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Avatar, Box, Flex, Image, Text, Link as ChakraLink } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -38,7 +38,8 @@ function Post({ post, user: propUser, handleDelete }) {
   }
 
   return (
-    <Flex gap={3} mb={4} pt={5} pb={2}>
+    <>
+    <Flex gap={3} mb={0} pt={5} pb={0}>
       <Flex flexDirection={'column'} alignItems={'center'}>
         <Link to={`/${postedByUser.username}`}>
           <Avatar size={'md'} name={postedByUser.name} src={postedByUser.profilePic} />
@@ -111,6 +112,49 @@ function Post({ post, user: propUser, handleDelete }) {
         </Flex>
       </Flex>
     </Flex>
+
+    {post.replies.length > 0 && (
+      <Flex direction="column" alignItems="left" mt={1}>
+        <Flex justifyContent={'space-between'} w={'full'}>
+          <Flex>
+            {post.replies.slice(0, 5).map((reply, index) => (
+              <Avatar
+                key={index}
+                size='xs'
+                name={reply.username}
+                src={reply.userProfilePic}
+                ml={index > 0 ? '1px' : '0'}
+              />
+            ))}
+            {post.replies.length > 5 && (
+              <Box
+                size='xs'
+                ml='1px'
+                bg='transparent'
+                borderRadius='full'
+                display='flex'
+                alignItems='center'
+                justifyContent='center'
+                width='24px'
+                height='24px'
+              >
+                ...
+              </Box>
+            )}
+          </Flex>
+          <Flex alignItems={'center'}>
+            <Text color={'gray.500'} fontSize='sm'>
+              {post.replies.length} replies
+            </Text>
+            <Box w={0.5} h={0.5} borderRadius={'full'} bg={'gray.light'} mx={1}></Box>
+            <Text color={'gray.500'} fontSize='sm'>
+              {post.likes.length} likes
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
+    )}
+    </>
   );
 }
 

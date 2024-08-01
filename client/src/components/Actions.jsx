@@ -100,7 +100,7 @@ const Actions = ({ post }) => {
   };
 
   return (
-    <Flex flexDirection='column' w='full' position='relative'>
+    <Flex flexDirection='column' w='full' position='relative' >
       <Flex gap={3} my={2} w='full' alignItems='center'>
         <svg
           aria-label='Like'
@@ -162,16 +162,6 @@ const Actions = ({ post }) => {
             </svg>
           </Button>
         </Box>
-      </Flex>
-
-      <Flex gap={2} alignItems={'center'}>
-        <Text color={'gray.light'} fontSize='sm'>
-          {post.replies.length} replies
-        </Text>
-        <Box w={0.5} h={0.5} borderRadius={'full'} bg={'gray.light'}></Box>
-        <Text color={'gray.light'} fontSize='sm'>
-          {post.likes.length} likes
-        </Text>
       </Flex>
 
       <Modal isOpen={isOpen} onClose={onClose}>
