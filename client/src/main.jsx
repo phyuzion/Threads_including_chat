@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
@@ -10,22 +10,22 @@ import { RecoilRoot } from 'recoil';
 import { SocketContextProvider } from './context/SocketContext.jsx';
 
 import { ApolloProvider } from '@apollo/client';
-import setupApolloClient from './apollo/apolloindex.js'
+import setupApolloClient from './apollo/apolloindex.js';
 
-//const client = setupApolloClient();
-const styles = {
+const styles = (bgSize) => ({
   global: (props) => ({
     body: {
       color: mode('gray.800', 'WhiteAlpha.900')(props),
       bg: mode('white', 'transparent')(props),
-      backgroundImage: "url('/ess-bg.png')", // 배경 이미지 추가
-      backgroundSize: '100% auto', // 이미지 사이즈 조정
-      backgroundPosition: 'center top', // 이미지 위치 조정
-      backgroundRepeat: 'repeat', // 이미지 반복 없음
-      backgroundAttachment: 'fixed'
+      backgroundImage: "url('/ess-bg.png')",
+      backgroundSize: bgSize,
+      backgroundPosition: 'center top',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
     },
   }),
-};
+});
+
 const config = {
   initialColorMode: 'dark',
   useSystemColorMode: true,
@@ -38,23 +38,39 @@ const colors = {
   },
 };
 
-const theme = extendTheme({ config, styles, colors });
+const ThemeApp = () => {
+  const [bgSize, setBgSize] = useState('100% auto');
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
-  <ApolloProvider client={setupApolloClient()}>
-  <RecoilRoot>
-    <BrowserRouter>
-      <ChakraProvider theme={theme}>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+  useEffect(() => {
+    const updateBgSize = () => {
+      const ratio = window.innerHeight / window.innerWidth;
+      if (ratio > 1) {
+        setBgSize(`${ratio * 100}% auto`);
+      } else {
+        setBgSize('100% auto');
+      }
+    };
 
-        {/* <SocketContextProvider> */}
-          <App />
-        {/* </SocketContextProvider> */}
+    window.addEventListener('resize', updateBgSize);
+    updateBgSize();
 
-      </ChakraProvider>
-    </BrowserRouter>
-  </RecoilRoot>
-  </ApolloProvider>
-  // </React.StrictMode>
-);
+    return () => window.removeEventListener('resize', updateBgSize);
+  }, []);
+
+  const theme = extendTheme({ config, styles: styles(bgSize), colors });
+
+  return (
+    <ApolloProvider client={setupApolloClient()}>
+      <RecoilRoot>
+        <BrowserRouter>
+          <ChakraProvider theme={theme}>
+            <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+            <App />
+          </ChakraProvider>
+        </BrowserRouter>
+      </RecoilRoot>
+    </ApolloProvider>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<ThemeApp />);

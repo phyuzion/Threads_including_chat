@@ -39,7 +39,7 @@ function App() {
         <Header />
       </Box>
       <Box w={'full'}>
-        <Container maxW={'800px'} mx="auto">
+        <Container maxW={'800px'} mx="auto" px="5%">
           <Routes>
             <Route
               path='/'

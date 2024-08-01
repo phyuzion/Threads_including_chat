@@ -14,6 +14,7 @@ import {
   Text,
   useColorModeValue,
   useToast,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -93,10 +94,12 @@ function LoginCard() {
     }
   };
 
+  const cardWidth = useBreakpointValue({ base: '80%', md: '70%', lg: '60%', xl: '50%' });
+
   return (
     <form onSubmit={handleLogin}>
       <Flex minH={'80vh'} align={'center'} justify={'center'}>
-        <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+        <Stack spacing={8} mx={'auto'} maxW={cardWidth} py={12} px={6}>
           <Stack align={'center'}>
             <Heading fontSize={'4xl'} textAlign={'center'}>
               Login
