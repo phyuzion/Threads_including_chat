@@ -31,7 +31,7 @@ const CreatePost = () => {
   const [postText, setPostText] = useState('');
   const imageInputRef = useRef();
   const videoInputRef = useRef();
-  const { handleImageChange, previewImage, setPreviewImage } = usePreviewImage();
+  const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage(); // webP or JPEG
   const { handleVideoChange, previewVideo, setPreviewVideo } = usePreviewVideo();
   const user = useRecoilValue(userAtom);
   const toast = useToast();
@@ -79,7 +79,7 @@ const CreatePost = () => {
 
     try {
       setIsCreatePostLoading(true);
-      const fileToUpload = previewImage ? imageInputRef.current.files[0] : videoInputRef.current.files[0];
+      const fileToUpload = previewImage ? processedImage : videoInputRef.current.files[0]; // webP or JPEG
 
       const formData = new FormData();
       formData.append('file', fileToUpload);
@@ -98,11 +98,10 @@ const CreatePost = () => {
       const response = await CREATE_POST_COMMAND({
         variables: {
           text: JSON.stringify(cleanedText),
-          imgUrl: (previewImage) ? data.url : "",
-          videoUrl: (!previewImage) ?  data.url : "",
+          imgUrl: previewImage ? data.url : "",
+          videoUrl: !previewImage ? data.url : "",
           hashtags: hashtags
         }
-
       });
 
       if (response?.data) {
