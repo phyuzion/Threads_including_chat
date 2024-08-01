@@ -38,7 +38,7 @@ function Post({ post, user: propUser, handleDelete }) {
   }
 
   return (
-    <>
+    <Box pb={3}>
     <Flex gap={3} mb={0} pt={5} pb={0}>
       <Flex flexDirection={'column'} alignItems={'center'}>
         <Link to={`/${postedByUser.username}`}>
@@ -154,7 +154,7 @@ function Post({ post, user: propUser, handleDelete }) {
         </Flex>
       </Flex>
     )}
-    </>
+    </Box>
   );
 }
 

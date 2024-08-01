@@ -23,26 +23,21 @@ const HomePage = () => {
   });
 
   return (
-    <Flex gap={10} alignItems={'flex-start'}>
-      <Box flex={70}>
-        {loading ? (
-          <Flex justifyContent={'center'}>
-            <Spinner size={'xl'} />
-          </Flex>
-        ) : (!posts || posts.length === 0) ? (
-          <Flex justifyContent={'center'} mt={20}>
-            <h1>You must follow someone to view posts</h1>
-          </Flex>
-        ) : (
-          posts.map((post) => {
-            return <Post key={post._id} post={post} />;
-          })
-        )}
-      </Box>
-      <Box flex={30}>
-        <SuggestedUsers />
-      </Box>
-    </Flex>
+    <>
+      {loading ? (
+        <Flex justifyContent={'center'}>
+          <Spinner size={'xl'} />
+        </Flex>
+      ) : (!posts || posts.length === 0) ? (
+        <Flex justifyContent={'center'} mt={20}>
+          <h1>You must follow someone to view posts</h1>
+        </Flex>
+      ) : (
+        posts.map((post) => {
+          return <Post key={post._id} post={post} />;
+        })
+      )}
+    </>
   );
 };
 

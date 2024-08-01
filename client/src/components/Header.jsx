@@ -58,7 +58,7 @@ function Header() {
 
   console.log('Header user -> ', user);
   return (
-    <Flex alignItems={'center'} justifyContent={user ? 'space-between' : 'center'} mt={6} mb={12} width="100%">
+    <Flex alignItems={'center'} justifyContent={user ? 'space-between' : 'center'} mt={6} px="3%" mb={12} width="100%">
       {user && (
         <NavLink to={'/'} onClick={handleHomeClick}>
           <Image alt='Home' w={10} h={10} src={'/ess-logo.png'} />

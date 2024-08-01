@@ -14,7 +14,7 @@ const SuggestedUsers = () => {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [showMoreSuggested, setShowMoreSuggested] = useState(false);
   const showToast = useShowToast();
-  const { loading, error, data } = useQuery(GET_SUGGESTED_USERS, {
+  const { loading, error, data, refetch } = useQuery(GET_SUGGESTED_USERS, {
     onCompleted: (data) => {
       setIsLoading(false);
       setSuggestedUsers(data.getSuggestedUsers);
@@ -29,6 +29,11 @@ const SuggestedUsers = () => {
 
   const toggleShowMoreSuggested = () => {
     setShowMoreSuggested(!showMoreSuggested);
+  };
+
+  const handleFollow = async (userId) => {
+    // User follow/unfollow mutation logic goes here (if needed)
+    await refetch();  // Ensure the list is updated by refetching the data
   };
 
   const visibleSuggestedUsers = showMoreSuggested ? suggestedUsers : suggestedUsers.slice(0, MAX_VISIBLE_USERS);
@@ -75,7 +80,9 @@ const SuggestedUsers = () => {
                 </Flex>
               );
             })
-          : visibleSuggestedUsers.map((user) => <SuggestedUser key={user._id} user={user} />)}
+          : visibleSuggestedUsers.map((user) => (
+              <SuggestedUser key={user._id} user={user} onFollow={handleFollow} />
+            ))}
         {!loading && suggestedUsers.length > MAX_VISIBLE_USERS && (
           <Button onClick={toggleShowMoreSuggested} variant="link" colorScheme="blue">
             {showMoreSuggested ? 'Show Less' : 'More...'}
