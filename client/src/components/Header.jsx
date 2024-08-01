@@ -84,10 +84,10 @@ function Header() {
       )}
 
       {user && (
-        <Flex alignItems={'center'} gap={0}>
+        <Flex alignItems={'center'} gap={0} flex={1} justifyContent="flex-end">
           {searchOpen ? (
-            <Flex alignItems={'center'} gap={1}>
-              <InputGroup size='md'>
+            <Flex alignItems={'center'} pl={2} gap={1} flex={1} maxW="300px">
+              <InputGroup size='md' flex={1}>
                 <Input
                   ref={inputRef}
                   placeholder='Search hashtag'

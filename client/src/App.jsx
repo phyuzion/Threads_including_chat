@@ -48,7 +48,7 @@ function App() {
       <Box w={'full'} display="flex" px="5%">
         <Box flex={isLargerThan800px ? 8 : 1}>
           <Container maxW={'750px'} mx="auto">
-            {!isLargerThan800px && <SideBar />}
+            {(!isLargerThan800px && pathname !== '/auth') && <SideBar />}
             <Routes>
               <Route
                 path='/'
