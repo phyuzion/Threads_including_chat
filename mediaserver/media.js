@@ -16,19 +16,6 @@ async function startServers() {
     credentials: true,
     origin: '*'
   }));
- // app.use(cors());
-  // app.use((req, res, next) => {
-  //   res.setHeader('Access-Control-Allow-Origin', 'https://ess-lux.net')
-  //   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
-  //   res.setHeader('Access-Control-Allow-Headers', 'Accept-Encoding, Content-Length, X-Requested-With,Authorization,Origin, Content-Type, X-Auth-Token, X-VERIFY')
-  //   res.setHeader('Access-Control-Allow-Credentials', 'true')
-    
-  //   if (req.method === 'OPTIONS') {
-  //     return res.sendStatus(200)
-  //   }
-  //   next()
-  // })
-  //app.set('trust proxy', true);
   const httpServer = http.createServer(app)
   app.use(cookieParser());
   app.use(express.json({ limit: '50mb' }));
@@ -36,11 +23,12 @@ async function startServers() {
   app.use(express.static('public'))
   const mediaUploadRouter = require("./routes/Upload.js");
   const mediaProfileRouter = require("./routes/ProfilePic.js");
-
+  const mediaMessageRouter = require("./routes/Message.js");
 
   
   app.use(path+"/upload",authenticate, mediaUploadRouter);
   app.use(path+"/profilepic",authenticate, mediaProfileRouter);
+  app.use(path+"/message",authenticate, mediaMessageRouter);
   const conn = await mongoose.connect(config.CONNECTION_STRING, {
     // authSource: config.AUTH_SOURCE,
     // user: config.DB_USER,

@@ -112,3 +112,24 @@ export const GetUserPosts = `query GetUserPosts {
     }
   }
 }`
+
+export const GetMessages = `query GetMessages($otherUserId: String) {
+  getMessages(otherUserId: $otherUserId) {
+    sender
+    conversationId
+    text
+    seen
+    img
+  }
+}`
+
+export const GetConversations = `query GetConversations {
+  getConversations {
+    participants
+    lastMessage {
+      text
+      sender
+      seen
+    }
+  }
+}`

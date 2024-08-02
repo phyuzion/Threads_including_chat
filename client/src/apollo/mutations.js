@@ -83,4 +83,13 @@ export const Update_User = `mutation Mutation($email: String, $password: String,
   }
 }
 `
+export const Send_Message = `mutation Mutation($receiverId: String, $text: String, $img: String) {
+  sendMessage(receiverId: $receiverId, text: $text, img: $img) {
+    sender
+    conversationId
+    text
+    seen
+    img
+  }
+}`
 

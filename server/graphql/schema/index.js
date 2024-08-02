@@ -39,6 +39,23 @@ type User {
     following: [String]
     profilePic: String
 }
+type LastMessage {
+    text: String
+    sender: String
+    seen: Boolean
+}
+type Conversation {
+    participants: [String]
+    lastMessage: LastMessage
+}
+
+type Message {
+    sender: String
+    conversationId: String
+    text: String
+    seen: Boolean
+    img: String
+}
 
 type Query {
     getPost(postId: String): Post
@@ -48,6 +65,9 @@ type Query {
     getUserProfile(postedBy: String!): User
     getProfileByName(username: String!): User
     getPostsByHashTag(hashtag: String!, skip: Int! , limit: Int!): [Post]
+    getMessages(otherUserId: String): [Message]
+    getConversations: [Conversation]
+
 }
 type Mutation {
 
@@ -63,10 +83,9 @@ type Mutation {
     logoutUser: Boolean
     followUnFollow(followId: String!): User
     updateUser(email: String,password: String,profilePic: String): User
-
-    
     freezeAccount: Boolean!
-    
+
+    sendMessage(receiverId: String, text: String , img: String): Message
 
 }
 

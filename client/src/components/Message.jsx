@@ -13,13 +13,13 @@ const Message = ({ message }) => {
 
   return (
     <>
-      {currentUser._id === message.sender ? (
+      {currentUser._id === message?.sender ? (
         <Flex gap={2} alignSelf={'flex-end'}>
           {message.text && (
             <Flex bg={'green.800'} p={1.5} borderRadius={'md'} maxW={'350px'}>
-              <Text color={'white'}>{message.text}</Text>
+              <Text color={'white'}>{message?.text}</Text>
 
-              <Box alignSelf={'flex-end'} ml={1} color={message.seen ? 'blue.400' : ''}>
+              <Box alignSelf={'flex-end'} ml={1} color={message?.seen ? 'blue.400' : ''}>
                 <BsCheck2All size={12} />
               </Box>
             </Flex>
@@ -39,10 +39,10 @@ const Message = ({ message }) => {
           )}
 
           {message.img && imgLoaded && (
-            <NavLink target={'_blank'} to={message.img}>
+            <NavLink target={'_blank'} to={message?.img}>
               <Flex w={'200px'}>
                 <Image src={message.img} alt='Message Media' borderRadius={4} />
-                <Box alignSelf={'flex-end'} ml={1} color={message.seen ? 'blue.400' : ''}>
+                <Box alignSelf={'flex-end'} ml={1} color={message?.seen ? 'blue.400' : ''}>
                   <BsCheck2All size={12} />
                 </Box>
               </Flex>
@@ -63,7 +63,7 @@ const Message = ({ message }) => {
           {message.img && !imgLoaded && (
             <Flex w={'200px'}>
               <Image
-                src={message.img}
+                src={message?.img}
                 hidden
                 onLoad={() => setImageLoaded(true)}
                 alt='Message Media'
@@ -74,7 +74,7 @@ const Message = ({ message }) => {
           )}
 
           {message.img && imgLoaded && (
-            <NavLink target={'_blank'} to={message.img}>
+            <NavLink target={'_blank'} to={message?.img}>
               <Flex w={'200px'}>
                 <Image src={message.img} alt='Message Media' borderRadius={4} />
               </Flex>

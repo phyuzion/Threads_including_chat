@@ -19,6 +19,13 @@ import MessageInput from './MessageInput';
 import { useSocket } from '../context/SocketContext';
 import userAtom from '../atoms/userAtom';
 import messageNotificationSound from '../assets/sounds/message.mp3';
+import { gql, useLazyQuery } from '@apollo/client';
+import { GetMessages } from '../apollo/queries';
+const GET_MESSAGES = gql`
+  ${GetMessages}
+`;
+
+
 const MessageContainer = () => {
   const currentConversation = useRecoilValue(currentConversationAtom);
   const currentUser = useRecoilValue(userAtom);
@@ -29,12 +36,13 @@ const MessageContainer = () => {
   const showToast = useShowToast();
   const { socket, onlineUsers } = useSocket();
 
-  const isOnline = onlineUsers.includes(currentConversation.userId);
+  const isOnline = onlineUsers?.includes(currentConversation.userId);
 
   const latestMessageRef = useRef(null);
 
   useEffect(() => {
     socket.on('newMessage', (newMessage) => {
+      console.log(' MessageConatiner newMessage: ',newMessage)
       setMessages((prevMessages) => {
         return [...prevMessages, newMessage];
       });
@@ -60,10 +68,11 @@ const MessageContainer = () => {
     }
 
     socket.on('messagesSeen', ({ conversationId }) => {
+      console.log('MessageContainer messagesSeen')
       if (conversationId === currentConversation._id) {
         setMessages((prevMessages) => {
           return prevMessages.map((message) => {
-            if (message.sender === currentUser._id) {
+            if (message?.sender === currentUser._id) {
               return {
                 ...message,
                 seen: true,
@@ -80,24 +89,38 @@ const MessageContainer = () => {
     latestMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const [queryMessages, { loading, error, data }] = useLazyQuery(GET_MESSAGES, {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      if (data?.getMessages) {
+        setMessages(data);
+      }
+    },
+    onError: (error) => {
+      showToast('Error', error, 'error');
+    },
+  });
+
   useEffect(() => {
     const getMessages = async () => {
       setLoadingMessages(true);
       setMessages([]);
       try {
         if (currentConversation.mock) return;
-        const res = await fetch(`api/messages/${currentConversation.userId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await res.json();
-        if (data.error) {
-          showToast('Error', data.error, 'error');
-          return;
-        }
-        setMessages(data);
+        queryMessages({variables: { otherUserId: currentConversation.userId }})
+        // const res = await fetch(`api/messages/${currentConversation.userId}`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        // });
+        // const data = await res.json();
+        // if (data.error) {
+        //   showToast('Error', data.error, 'error');
+        //   return;
+        // }
+        // setMessages(data);
       } catch (err) {
         console.log(err);
         showToast('Error', err.message, 'error');
@@ -170,9 +193,9 @@ const MessageContainer = () => {
           : messages.map((message) => {
               return (
                 <Flex
-                  key={message._id}
+                  key={message?._id}
                   direction={'column'}
-                  ref={messages.length - 1 === messages.indexOf(message) ? latestMessageRef : null}
+                  ref={messages?.length - 1 === messages?.indexOf(message) ? latestMessageRef : null}
                 >
                   <Message message={message} />
                 </Flex>

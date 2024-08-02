@@ -48,9 +48,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ChakraProvider theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
 
-        {/* <SocketContextProvider> */}
+        <SocketContextProvider>
           <App />
-        {/* </SocketContextProvider> */}
+        </SocketContextProvider>
 
       </ChakraProvider>
     </BrowserRouter>

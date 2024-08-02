@@ -18,6 +18,16 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { conversationsAtom, currentConversationAtom } from '../atoms/convAtoms';
 import userAtom from '../atoms/userAtom';
 import { useSocket } from '../context/SocketContext';
+import { gql, useLazyQuery } from '@apollo/client';
+import { GetProfileByName } from "../apollo/queries.js";
+const GET_USER_PROFILE_BY_NAME = gql`
+  ${GetProfileByName}
+`;
+import { GetConversations } from '../apollo/queries';
+const GET_CONVERSATIONS = gql`
+  ${GetConversations}
+`;
+
 
 const ChatPage = () => {
   const [conversations, setConversations] = useRecoilState(conversationsAtom);
@@ -28,7 +38,7 @@ const ChatPage = () => {
   const [searchText, setSearchText] = useState('');
   const [searchingConversation, setSearchingConversation] = useState();
 
-  const showToast = useShowToast();
+  //const showToast = useShowToast();
   const { socket, onlineUsers } = useSocket();
 
   useEffect(() => {
@@ -66,54 +76,34 @@ const ChatPage = () => {
     });
     return () => socket?.off('newMessage');
   }, [socket]);
-
-  useEffect(() => {
-    const getConversations = async () => {
-      setLoadingConversations(true);
-      setCurrentConversation({});
-      try {
-        const res = await fetch('/api/messages/conversations', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await res.json();
-        if (data.error) {
-          showToast('Error', data.error, 'error');
-        }
-
-        setConversations(data);
-      } catch (error) {
-        showToast('Error', error.message, 'error');
-      } finally {
-        setLoadingConversations(false);
+  
+  const [queryConversations, { loading, error, data }] = useLazyQuery(GET_CONVERSATIONS, {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      if (data?.getConversations) {
+        setConversations(data?.getConversations);
       }
-    };
-    getConversations();
-  }, []);
-
-  const handleConversationSearch = async (e) => {
-    e.preventDefault();
-    setSearchingConversation(true);
-    try {
-      const res = await fetch(`/api/users/profile/${searchText}`);
-      const searchedUser = await res.json();
-
-      if (searchedUser.error) {
-        showToast('Error', searchedUser.error, 'error');
+    },
+    onError: (error) => {
+      console.log(error)
+      //showToast('Error', error, 'error');
+    },
+  });
+  const [handleSearch, { loading_, error_, data_ }] = useLazyQuery(GET_USER_PROFILE_BY_NAME, {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      console.log('handleSearch data: ',data)
+      if (data?.getProfileByName?._id.toString() == currentUser._id) {
+        //showToast('Error', 'You cannot search for yourself', 'error');
         return;
       }
-
-      if (searchedUser._id === currentUser._id) {
-        showToast('Error', 'You cannot search for yourself', 'error');
-        return;
-      }
-
+      const searchedUser = data?.getProfileByName
       if (conversations.find((conversation) => conversation.participants[0]._id === currentUser._id)) {
         setCurrentConversation({
-          _id: conversations.find((conversation) => conversation.participants[0]._id === searchedUser_id),
-          userId: searchedUser._id,
+          _id: conversations.find((conversation) => conversation.participants[0]._id === searchedUser._id.toString()),
+          userId: searchedUser._id.toString(),
           username: searchedUser.username,
           userProfilePic: searchedUser.profilePic,
         });
@@ -125,7 +115,7 @@ const ChatPage = () => {
         _id: Date.now(),
         participants: [
           {
-            _id: searchedUser._id,
+            _id: searchedUser._id.toString(),
             username: searchedUser.username,
             profilePic: searchedUser.profilePic,
           },
@@ -138,9 +128,52 @@ const ChatPage = () => {
 
       setConversations((prevConv) => {
         return [mockConversation, ...prevConv];
-      });
+      });      
+    },
+    onError: (error) => {
+      console.error('getPostsByHashTag error:', error);
+      //showToast('Error', error.message, 'error');
+    },
+  });
+
+  useEffect(() => {
+    const getConversations = async () => {
+      setLoadingConversations(true);
+      setCurrentConversation({});
+      try {
+        console.log('getConversations ')
+        queryConversations()
+        // const res = await fetch('/api/messages/conversations', {
+        //   method: 'GET',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        // });
+        // const data = await res.json();
+        // if (data.error) {
+        //   showToast('Error', data.error, 'error');
+        // }
+
+        // setConversations(data);
+      } catch (error) {
+        console.log('getConversations :',error)
+        //showToast('Error', error.message, 'error');
+      } finally {
+        setLoadingConversations(false);
+      }
+    };
+    getConversations();
+  }, []);
+
+  const handleConversationSearch = async (e) => {
+    e.preventDefault();
+    console.log('handleConversationSearch ')
+    setSearchingConversation(true);
+    try {
+      handleSearch({ variables: { username: searchText } });
     } catch (error) {
-      showToast('Error', error.message, 'error');
+      console.log(error)
+     // showToast('Error', error.message, 'error');
     } finally {
       setSearchingConversation(false);
     }
@@ -183,16 +216,16 @@ const ChatPage = () => {
               </Flex>
             ))}
           {!loadingConversations &&
-            conversations.map((conversation) => (
+            conversations?.map((conversation) => (
               <Conversation
-                isOnline={onlineUsers.includes(conversation.participants[0]._id)}
+                isOnline={onlineUsers?.includes(conversation?.participants[0]?._id)}
                 key={conversation._id}
                 conversation={conversation}
               />
             ))}
         </Flex>
 
-        {!currentConversation._id ? (
+        {!currentConversation?._id ? (
           <Flex
             flex={70}
             direction={'column'}

@@ -70,7 +70,7 @@ const Conversation = ({ conversation, isOnline }) => {
           <Image src='/verified.png' w={4} />
         </Text>
         <Text fontSize={'xs'} display={'flex'} alignItems={'center'} gap={1}>
-          {currentUser._id.toString() === otherUser._id.toString() ? (
+          {currentUser?._id?.toString() === otherUser?._id?.toString() ? (
             <Box alignSelf={'flex-end'} ml={1} color={lastMessage.seen ? 'blue.400' : ''}>
               <BsCheck2All size={12} />
             </Box>
