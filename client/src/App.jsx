@@ -1,5 +1,9 @@
-import { useEffect } from 'react';
-import { Box, Container } from '@chakra-ui/react';
+import { React, useEffect } from 'react';
+import {
+  Box,
+  Container,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from './atoms/userAtom';
@@ -14,12 +18,15 @@ import UserPage from './pages/UserPage';
 import ChatPage from './pages/ChatPage';
 import SettingsPage from './pages/SettingsPage';
 import setupApolloClient from "./apollo/apolloindex.js";
+import SideBar from './components/SideBar';
+import SuggestedUsers from './components/SuggestedUsers';
 
 function App() {
   const user = useRecoilValue(userAtom);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const client = setupApolloClient();
+  const [isLargerThan800px] = useMediaQuery('(min-width: 800px)');
 
   useEffect(() => {
     // after logout, send to auth
@@ -38,40 +45,48 @@ function App() {
       <Box px={4}>
         <Header />
       </Box>
-      <Box w={'full'}>
-        <Container maxW={pathname !== '/' ? '720px' : '950px'} mx="auto">
-          <Routes>
-            <Route
-              path='/'
-              element={
-                user ? (
-                  <>
-                    <HomePage /> <CreatePost />{' '}
-                  </>
-                ) : (
-                  <Navigate to={'/auth'} />
-                )
-              }
-            />
-            <Route path='/auth' element={!user ? <AuthPage /> : <Navigate to={'/'} />} />
-            <Route path='/edit-profile' element={<UpdateProfilePage />} />
-            <Route
-              path='/:username'
-              element={
-                user ? (
-                  <>
-                    <UserPage /> <CreatePost />{' '}
-                  </>
-                ) : (
-                  <Navigate to={'/auth'} />
-                )
-              }
-            />
-            <Route path='/:username/post/:postId' element={<PostPage />} />
-            <Route path='/chat' element={user ? <ChatPage /> : <Navigate to={'/auth'} />} />
-            <Route path='/settings' element={user ? <SettingsPage /> : <Navigate to={'/auth'} />} />
-          </Routes>
-        </Container>
+      <Box w={'full'} display="flex" px="5%">
+        <Box flex={isLargerThan800px ? 8 : 1}>
+          <Container maxW={'750px'} mx="auto">
+            {(!isLargerThan800px && pathname !== '/auth') && <SideBar />}
+            <Routes>
+              <Route
+                path='/'
+                element={
+                  user ? (
+                    <>
+                      <HomePage /> <CreatePost />{' '}
+                    </>
+                  ) : (
+                    <Navigate to={'/auth'} />
+                  )
+                }
+              />
+              <Route path='/auth' element={!user ? <AuthPage /> : <Navigate to={'/'} />} />
+              <Route path='/edit-profile' element={<UpdateProfilePage />} />
+              <Route
+                path='/:username'
+                element={
+                  user ? (
+                    <>
+                      <UserPage />{' '}
+                    </>
+                  ) : (
+                    <Navigate to={'/auth'} />
+                  )
+                }
+              />
+              <Route path='/:username/post/:postId' element={<PostPage />} />
+              <Route path='/chat' element={user ? <ChatPage /> : <Navigate to={'/auth'} />} />
+              <Route path='/settings' element={user ? <SettingsPage /> : <Navigate to={'/auth'} />} />
+            </Routes>
+          </Container>
+        </Box>
+        {isLargerThan800px && (
+          <Box pl={5} flex={2} display={user && pathname !== '/auth' ? 'block' : 'none'}>
+            <SuggestedUsers />
+          </Box>
+        )}
       </Box>
     </Box>
   );

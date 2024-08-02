@@ -22,75 +22,109 @@ import userAtom from '../atoms/userAtom.js';
 import { gql, useMutation } from "@apollo/client";
 import { signupUser } from "../apollo/mutations.js";
 
-const SIGNUP_USER = gql` ${signupUser}`;
-
+const SIGNUP_USER = gql`${signupUser}`;
 
 function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
-  const [_, setAuthSceen] = useRecoilState(authScreenAtom);
+  const [_, setAuthScreen] = useRecoilState(authScreenAtom);
   const [SIGNUP_USER_COMMAND] = useMutation(SIGNUP_USER);
   const [inputs, setInputs] = useState({
     username: '',
     email: '',
     password: '',
   });
+  const [passwordError, setPasswordError] = useState(false);
   const setUser = useSetRecoilState(userAtom);
 
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
+    if (name === 'password' && value.length >= 8) {
+      setPasswordError(false);
+    }
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (inputs.password.length < 8) {
+      setPasswordError(true);
+      toast({
+        title: 'Signup failed',
+        description: "Password must be at least 8 characters long.",
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
     try {
       setIsLoading(true);
-      console.log('inputs: ',inputs)
-      const response = await SIGNUP_USER_COMMAND({ variables: inputs})
-      console.log('reponse.data')
-      // localStorage.setItem('user', JSON.stringify(response?.data?.signupUser));
-      // setUser(response?.data?.signupUser);     
-      setAuthSceen('login')
-
-
+      console.log('inputs: ', inputs);
+      const response = await SIGNUP_USER_COMMAND({ variables: inputs });
+      console.log('response.data', response.data);
+      setAuthScreen('login');
+      toast({
+        title: 'Account created.',
+        description: "You have successfully signed up. Please log in.",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error) {
       console.log(error);
+      toast({
+        title: 'Signup failed',
+        description: "Username or email is already in use. Please try a different one.",
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSignup}>
-      <Flex minH={'80vh'} align={'center'} justify={'center'}>
-        <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+      <Flex minH={'60vh'} align={'center'} justify={'center'}>
+        <Stack spacing={8} mx={'auto'} maxW={['90%', '80%', '70%', '60%']} py={[4, 6, 8]} px={[4, 6, 8]}>
           <Stack align={'center'}>
-            <Heading fontSize={'4xl'} textAlign={'center'}>
+            <Heading fontSize={['xl', '2xl', '3xl']} textAlign={'center'}>
               Sign up
             </Heading>
           </Stack>
-          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={8}>
+          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={[4, 6, 8]}>
             <Stack spacing={4}>
-              
               <FormControl isRequired>
-                <FormLabel>User name</FormLabel>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Username</FormLabel>
                 <Input
                   type='text'
-                  onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
+                  name='username'
+                  onChange={handleInputChange}
                   value={inputs.username}
                 />
               </FormControl>
               <FormControl isRequired>
-                <FormLabel>Email address</FormLabel>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Email address</FormLabel>
                 <Input
                   type='email'
-                  onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
+                  name='email'
+                  onChange={handleInputChange}
                   value={inputs.email}
                 />
               </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Password</FormLabel>
+              <FormControl isRequired isInvalid={passwordError}>
+                <FormLabel fontSize={['sm', 'md', 'lg']}>Password</FormLabel>
                 <InputGroup>
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
+                    name='password'
+                    onChange={handleInputChange}
                     value={inputs.password}
+                    borderColor={passwordError ? 'red.500' : 'inherit'}
                   />
                   <InputRightElement h={'full'}>
                     <Button
@@ -102,9 +136,9 @@ function SignupCard() {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
-              <Stack spacing={10} pt={2}>
+              <Stack spacing={6} pt={2}>
                 <Button
-                  loadingText='Signing In...'
+                  loadingText='Signing Up...'
                   size='lg'
                   bg={'blue.400'}
                   color={'white'}
@@ -117,25 +151,10 @@ function SignupCard() {
                   Sign up
                 </Button>
               </Stack>
-              <Stack spacing={10} pt={2}>
-                <Button
-                  loadingText='Signing In...'
-                  size='lg'
-                  bg={'blue.400'}
-                  color={'white'}
-                  _hover={{
-                    bg: 'blue.500',
-                  }}
-                  type={'submit'}
-                  isLoading={isLoading}
-                >
-                  temporary button
-                </Button>
-              </Stack>
               <Stack pt={6}>
-                <Text align={'center'}>
+                <Text fontSize={['sm', 'md']} align={'center'}>
                   Already a user?{' '}
-                  <Link color={'blue.400'} onClick={() => setAuthSceen('login')}>
+                  <Link color={'blue.400'} onClick={() => setAuthScreen('login')}>
                     Login
                   </Link>
                 </Text>

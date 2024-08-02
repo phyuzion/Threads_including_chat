@@ -27,11 +27,11 @@ import usePreviewImage from '../hooks/usePreviewImage';
 import usePreviewVideo from '../hooks/usePreviewVideo';
 
 const CreatePost = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure({ preserveScrollBarGap: true });
   const [postText, setPostText] = useState('');
   const imageInputRef = useRef();
   const videoInputRef = useRef();
-  const { handleImageChange, previewImage, setPreviewImage } = usePreviewImage();
+  const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage(); // webP or JPEG
   const { handleVideoChange, previewVideo, setPreviewVideo } = usePreviewVideo();
   const user = useRecoilValue(userAtom);
   const toast = useToast();
@@ -79,7 +79,7 @@ const CreatePost = () => {
 
     try {
       setIsCreatePostLoading(true);
-      const fileToUpload = previewImage ? imageInputRef.current.files[0] : videoInputRef.current.files[0];
+      const fileToUpload = previewImage ? processedImage : videoInputRef.current.files[0]; // webP or JPEG
 
       const formData = new FormData();
       formData.append('file', fileToUpload);
@@ -98,11 +98,10 @@ const CreatePost = () => {
       const response = await CREATE_POST_COMMAND({
         variables: {
           text: JSON.stringify(cleanedText),
-          imgUrl: (previewImage) ? data.url : "",
-          videoUrl: (!previewImage) ?  data.url : "",
+          imgUrl: previewImage ? data.url : "",
+          videoUrl: !previewImage ? data.url : "",
           hashtags: hashtags
         }
-
       });
 
       if (response?.data) {
@@ -130,8 +129,8 @@ const CreatePost = () => {
     <div>
       <Button
         position={'fixed'}
-        bottom={10}
-        right={10}
+        bottom={[4, 6, 10]}
+        right={[4, 6, 10]}
         bg={'gray.dark'}
         color={'white'}
         leftIcon={<AddIcon />}
@@ -143,20 +142,10 @@ const CreatePost = () => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent bg={'gray.dark'} borderRadius="md" boxShadow="xl">
-          <ModalBody p={6}>
+          <ModalBody pt={[4, 6, 8]}>
             <VStack spacing={4}>
-              <Textarea
-                placeholder='Write your post details here'
-                value={postText}
-                onChange={handleTextChange}
-                size='lg'
-                resize='none'
-                color={'white'}
-                maxLength={500}
-              />
-              <Flex justifyContent='flex-end' width='100%'>
-                <Text color='gray.400'>{postText.length}/500</Text>
-              </Flex>
+              {!previewImage && !previewVideo && (
+              <>
               <Flex alignItems={'center'} justifyContent={'center'} gap={2}>
                 <Input type='file' hidden ref={imageInputRef} onChange={handleImageChange} accept='image/*' />
                 <Input type='file' hidden ref={videoInputRef} onChange={handleVideoChange} accept='video/*' />
@@ -165,7 +154,7 @@ const CreatePost = () => {
                   alignItems='center'
                   bg='gray.600'
                   borderRadius='md'
-                  p={2}
+                  p={[1, 2, 3]}
                   cursor='pointer'
                   onClick={() => imageInputRef.current.click()}
                 >
@@ -179,7 +168,7 @@ const CreatePost = () => {
                   alignItems='center'
                   bg='gray.600'
                   borderRadius='md'
-                  p={2}
+                  p={[1, 2, 3]}
                   cursor='pointer'
                   onClick={() => videoInputRef.current.click()}
                 >
@@ -189,8 +178,10 @@ const CreatePost = () => {
                   </Text>
                 </Box>
               </Flex>
+              </>
+              )}
               {previewImage && (
-                <Flex m={'5px'} w={'full'} position={'relative'}>
+                <Flex m={1} w={'full'} position={'relative'}>
                   <img src={previewImage} alt='Preview' />
                   <Button size='sm' onClick={() => setPreviewImage(null)} position={'absolute'} top={2} right={2}>
                     <CloseIcon />
@@ -198,13 +189,25 @@ const CreatePost = () => {
                 </Flex>
               )}
               {previewVideo && (
-                <Flex m={'5px'} w={'full'} position={'relative'}>
+                <Flex m={1} w={'full'} position={'relative'}>
                   <video width='100%' controls src={previewVideo} />
                   <Button size='sm' onClick={() => setPreviewVideo(null)} position={'absolute'} top={2} right={2}>
                     <CloseIcon />
                   </Button>
                 </Flex>
               )}
+              <Textarea
+                placeholder='Write your post details here'
+                value={postText}
+                onChange={handleTextChange}
+                size='lg'
+                resize='none'
+                color={'white'}
+                maxLength={500}
+              />
+              <Flex justifyContent='flex-end' width='100%'>
+                <Text color='gray.400'>{postText.length}/500</Text>
+              </Flex>
             </VStack>
           </ModalBody>
           <ModalFooter bg={'gray.dark'}>

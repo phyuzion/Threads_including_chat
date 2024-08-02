@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Avatar, Box, Flex, Image, Text, Link as ChakraLink } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -38,79 +38,123 @@ function Post({ post, user: propUser, handleDelete }) {
   }
 
   return (
-    <Flex gap={3} mb={4} pt={5} pb={2}>
-      <Flex flexDirection={'column'} alignItems={'center'}>
-        <Link to={`/${postedByUser.username}`}>
-          <Avatar size={'md'} name={postedByUser.name} src={postedByUser.profilePic} />
-        </Link>
-        <Box w='1px' h={'full'} bg={'gray.light'} my={2}></Box>
-      </Flex>
-      <Flex flex={1} flexDirection={'column'} gap={2}>
-        <Flex justifyContent={'space-between'}>
+    <Box pb={3}>
+      <Flex gap={[2, 3, 4]} mb={0} pt={[3, 4, 5]} pb={0}>
+        <Flex flexDirection={'column'} alignItems={'center'}>
           <Link to={`/${postedByUser.username}`}>
-            <Flex w={'full'} alignItems={'center'}>
-              <Text fontSize={'sm'} fontWeight={'bold'}>
-                {postedByUser.username}
-              </Text>
-            </Flex>
+            <Avatar size={['sm', 'md']} name={postedByUser.name} src={postedByUser.profilePic} />
           </Link>
-          <Flex alignItems={'center'}>
-            <Text fontSize={'sm'} color={'gray.light'}>
-              {formatDistanceToNowStrict(new Date(post.createdAt))}
-            </Text>
-            {handleDelete && (
-              <DeleteIcon onClick={handleDelete} ml={2} cursor={'pointer'} />
+          <Box w='1px' h={'full'} bg={'gray.500'} my={2}></Box>
+        </Flex>
+        <Flex flex={1} flexDirection={'column'} gap={[1, 2, 3]}>
+          <Flex justifyContent={'space-between'}>
+            <Link to={`/${postedByUser.username}`}>
+              <Flex w={'full'} alignItems={'center'}>
+                <Text fontSize={['xs', 'sm', 'md']} fontWeight={'bold'}>
+                  {postedByUser.username}
+                </Text>
+              </Flex>
+            </Link>
+            <Flex alignItems={'center'}>
+              <Text fontSize={['xs', 'sm']} color={'gray.500'}>
+                {formatDistanceToNowStrict(new Date(post.createdAt))}
+              </Text>
+              {handleDelete && (
+                <DeleteIcon onClick={handleDelete} ml={2} cursor={'pointer'} />
+              )}
+            </Flex>
+          </Flex>
+          <Link to={`/${postedByUser.username}/post/${post._id}`}>
+            <Text fontSize={['xs', 'sm']}>{post.text}</Text>
+            {!imgLoaded && post.img && (
+              <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
+                <Image 
+                  src={post.img} 
+                  w={'full'} 
+                  onLoad={() => setImgLoaded(true)} 
+                  onError={() => setImgLoaded(false)}
+                  style={{ display: 'none' }}
+                />
+              </Box>
             )}
+            {imgLoaded && post.img && (
+              <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
+                <Image src={post.img} w={'full'} />
+              </Box>
+            )}
+            {!videoLoaded && post.video && (
+              <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
+                <video 
+                  controls 
+                  src={post.video} 
+                  width="100%" 
+                  onCanPlay={() => setVideoLoaded(true)} 
+                  onError={() => setVideoLoaded(false)}
+                  style={{ display: 'none' }}
+                />
+              </Box>
+            )}
+            {videoLoaded && post.video && (
+              <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
+                <video controls src={post.video} width="100%" />
+              </Box>
+            )}
+          </Link>
+          <Box>
+            <Text fontSize={['xs', 'sm']} flexWrap='wrap'>
+              {post.hashtags?.map((tag) => (
+                <ChakraLink key={tag} color="blue.500" onClick={() => searchHashtag(tag)}>#{tag}</ChakraLink>
+              ))}
+            </Text>
+          </Box>
+          <Flex gap={[2, 3]} my={1} alignItems={'center'}>
+            <Actions post={post} />
           </Flex>
         </Flex>
-        <Link to={`/${postedByUser.username}/post/${post._id}`}>
-          <Text fontSize={'sm'}>{post.text}</Text>
-          {!imgLoaded && post.img && (
-            <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
-              <Image 
-                src={post.img} 
-                w={'full'} 
-                onLoad={() => setImgLoaded(true)} 
-                onError={() => setImgLoaded(false)}
-                style={{ display: 'none' }}
-              />
-            </Box>
-          )}
-          {imgLoaded && post.img && (
-            <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
-              <Image src={post.img} w={'full'} />
-            </Box>
-          )}
-          {!videoLoaded && post.video && (
-            <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
-              <video 
-                controls 
-                src={post.video} 
-                width="100%" 
-                onCanPlay={() => setVideoLoaded(true)} 
-                onError={() => setVideoLoaded(false)}
-                style={{ display: 'none' }}
-              />
-            </Box>
-          )}
-          {videoLoaded && post.video && (
-            <Box borderRadius={6} overflow={'hidden'} border={'1px solid gray.light'}>
-              <video controls src={post.video} width="100%" />
-            </Box>
-          )}
-        </Link>
-        <Box>
-          <Text fontSize={'sm'} flexWrap='wrap'>
-            {post.hashtags?.map((tag) => (
-              <ChakraLink key={tag} color="blue.500" onClick={() => searchHashtag(tag)}>#{tag}</ChakraLink>
-            ))}
-          </Text>
-        </Box>
-        <Flex gap={3} my={1} alignItems={'center'}>
-          <Actions post={post} />
-        </Flex>
       </Flex>
-    </Flex>
+
+      {post.replies.length > 0 && (
+        <Flex direction="column" alignItems="left" mt={1}>
+          <Flex justifyContent={'space-between'} w={'full'}>
+            <Flex>
+              {post.replies.slice(0, 5).map((reply, index) => (
+                <Avatar
+                  key={index}
+                  size='xs'
+                  name={reply.username}
+                  src={reply.userProfilePic}
+                  ml={index > 0 ? '1px' : '0'}
+                />
+              ))}
+              {post.replies.length > 5 && (
+                <Box
+                  size='xs'
+                  ml='1px'
+                  bg='transparent'
+                  borderRadius='full'
+                  display='flex'
+                  alignItems='center'
+                  justifyContent='center'
+                  width={['16px', '20px', '24px']}
+                  height={['16px', '20px', '24px']}
+                >
+                  ...
+                </Box>
+              )}
+            </Flex>
+            <Flex alignItems={'center'}>
+              <Text color={'gray.500'} fontSize={['xs', 'sm']}>
+                {post.replies.length} replies
+              </Text>
+              <Box w={0.5} h={0.5} borderRadius={'full'} bg={'gray.light'} mx={1}></Box>
+              <Text color={'gray.500'} fontSize={['xs', 'sm']}>
+                {post.likes.length} likes
+              </Text>
+            </Flex>
+          </Flex>
+        </Flex>
+      )}
+    </Box>
   );
 }
 

@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import React, { useState } from 'react';
-import { useToast, Flex, Spinner, Box } from '@chakra-ui/react';
+import { useToast, Flex, Spinner, Box, Text } from '@chakra-ui/react';
 import Post from '../components/Post';
 import { useRecoilState } from 'recoil';
 import postsAtom from '../atoms/postsAtom';
@@ -23,26 +23,21 @@ const HomePage = () => {
   });
 
   return (
-    <Flex gap={10} alignItems={'flex-start'}>
-      <Box flex={70}>
-        {loading ? (
-          <Flex justifyContent={'center'}>
-            <Spinner size={'xl'} />
-          </Flex>
-        ) : (!posts || posts.length === 0) ? (
-          <Flex justifyContent={'center'} mt={20}>
-            <h1>You must follow someone to view posts</h1>
-          </Flex>
-        ) : (
-          posts.map((post) => {
-            return <Post key={post._id} post={post} />;
-          })
-        )}
-      </Box>
-      <Box flex={30}>
-        <SuggestedUsers />
-      </Box>
-    </Flex>
+    <>
+      {loading ? (
+        <Flex justifyContent={'center'} mt={[4, 6, 8]}>
+          <Spinner size={'xl'} />
+        </Flex>
+      ) : (!posts || posts.length === 0) ? (
+        <Flex justifyContent={'center'} mt={[10, 15, 20]}>
+          <Text fontSize={['md', 'lg', 'xl']}>You must follow someone to view posts</Text>
+        </Flex>
+      ) : (
+        posts.map((post) => {
+          return <Post key={post._id} post={post} />;
+        })
+      )}
+    </>
   );
 };
 
