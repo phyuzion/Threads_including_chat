@@ -20,6 +20,7 @@ import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom.js';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow.js';
 import UpdateProfilePage from '../pages/UpdateProfilePage';
+import WalletComponent from './WalletComponent.jsx'
 
 function UserHeader({ user }) {
   const toast = useToast();
@@ -42,12 +43,7 @@ function UserHeader({ user }) {
             {user?.username}
           </Text>
           <Text fontSize={['sm', 'md']}>{user?.bio}</Text>
-          <Flex alignItems="center" gap={[2, 4]}>
-            <Text fontSize={['xs', 'sm']}>Address: </Text>
-          </Flex>
-          <Flex alignItems="center" gap={[2, 4]}>
-            <Text fontSize={['xs', 'sm']}>Star: </Text>
-          </Flex>
+          <WalletComponent />
         </Box>
         <Box textAlign="center">
           <Avatar name={user?.name} size={{ base: 'xl', md: '2xl' }} src={user?.profilePic} mb={[2, 4]} />
