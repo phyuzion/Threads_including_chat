@@ -44,8 +44,15 @@ type LastMessage {
     sender: String
     seen: Boolean
 }
+
+type Participant {
+    _id: String
+    username: String
+    profilePic: String
+}
 type Conversation {
-    participants: [String]
+    _id: String
+    participants: [Participant]
     lastMessage: LastMessage
 }
 

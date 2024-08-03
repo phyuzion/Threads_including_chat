@@ -42,7 +42,7 @@ module.exports = {
         }
       },
         getSuggestedUsers: async (_,args,{req, res}) => {
-          console.log(' getSuggestedUsers: ')
+          //console.log(' getSuggestedUsers: ')
             if(!req.user) {
                 throwForbiddenError()
             }
@@ -67,7 +67,7 @@ module.exports = {
                 //console.log(' get Suggested users : ',filteredUsers)
                 if(filteredUsers && filteredUsers.length > 0 ) {
                   const sugusers =  transformUsers(filteredUsers)
-                  console.log(' sugusers: ',sugusers)
+                  //console.log(' sugusers: ',sugusers)
                   return sugusers
 
                 } else {

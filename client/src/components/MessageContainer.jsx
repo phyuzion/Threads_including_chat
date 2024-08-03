@@ -28,6 +28,7 @@ const GET_MESSAGES = gql`
 
 const MessageContainer = () => {
   const currentConversation = useRecoilValue(currentConversationAtom);
+  console.log('MessageContainer currentConversation: ',currentConversation)
   const currentUser = useRecoilValue(userAtom);
 
   const [messages, setMessages] = useState([]);
@@ -94,7 +95,7 @@ const MessageContainer = () => {
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (data?.getMessages) {
-        setMessages(data);
+        setMessages(data?.getMessages);
       }
     },
     onError: (error) => {
@@ -190,7 +191,7 @@ const MessageContainer = () => {
                 {i % 2 !== 0 && <SkeletonCircle size={7} />}
               </Flex>
             ))
-          : messages.map((message) => {
+          : messages?.map((message) => {
               return (
                 <Flex
                   key={message?._id}

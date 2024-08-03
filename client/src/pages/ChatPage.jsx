@@ -81,6 +81,7 @@ const ChatPage = () => {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
+      console.log('Chat Page: queryConversations ',data?.getConversations)
       if (data?.getConversations) {
         setConversations(data?.getConversations);
       }
@@ -101,12 +102,20 @@ const ChatPage = () => {
       }
       const searchedUser = data?.getProfileByName
       if (conversations.find((conversation) => conversation.participants[0]._id === currentUser._id)) {
-        setCurrentConversation({
+        const conversation_ = {
           _id: conversations.find((conversation) => conversation.participants[0]._id === searchedUser._id.toString()),
           userId: searchedUser._id.toString(),
           username: searchedUser.username,
-          userProfilePic: searchedUser.profilePic,
-        });
+          userProfilePic: searchedUser.profilePic,          
+        }
+        console.log(' ChatPage conversation_ : ', conversation_)
+        setCurrentConversation(conversation_);        
+        // setCurrentConversation({
+        //   _id: conversations.find((conversation) => conversation.participants[0]._id === searchedUser._id.toString()),
+        //   userId: searchedUser._id.toString(),
+        //   username: searchedUser.username,
+        //   userProfilePic: searchedUser.profilePic,
+        // });
         return;
       }
 

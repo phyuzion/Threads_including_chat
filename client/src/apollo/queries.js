@@ -126,7 +126,12 @@ export const GetMessages = `query GetMessages($otherUserId: String) {
 
 export const GetConversations = `query GetConversations {
   getConversations {
-    participants
+    _id
+    participants {
+      _id
+      username
+      profilePic
+    }
     lastMessage {
       text
       sender

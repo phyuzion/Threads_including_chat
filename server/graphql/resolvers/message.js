@@ -34,6 +34,7 @@ module.exports = {
                 throwForbiddenError()
             } 
             const userId = req.user._id;
+            console.log(' getConversations userId: ',userId)
             try {
                 const conversations = await Conversation.find({
                     participants: userId,
@@ -50,6 +51,7 @@ module.exports = {
                         (participant) => participant._id.toString() !== userId.toString()
                     );
                     });
+                    console.log(JSON.stringify(conversations, null, 2));
                 return conversations
             } catch(error){
                 throwServerError(error) 

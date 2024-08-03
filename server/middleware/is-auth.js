@@ -10,7 +10,7 @@ const authenticateUser = async (req,authHeader_) => {
         if(token) { 
           try {
             const decodedToken = await jwt.verify(token, `${config.SECRET_KEY}` )
-            console.log('decodedToken: ',decodedToken)
+            //console.log('decodedToken: ',decodedToken)
             if(decodedToken) {
                 const user = await User.findById(decodedToken.userId).select('-password');
                 req.user = user;
@@ -27,7 +27,7 @@ const authenticateUser = async (req,authHeader_) => {
 const  isAuthenticated = async (req, res, next) => {
     req.user = null
     const authHeader_ = req.get('Authorization')
-    console.log('isAuthenticated authHeader_: ',authHeader_)
+    //console.log('isAuthenticated authHeader_: ',authHeader_)
     if(authHeader_) {
       return await authenticateUser(req,authHeader_)
     }
