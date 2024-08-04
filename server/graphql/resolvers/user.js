@@ -3,9 +3,43 @@ const { transformUser,transformUserWithToken,transformUsers } = require("../../u
 const bcrypt = require('bcryptjs')
 const User = require('../../models/userModel')
 const Post = require('../../models/postModel')
+const Follow = require('../../models/followModel')
+const mongoose = require('mongoose')
 const ObjectId = require('mongodb').ObjectId;
+const config = require('../../config')
+const {
+    QUERY_FOLLOWS,
+    QUERY_FOLLOWS_COUNT,
+    QUERY_SUGGESTED_USERS} = require('../aggregation/user')
+
+const { getFollowUnfollowUpdate } = require('../helpers/user')
 module.exports = {
     Query: {
+      getFollows: async (_,args,{req, res}) => {
+        const {skip, limit , following } = args
+        console.log( ' getFollows skip: ',skip, ' limit: ',limit , ' following: ',following)
+        if(!req.user) {
+          throwForbiddenError()
+        }
+        let aggregation 
+        try{ 
+          aggregation  = QUERY_FOLLOWS(req.user._id,skip,limit,following)
+          console.log(' aggregation: ',aggregation)
+          const result = await User.aggregate(aggregation)
+
+          console.log('getFollows: result ', result)
+          aggregation  = QUERY_FOLLOWS_COUNT(req.user._id,following)
+          const resultCount =  await User.aggregate(aggregation)
+          return  {
+            follows: result,
+            count : (resultCount[0] ) ? resultCount[0].count : 0
+          }
+          return result
+        } catch ( error ) {
+          console.log(' getFollows error : ',error)
+          throwServerError(error)
+        }
+      },
       getProfileByName: async (_,args,{req, res}) => {
         const {username} = args
         console.log(' getUserProfileByName userName: ',username)
@@ -48,32 +82,36 @@ module.exports = {
             }
             try {
                 const userId = req.user._id;
-                const usersFollowedByClient = await User.findById(userId).select('following');
+                const aggregation = QUERY_SUGGESTED_USERS(userId,0,10)
+                const result = await User.aggregate(aggregation)
+                console.log(result)
+                return result
+                // const usersFollowedByClient = await User.findById(userId).select('following');
                 
-                const users = await User.aggregate([
-                  {
-                    $match: {
-                      _id: { $ne: userId },
-                      isFrozen: false,
-                    },
-                  },
-                  {
-                    $sample: { size: 10 },
-                  },
-                ]);
-                const filteredUsers = users.filter(
-                  (user) => !usersFollowedByClient.following.includes(user._id.toString())
-                );
-                //console.log(' get Suggested users : ',filteredUsers)
-                if(filteredUsers && filteredUsers.length > 0 ) {
-                  const sugusers =  transformUsers(filteredUsers)
-                  //console.log(' sugusers: ',sugusers)
-                  return sugusers
+                // const users = await User.aggregate([
+                //   {
+                //     $match: {
+                //       _id: { $ne: userId },
+                //       isFrozen: false,
+                //     },
+                //   },
+                //   {
+                //     $sample: { size: 10 },
+                //   },
+                // ]);
+                // const filteredUsers = users.filter(
+                //   (user) => !usersFollowedByClient.following.includes(user._id.toString())
+                // );
+                // //console.log(' get Suggested users : ',filteredUsers)
+                // if(filteredUsers && filteredUsers.length > 0 ) {
+                //   const sugusers =  transformUsers(filteredUsers)
+                //   //console.log(' sugusers: ',sugusers)
+                //   return sugusers
 
-                } else {
-                  console.log(' suggestedUsers does not exist')
-                  return []
-                }
+                // } else {
+                //   console.log(' suggestedUsers does not exist')
+                //   return []
+                // }
 
               } catch (error) {
                 console.log(error.message);
@@ -87,30 +125,47 @@ module.exports = {
           throwForbiddenError()
         }        
         const { email, password, profilePic } = args
-        let user = await User.findById(req.user._id);
-        if (!user)
-          throwServerError('User not found')
+        const session = await mongoose.startSession();
+        await session.startTransaction();
+        try {
 
-        if (password) {
-          const salt = await bcrypt.genSalt(10);
-          const hashedPassword = await bcrypt.hash(password, salt);
-          user.password = hashedPassword;
-        }
-        user.profilePic = profilePic || user.profilePic
-        user.email = email || user.email;
-        user = await user.save();
-        await Post.updateMany(
-          {
-            'replies.userId': user._id,
-          },
-          {
-            $set: {
-              'replies.$[reply].userProfilePic': user.profilePic,
+          let user = await User.findById(req.user._id).session(session);
+          if (!user)
+            throwServerError('User not found')
+  
+          if (password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            user.password = hashedPassword;
+          }
+          user.profilePic = profilePic || user.profilePic
+          user.email = email || user.email;
+          user = await user.save({ session });
+          await Post.updateMany(
+            {
+              'replies.userId': user._id,
             },
-          },
-          { arrayFilters: [{ 'reply.userId': user._id }] }
-        );
-        return transformUser(user)
+            {
+              $set: {
+                'replies.$[reply].userProfilePic': user.profilePic,
+              },
+            },
+            { 
+              arrayFilters: [{ 'reply.userId': user._id }],
+              session: session
+  
+            }
+          );
+          await session.commitTransaction()
+          return transformUser(user)
+        } catch (error) {
+          console.log(error)
+          await session.abortTransaction()
+          throwServerError(error)
+        } finally {
+          await session.endSession()
+        }
+
 
       },
         logoutUser: async (_,args,{req, res}) => {
@@ -211,37 +266,42 @@ module.exports = {
             if(!req.user) {
                 throwForbiddenError()
             }
+            console.log( 'followUnFollow  followId: ',followId)
+            if (followId == req.user._id.toString()) {
+              throwServerError('You can not follow/un-follow yourself ');
+            }
             console.log('followUnFollow: id: ',followId)
+            let session
+            if (config.DB_TYPE == "ATLAS") {
+              session = await mongoose.startSession();
+              await session.startTransaction();
+            }
             try {
-                const userToModify = await User.findById(followId);
-                const currentUser = await User.findById(req.user._id);
-                if (followId == req.user._id.toString()) {
-                    throwServerError('You can not follow/un-follow yourself ');
+                const follow_ = await User.findOne({
+                  _id: req.user._id,
+                  following: { "$elemMatch": { followId: followId}}
+                }).session(session)
+                const isFollowing = (follow_) ? true : false
+                console.log(' isFollowing : ',isFollowing)
+                const bulkOps = getFollowUnfollowUpdate(isFollowing, req.user._id,  new ObjectId(followId))
+                console.log(' bulkOps : ',bulkOps)
+                result = await User.bulkWrite(bulkOps,{session});
+                const user_ = await User.findById(followId).session(session)
+                if (config.DB_TYPE == "ATLAS") {
+                  await session.commitTransaction()
                 }
-                if (!userToModify || !currentUser) {
-                    throwServerError(' User not found' );
-                }   
-                const isFollowing = currentUser.following.includes(followId);
-                console.log('followUnFollow: isFollowing: ',isFollowing)
-                if (isFollowing) {
-                  // Un-Following
-                  
-                  await User.findByIdAndUpdate(req.user._id, {
-                    $pull: { following: followId },
-                  });
-                  const user_ = await User.findByIdAndUpdate(followId, { $pull: { followers: req.user._id } },{returnOriginal: false});
-                  console.log('unfollow: ',user_)
-                  return transformUser(user_)
-                } else {
-                  // Following
-                  await User.findByIdAndUpdate(req.user._id, { $push: { following: followId } });
-                  const user_ =  await User.findByIdAndUpdate(followId, { $push: { followers: req.user._id } }, {returnOriginal: false});
-                  console.log('unfollow: ',user_)
-                  return transformUser(user_)
-                }                             
+                return transformUser(user_)
+                           
             } catch(error) {
               console.log(' isFollowing : ',error)
-                throwServerError(error)
+              if (config.DB_TYPE == "ATLAS") {
+                await session.abortTransaction()
+              }
+              throwServerError(error)
+            } finally {
+              if (config.DB_TYPE == "ATLAS") {
+                await session.endSession()
+              }
             }
         }
     }

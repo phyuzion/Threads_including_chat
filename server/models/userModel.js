@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const {followSchema} = require('./followModel')
 mongoose.pluralize(null);
 
 const userSchema = new Schema(
@@ -23,14 +24,8 @@ const userSchema = new Schema(
       type: String,
       default: '',
     },
-    followers: {
-      type: [String],
-      default: [],
-    },
-    following: {
-      type: [String],
-      default: [],
-    },
+    followers: [followSchema],
+    following: [ followSchema],
     bio: {
       type: String,
       default: '',

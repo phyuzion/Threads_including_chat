@@ -61,8 +61,14 @@ export const followUnFollow = `mutation FollowUnFollow($followId: String!) {
     _id
     username
     email
-    followers
-    following
+    followers {
+      followId
+      startDate
+    }
+    following {
+      followId
+      startDate
+    }
   
   }
 }`

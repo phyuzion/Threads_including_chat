@@ -9,7 +9,8 @@ import { followUnFollow } from "../apollo/mutations.js";
 const useHandleFollowUnFollow = (user) => {
  // console.log(' useHandleFollowUnFollow user: ',user)
   const currentUser = useRecoilValue(userAtom);
-  const [following, setFollowing] = useState(user?.followers.includes(currentUser?._id));
+  //const [following, setFollowing] = useState(user?.followers.includes(currentUser?._id));
+  const [following, setFollowing] = useState();
   const [isFlwBtnLoading, SetIsFlwBtnLoading] = useState();
   const FOLLOW_UNFOLLOW = gql` ${followUnFollow}`;
   const [FOLLOW_UNFOLLOW_COMMAND] = useMutation(FOLLOW_UNFOLLOW,{fetchPolicy: 'network-only'});

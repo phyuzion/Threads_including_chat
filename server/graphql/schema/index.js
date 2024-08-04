@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express')
 
 
 const typeDefs = gql`
-
+scalar DateTime
 type Reply {
     _id: String
     userId: String,
@@ -29,14 +29,19 @@ type uploadURLs {
     imageUrl: String
     videoUrl: String
 }
+
+type Follow {
+    followId: String
+    startDate: DateTime
+}
 type User {
     _id: String
     username: String!
     email: String!
     password: String
     jwtToken: String
-    followers: [String]
-    following: [String]
+    followers: [Follow]
+    following: [Follow]
     profilePic: String
 }
 type LastMessage {
@@ -63,15 +68,39 @@ type Message {
     seen: Boolean
     img: String
 }
+type UserLimited {
+    _id: String
+    username: String
+    profilePic: String
+    bio: String
+    createdAt: DateTime
+    followersCount: Int
+    followingCount: Int
+}
+type Follows {
+    _id: String
+    username: String
+    profilePic: String
+    bio: String
+    followAt: DateTime
+}
+type UserFollow {
+    follows: [Follows]
+    count: Int
+}
 
 type Query {
+    getSuggestedUsers: [UserLimited]
+    getFollows(skip: Int! , limit: Int!, following: Boolean): UserFollow
+    getUserProfile(postedBy: String!): User
+    getProfileByName(username: String!): User
+
     getPost(postId: String): Post
     getUserPosts(username: String): [Post]
     getFeedPosts: [Post]
-    getSuggestedUsers: [User]
-    getUserProfile(postedBy: String!): User
-    getProfileByName(username: String!): User
     getPostsByHashTag(hashtag: String!, skip: Int! , limit: Int!): [Post]
+
+
     getMessages(otherUserId: String): [Message]
     getConversations: [Conversation]
 
