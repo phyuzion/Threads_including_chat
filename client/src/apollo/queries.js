@@ -1,3 +1,23 @@
+export const GetLatestPost = `query GetLatestPosts($skip: Int!, $limit: Int!) {
+  getLatestPosts(skip: $skip, limit: $limit) {
+    _id
+    postedBy
+    text
+    img
+    video
+    likes
+    replies {
+      _id
+      userId
+      text
+      userProfilePic
+      username
+    }
+    hashtags
+    createdAt
+  }
+}`
+
 export const GetPostsByHashtag = `query GetPostsByHashTag($hashtag: String!, $skip: Int!, $limit: Int!) {
   getPostsByHashTag(hashtag: $hashtag, skip: $skip, limit: $limit) {
     _id

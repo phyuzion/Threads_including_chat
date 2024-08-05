@@ -1,16 +1,20 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery ,useLazyQuery } from "@apollo/client";
 import React, { useEffect, useState } from 'react';
 import { Flex, Spinner, Text, Box, Button } from '@chakra-ui/react';
 import { ViewIcon } from '@chakra-ui/icons';
 import Post from '../components/Post';
 import { useRecoilState } from 'recoil';
 import postsAtom from '../atoms/postsAtom';
-import { GetFeedPosts } from "../apollo/queries.js";
+import { GetFeedPosts, GetLatestPost } from "../apollo/queries.js";
 
 //import { GetFeedPosts, GetLatestPosts } from "../apollo/queries.js";
 
 const GET_FEED_POST = gql`
   ${GetFeedPosts}
+`;
+
+const GET_LATEST_POST = gql`
+  ${GetLatestPost}
 `;
 
 //const GET_LATEST_POST = gql`
@@ -20,42 +24,46 @@ const GET_FEED_POST = gql`
 const HomePage = () => {
   const [posts, setPosts] = useRecoilState(postsAtom);
 
-  const [queryType, setQueryType] = useState('LATEST');
+  const [queryType, setQueryType] = useState('FEED');
 
-  const { loading, error, data } = useQuery(GET_FEED_POST, {
-    variables: { skip: 0 , limit: 10 },
-    onCompleted: (data) => {
-      setPosts(data.getFeedPosts);
-    },
-    onError: (error) => {
-      console.error('Error fetching feed posts:', error);
-    }
-  });
+  // const { loading, error, data } = useQuery(GET_FEED_POST, {
+  //   variables: { skip: 0 , limit: 10 },
+  //   onCompleted: (data) => {
+  //     setPosts(data.getFeedPosts);
+  //   },
+  //   onError: (error) => {
+  //     console.error('Error fetching feed posts:', error);
+  //   }
+  // });
 
 
-  /*
-  const { loading, error, data, refetch } = useQuery(
-    queryType === 'FEED' ? GET_FEED_POST : GET_LATEST_POST,
+  
+  const [ refetch,{loading, error, data} ] = useLazyQuery(
+    queryType == 'FEED' ? GET_FEED_POST : GET_LATEST_POST,
     {
+      variables: { skip: 0 , limit: 10 },
       onCompleted: (data) => {
-        setPosts(queryType === 'FEED' ? data.getFeedPosts : data.getLatestPosts);
+        setPosts(queryType === 'FEED' ? data?.getFeedPosts : data?.getLatestPosts);
       },
       onError: (error) => {
         console.error(`Error fetching ${queryType.toLowerCase()} posts:`, error);
       }
     }
   );
-  */
 
-  /*
+  useEffect(() => {
+    refetch();
+  }, []);
+  
   useEffect(() => {
     refetch();
   }, [queryType, refetch]);
-*/
+
   
   const handleQueryChange = () => {
     const newQueryType = queryType === 'LATEST' ? 'FEED' : 'LATEST';
-    //setQueryType(newQueryType);
+    console.log('newQueryType: ',newQueryType)
+    setQueryType(newQueryType);
     setPosts([]); // Reset posts to ensure the loading state is shown
   };
 
@@ -84,7 +92,7 @@ const HomePage = () => {
         rightIcon={<ViewIcon />}
         onClick={handleQueryChange}
       >
-        {queryType === 'LATEST' ? 'LATEST' : 'FEEDS'}
+        {queryType === 'LATEST' ? 'FEEDS' : 'LATEST'}
       </Button>
     </Box>
   );

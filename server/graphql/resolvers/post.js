@@ -8,6 +8,16 @@ const { QUERY_USER_FOLLOWING_FEEDS } = require('../aggregation/user')
 const config = require('../../config')
 module.exports = {
     Query: {
+        getLatestPosts: async (_,args,{req, res}) => {
+          const { skip,limit } = args
+          console.log(' getLatestPost : ',args)
+          result =  await Post.find({}).limit(limit)
+              .skip(skip)
+              .sort({createdAt: -1})
+              console.log(result)
+          return result
+
+        },
         getPostsByHashTag: async (_,args,{req, res}) => {
           const { hashtag,skip,limit } = args
           if(!req.user) {

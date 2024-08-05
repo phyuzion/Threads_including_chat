@@ -95,6 +95,7 @@ type Query {
     getUserProfile(postedBy: String!): User
     getProfileByName(username: String!): User
 
+    getLatestPosts(skip: Int! , limit: Int!): [Post]
     getPost(postId: String): Post
     getUserPosts(username: String): [Post]
     getFeedPosts(skip: Int! , limit: Int!): [Post]
