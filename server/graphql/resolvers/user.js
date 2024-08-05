@@ -17,24 +17,24 @@ module.exports = {
     Query: {
       getFollows: async (_,args,{req, res}) => {
         const {skip, limit , following } = args
-        console.log( ' getFollows skip: ',skip, ' limit: ',limit , ' following: ',following)
+        //console.log( ' getFollows skip: ',skip, ' limit: ',limit , ' following: ',following)
         if(!req.user) {
           throwForbiddenError()
         }
         let aggregation 
         try{ 
           aggregation  = QUERY_FOLLOWS(req.user._id,skip,limit,following)
-          console.log(' aggregation: ',aggregation)
+          //console.log(' aggregation: ',aggregation)
           const result = await User.aggregate(aggregation)
 
-          console.log('getFollows: result ', result)
+          //console.log('getFollows: result ', result)
           aggregation  = QUERY_FOLLOWS_COUNT(req.user._id,following)
           const resultCount =  await User.aggregate(aggregation)
           return  {
             follows: result,
             count : (resultCount[0] ) ? resultCount[0].count : 0
           }
-          return result
+         // return result
         } catch ( error ) {
           console.log(' getFollows error : ',error)
           throwServerError(error)
@@ -42,10 +42,10 @@ module.exports = {
       },
       getProfileByName: async (_,args,{req, res}) => {
         const {username} = args
-        console.log(' getUserProfileByName userName: ',username)
+        //console.log(' getUserProfileByName userName: ',username)
         try {
           const user = await User.findOne({username }).select('-password').select('-updatedAt').select('-jwtToken');
-          console.log('getUserProfileByName user: ',user)
+          //console.log('getUserProfileByName user: ',user)
           if(user) {
             return user
           } else {
@@ -60,7 +60,7 @@ module.exports = {
       },
       getUserProfile: async (_,args,{req, res}) => {
         const {postedBy} = args
-        console.log(' getUserProfile id: ',postedBy)
+       // console.log(' getUserProfile id: ',postedBy)
         try {
           const user = await User.findById(postedBy).select('-password').select('-updatedAt').select('-jwtToken');
           console.log('user: ',user)
@@ -86,32 +86,6 @@ module.exports = {
                 const result = await User.aggregate(aggregation)
                 console.log(result)
                 return result
-                // const usersFollowedByClient = await User.findById(userId).select('following');
-                
-                // const users = await User.aggregate([
-                //   {
-                //     $match: {
-                //       _id: { $ne: userId },
-                //       isFrozen: false,
-                //     },
-                //   },
-                //   {
-                //     $sample: { size: 10 },
-                //   },
-                // ]);
-                // const filteredUsers = users.filter(
-                //   (user) => !usersFollowedByClient.following.includes(user._id.toString())
-                // );
-                // //console.log(' get Suggested users : ',filteredUsers)
-                // if(filteredUsers && filteredUsers.length > 0 ) {
-                //   const sugusers =  transformUsers(filteredUsers)
-                //   //console.log(' sugusers: ',sugusers)
-                //   return sugusers
-
-                // } else {
-                //   console.log(' suggestedUsers does not exist')
-                //   return []
-                // }
 
               } catch (error) {
                 console.log(error.message);
@@ -125,8 +99,12 @@ module.exports = {
           throwForbiddenError()
         }        
         const { email, password, profilePic } = args
-        const session = await mongoose.startSession();
-        await session.startTransaction();
+        console.log('updateUser args ',args)
+        let session
+        if (config.DB_TYPE == "ATLAS") {
+          session = await mongoose.startSession();
+          await session.startTransaction();
+        }
         try {
 
           let user = await User.findById(req.user._id).session(session);
@@ -141,6 +119,7 @@ module.exports = {
           user.profilePic = profilePic || user.profilePic
           user.email = email || user.email;
           user = await user.save({ session });
+          console.log(' saved user : ',user)
           await Post.updateMany(
             {
               'replies.userId': user._id,
@@ -156,14 +135,20 @@ module.exports = {
   
             }
           );
-          await session.commitTransaction()
+          if (config.DB_TYPE == "ATLAS") {
+            await session.commitTransaction()
+          }
           return transformUser(user)
         } catch (error) {
           console.log(error)
-          await session.abortTransaction()
+          if (config.DB_TYPE == "ATLAS") {
+            await session.abortTransaction()
+          }
           throwServerError(error)
         } finally {
-          await session.endSession()
+          if (config.DB_TYPE == "ATLAS") {
+            await session.endSession()
+          }
         }
 
 
@@ -266,11 +251,11 @@ module.exports = {
             if(!req.user) {
                 throwForbiddenError()
             }
-            console.log( 'followUnFollow  followId: ',followId)
+            //console.log( 'followUnFollow  followId: ',followId)
             if (followId == req.user._id.toString()) {
               throwServerError('You can not follow/un-follow yourself ');
             }
-            console.log('followUnFollow: id: ',followId)
+           // console.log('followUnFollow: id: ',followId)
             let session
             if (config.DB_TYPE == "ATLAS") {
               session = await mongoose.startSession();
@@ -282,9 +267,9 @@ module.exports = {
                   following: { "$elemMatch": { followId: followId}}
                 }).session(session)
                 const isFollowing = (follow_) ? true : false
-                console.log(' isFollowing : ',isFollowing)
+              //  console.log(' isFollowing : ',isFollowing)
                 const bulkOps = getFollowUnfollowUpdate(isFollowing, req.user._id,  new ObjectId(followId))
-                console.log(' bulkOps : ',bulkOps)
+              //  console.log(' bulkOps : ',bulkOps)
                 result = await User.bulkWrite(bulkOps,{session});
                 const user_ = await User.findById(followId).session(session)
                 if (config.DB_TYPE == "ATLAS") {

@@ -80,7 +80,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
         previewUrl = data?.url;
         console.log('updateProfile previewUrl:', previewUrl);
       }
-
+      console.log('updateProfile inputs:', inputs);
       const response = await UPDATE_USER_COMMAND({
         variables: {
           email: inputs.email || null,

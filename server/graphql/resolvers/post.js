@@ -55,7 +55,7 @@ module.exports = {
 
         },
         getFeedPosts: async (_,args,{req, res}) => {
-            console.log(' getFeedPosts: ')
+            //console.log(' getFeedPosts: ')
             if(!req.user) {
                 throwForbiddenError()
             }
@@ -74,7 +74,7 @@ module.exports = {
                 });
                 //console.log(' getFeedPosts feedPosts: ',feedPosts)
                 const posts_ =  transformPosts(feedPosts)
-                console.log(' getFeedPosts posts_: ',posts_)
+                //console.log(' getFeedPosts posts_: ',posts_)
                 return posts_
               } catch (error) {
                 console.log('getFeedPosts error: ',error)
@@ -118,7 +118,7 @@ module.exports = {
                 
                 
                 const result = await updateHashTags(hashtags,post_._id,post_.postedBy,session)
-                console.log(' hastags inserted: ',result)
+                //console.log(' hastags inserted: ',result)
                 if (config.DB_TYPE == "ATLAS") {
                   await session.commitTransaction()
                 }
@@ -178,7 +178,7 @@ module.exports = {
             }
             try{
                 const post = await Post.findById(postId);
-                console.log('likeUnLikePost post: ',post)
+                //console.log('likeUnLikePost post: ',post)
                 if(!post) {
                     throwServerError('Post not found')
                 }
@@ -210,7 +210,7 @@ module.exports = {
                       );
                     
                 } 
-                console.log('liked Post : ',s)
+                //console.log('liked Post : ',s)
                 return true;
             } catch( error) {
                 throwServerError(error)
@@ -218,7 +218,7 @@ module.exports = {
         } ,
 
         replyToPost: async (_,args,{req, res}) => {
-            console.log(' replyToPost : ', args)
+            //console.log(' replyToPost : ', args)
             const { text, postId } = args;
             if(!req.user) {
                 throwForbiddenError()
@@ -234,7 +234,7 @@ module.exports = {
                 const reply = { userId, text, userProfilePic, username };
                 post.replies.push(reply);
                 await post.save();
-                console.log(' reply : ',reply)
+                //console.log(' reply : ',reply)
                 return reply
             } catch( error) {
                 throwServerError(error)

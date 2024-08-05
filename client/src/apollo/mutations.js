@@ -83,8 +83,14 @@ export const Update_User = `mutation Mutation($email: String, $password: String,
     email
     password
     jwtToken
-    followers
-    following
+    followers {
+      followId
+      startDate
+    }
+    following {
+      followId
+      startDate
+    }
     profilePic
   }
 }
