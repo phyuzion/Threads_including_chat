@@ -81,12 +81,14 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
         console.log('updateProfile previewUrl:', previewUrl);
       }
       console.log('updateProfile inputs:', inputs);
+      const variables = {
+        email: inputs.email || null,
+        password: inputs.password || null,
+        profilePic: previewUrl || null,       
+      }
+      console.log('updateProfile inputs:', inputs);
       const response = await UPDATE_USER_COMMAND({
-        variables: {
-          email: inputs.email || null,
-          password: inputs.password || null,
-          profilePic: previewUrl || null,
-        },
+        variables: variables,
       });
 
       if (response?.data) {

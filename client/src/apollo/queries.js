@@ -19,15 +19,14 @@ export const GetPostsByHashtag = `query GetPostsByHashTag($hashtag: String!, $sk
 }
 `
 
-export const GetFeedPosts = ` query GetFeedPosts {
-getFeedPosts {
+export const GetFeedPosts = ` query GetFeedPosts($skip: Int!, $limit: Int!) {
+  getFeedPosts(skip: $skip, limit: $limit) {
     _id
     postedBy
     text
     img
     video
     likes
-    hashtags
     replies {
       _id
       userId
@@ -35,6 +34,7 @@ getFeedPosts {
       userProfilePic
       username
     }
+    hashtags
     createdAt
   }
 }`

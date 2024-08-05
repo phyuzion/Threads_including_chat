@@ -21,7 +21,7 @@ type Post {
     likes: [String]
     replies: [Reply]
     hashtags: [String]
-    createdAt: String
+    createdAt: DateTime
 }
 
 type uploadURLs {
@@ -97,7 +97,7 @@ type Query {
 
     getPost(postId: String): Post
     getUserPosts(username: String): [Post]
-    getFeedPosts: [Post]
+    getFeedPosts(skip: Int! , limit: Int!): [Post]
     getPostsByHashTag(hashtag: String!, skip: Int! , limit: Int!): [Post]
 
 

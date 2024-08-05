@@ -23,6 +23,7 @@ const HomePage = () => {
   const [queryType, setQueryType] = useState('LATEST');
 
   const { loading, error, data } = useQuery(GET_FEED_POST, {
+    variables: { skip: 0 , limit: 10 },
     onCompleted: (data) => {
       setPosts(data.getFeedPosts);
     },

@@ -38,8 +38,20 @@ const LOOKUP_STAGE = (fromCollection,localFieldName,foreignFieldName,returnField
 
   }
 
+  const PROJECT_FIELD_SLICE = (fieldName, skip , limit) =>{
+    const field = "$"+fieldName
+    return {
+        $project:
+        {
+            _id: 0,
+            Posts: { $slice: [field, skip, limit] }
+        }  
+    }
+ }
+
 exports.UNWIND_STAGE = UNWIND_STAGE  
 exports.LIMIT_STAGE = LIMIT_STAGE
 exports.SKIP_STAGE = SKIP_STAGE
 exports.LOOKUP_STAGE = LOOKUP_STAGE
 exports.SORT_CREATED_AT_DESC = SORT_CREATED_AT_DESC
+exports.PROJECT_FIELD_SLICE = PROJECT_FIELD_SLICE

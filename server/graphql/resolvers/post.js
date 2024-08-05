@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const Post = require('../../models/postModel')
 const User = require('../../models/userModel')
 const { updateHashTags, getHashtagPosts } = require('../helpers/hashtags')
+const { QUERY_USER_FOLLOWING_FEEDS } = require('../aggregation/user')
 const config = require('../../config')
 module.exports = {
     Query: {
@@ -56,26 +57,16 @@ module.exports = {
         },
         getFeedPosts: async (_,args,{req, res}) => {
             //console.log(' getFeedPosts: ')
+            const { skip , limit } = args
             if(!req.user) {
                 throwForbiddenError()
             }
             try {
-                const userId = req.user._id;
-                const user = await User.findById(userId);
-                if (!user) throwServerError('User not found' );
-            
-                const userFollowing = user.following;
-                userFollowing.push(userId.toString());
-            
-                const feedPosts = await Post.find({
-                  postedBy: { $in: userFollowing },
-                }).sort({
-                  createdAt: -1,
-                });
-                //console.log(' getFeedPosts feedPosts: ',feedPosts)
-                const posts_ =  transformPosts(feedPosts)
-                //console.log(' getFeedPosts posts_: ',posts_)
-                return posts_
+                const aggregation = QUERY_USER_FOLLOWING_FEEDS(req.user._id,skip , limit )
+                const results = await User.aggregate(aggregation)
+                console.log('get feed posts : ', results)
+                
+                return results[0].Posts
               } catch (error) {
                 console.log('getFeedPosts error: ',error)
                 throwServerError(error)

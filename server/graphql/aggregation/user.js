@@ -2,8 +2,23 @@ const {
     SKIP_STAGE, 
     LIMIT_STAGE, 
     LOOKUP_STAGE, 
-    UNWIND_STAGE
+    UNWIND_STAGE,
+    PROJECT_FIELD_SLICE
  } = require('./common');
+
+ const PROJECT_SORT_CREATED_AT_POSTS = {
+    $project:
+    {
+      Posts: {
+        $sortArray: {
+          input: "$Posts",
+          sortBy: {
+            createdAt: -1
+          }
+        }
+      }
+    }
+ }
 
  const PROJECT_FOLLOWS_LIMITED = {
     $project:
@@ -148,8 +163,18 @@ const QUERY_SUGGESTED_USERS = (userId,skip,limit) => {
         PROJECT_FOLLOWS_LIMITED             
     ]
 }
+const QUERY_USER_FOLLOWING_FEEDS = (userId,skip,limit) => {
+    return [
+        MATCH_USER_ID(userId),   
+        LOOKUP_STAGE("Post","following.followId","postedBy","feedPosts"),
+        PROJECT_FIELD_SLICE("feedPosts",skip,limit),
+        PROJECT_SORT_CREATED_AT_POSTS
+
+    ]
+}
 
 exports.QUERY_FOLLOWS = QUERY_FOLLOWS
 exports.QUERY_FOLLOWS_COUNT = QUERY_FOLLOWS_COUNT
 exports.QUERY_USER_LIMITED = QUERY_USER_LIMITED
 exports.QUERY_SUGGESTED_USERS = QUERY_SUGGESTED_USERS
+exports.QUERY_USER_FOLLOWING_FEEDS = QUERY_USER_FOLLOWING_FEEDS
