@@ -36,16 +36,11 @@ function App() {
   }, [user, pathname, navigate]);
 
   return (
-    <Box
-      position={'relative'}
-      w={'full'}
-      maxW="1000px"
-      mx="auto"
-    >
-      <Box px={4}>
+    <Box position={'relative'} w={'full'} maxW='1000px' mx='auto'>
+      <Box position="fixed" top={0} left={0} right={0} zIndex={10} >
         <Header />
       </Box>
-      <Box w={'full'} display="flex" px="5%">
+      <Box w={'full'} display='flex' px='5%' pt={['40px', '50px', '60px']}>
         <Box flex={isLargerThan800px ? 8 : 1}>
           <Container maxW={'750px'} mx="auto">
             {(!isLargerThan800px && pathname !== '/auth') && <SideBar />}
