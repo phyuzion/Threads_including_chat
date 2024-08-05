@@ -15,21 +15,19 @@ const GET_FOLLOWS_USERS = gql`
 
 const SuggestedUsers = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [showMoreSuggested, setShowMoreSuggested] = useState(false);
   const showToast = useShowToast();
 
-  const [followingUsers , setFollowingUsers] = useState([])
+  const [followingUsers , setFollowingUsers] = useState([]);
 
-  const [queryMessages, { loadingusers, errors, datas }] = useLazyQuery(GET_FOLLOWS_USERS, {
+  const [queryMessages, { loading: loadingUsers, errors, data: followsData }] = useLazyQuery(GET_FOLLOWS_USERS, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      console.log('getFollows: ',data?.getFollows)
+      console.log('getFollows: ', data?.getFollows);
       if (data?.getFollows?.follows) {
         setFollowingUsers(data?.getFollows?.follows);
       }
-      
     },
     onError: (error) => {
       showToast('Error', error, 'error');
@@ -38,10 +36,9 @@ const SuggestedUsers = () => {
 
   const { loading, error, data, refetch } = useQuery(GET_SUGGESTED_USERS, {
     onCompleted: (data) => {
-      console.log(' Suggested User: ',data)
+      console.log('Suggested User: ', data);
       setIsLoading(false);
-      setSuggestedUsers(data?.getSuggestedUsers);
-      queryMessages({variables: { skip: 0, limit: 10 , following: true}})
+      queryMessages({ variables: { skip: 0, limit: 10, following: true } });
     },
     onError: (error) => {
       setIsLoading(false);
@@ -56,60 +53,56 @@ const SuggestedUsers = () => {
   };
 
   const handleFollow = async (userId) => {
-    // User follow/unfollow mutation logic goes here (if needed)
     await refetch();  // Ensure the list is updated by refetching the data
+    queryMessages({ variables: { skip: 0, limit: 10, following: true } });
   };
 
-  const visibleSuggestedUsers = showMoreSuggested ? suggestedUsers : suggestedUsers.slice(0, MAX_VISIBLE_USERS);
-  console.log(' visibleSuggestedUsers: ',visibleSuggestedUsers)
+  const visibleSuggestedUsers = showMoreSuggested ? data?.getSuggestedUsers : data?.getSuggestedUsers.slice(0, MAX_VISIBLE_USERS);
+  console.log('visibleSuggestedUsers: ', visibleSuggestedUsers);
+
   return (
     <>
       <Text mb={2} fontWeight={'bold'}>
         Following
       </Text>
       <Flex direction={'column'} gap={4}>
-        {/* Placeholder for Follow Users */}
-        {loading
-          ? [1, 2, 3, 4, 5].map((_, indx) => {
-              return (
-                <Flex key={indx} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
-                  <Box>
-                    <SkeletonCircle size={'10'} />
-                  </Box>
-                  <Flex w={'full'} flexDirection={'column'} gap={3}>
-                    <Skeleton h={'10px'} w={'80px'} />
-                    <Skeleton h={'8px'} w={'90%'} />
-                  </Flex>
+        {loadingUsers
+          ? [1, 2, 3, 4, 5].map((_, indx) => (
+              <Flex key={indx} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
+                <Box>
+                  <SkeletonCircle size={'10'} />
+                </Box>
+                <Flex w={'full'} flexDirection={'column'} gap={3}>
+                  <Skeleton h={'10px'} w={'80px'} />
+                  <Skeleton h={'8px'} w={'90%'} />
                 </Flex>
-              );
-            })
+              </Flex>
+            ))
           : followingUsers.map((user) => (
-            <FollowingUser key={user._id} user={user} />
-          ))}
+              <FollowingUser key={user._id} user={user} />
+            ))}
       </Flex>
       <Box mb={4} /> {/* Placeholder for spacing */}
       <Text mb={2} fontWeight={'bold'}>
         Suggested
       </Text>
       <Flex direction={'column'} gap={4}>
-        {loading
-          ? [1, 2, 3, 4, 5].map((_, indx) => {
-              return (
-                <Flex key={indx} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
-                  <Box>
-                    <SkeletonCircle size={'10'} />
-                  </Box>
-                  <Flex w={'full'} flexDirection={'column'} gap={3}>
-                    <Skeleton h={'10px'} w={'80px'} />
-                    <Skeleton h={'8px'} w={'90%'} />
-                  </Flex>
+        {isLoading
+          ? [1, 2, 3, 4, 5].map((_, indx) => (
+              <Flex key={indx} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
+                <Box>
+                  <SkeletonCircle size={'10'} />
+                </Box>
+                <Flex w={'full'} flexDirection={'column'} gap={3}>
+                  <Skeleton h={'10px'} w={'80px'} />
+                  <Skeleton h={'8px'} w={'90%'} />
                 </Flex>
-              );
-            })
+              </Flex>
+            ))
           : visibleSuggestedUsers.map((user) => (
               <SuggestedUser key={user._id} user={user} onFollow={handleFollow} />
             ))}
-        {!loading && suggestedUsers.length > MAX_VISIBLE_USERS && (
+        {!isLoading && data?.getSuggestedUsers.length > MAX_VISIBLE_USERS && (
           <Button onClick={toggleShowMoreSuggested} variant="link" colorScheme="blue">
             {showMoreSuggested ? 'Show Less' : 'More...'}
           </Button>
