@@ -1,9 +1,9 @@
 import { Avatar, Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { currentConversationAtom } from '../atoms/convAtoms';
 import userAtom from '../atoms/userAtom';
-import { BsCheck2All } from 'react-icons/bs';
+import { BsCheck2All, BsQuestion } from 'react-icons/bs';
 import { NavLink } from 'react-router-dom';
 
 const Message = ({ message }) => {
@@ -12,7 +12,7 @@ const Message = ({ message }) => {
 
   const [imgLoaded, setImageLoaded] = useState(false);
 
-  const isCurrentUser = currentUser._id === message.sender;
+  const isCurrentUser = currentUser?.loginUser?._id === message.sender;
 
   return (
     <Flex
@@ -21,11 +21,18 @@ const Message = ({ message }) => {
       m={1}
       maxW={'80%'}
     >
-      <Flex alignItems={'center'} gap={2} mb={1}>
-        <Avatar size={'xs'} src={isCurrentUser ? currentUser.profilePic : currentConversation.userProfilePic} />
-        <Text fontSize={'xs'} fontWeight={700}>
-          {isCurrentUser ? currentUser.username : currentConversation.username}
-        </Text>
+      <Flex alignItems={'center'} justifyContent="space-between" mb={1}>
+        <Flex alignItems={'center'} gap={2}>
+          <Avatar size={'xs'} src={isCurrentUser ? currentUser?.loginUser?.profilePic : currentConversation.userProfilePic} />
+          <Text fontSize={'xs'} fontWeight={700}>
+            {isCurrentUser ? currentUser?.loginUser?.username : currentConversation.username}
+          </Text>
+        </Flex>
+        {isCurrentUser && (
+          <Box color={message?.seen ? 'blue.400' : 'gray.400'}>
+            {message?.seen ? <BsCheck2All size={12} /> : <BsQuestion size={12} />}
+          </Box>
+        )}
       </Flex>
       <Flex
         direction={'column'}
@@ -54,11 +61,6 @@ const Message = ({ message }) => {
               <Image src={message.img} alt='Message Media' borderRadius={4} />
             </Flex>
           </NavLink>
-        )}
-        {isCurrentUser && (
-          <Box alignSelf={'flex-end'} ml={1} color={message?.seen ? 'blue.400' : ''}>
-            <BsCheck2All size={12} />
-          </Box>
         )}
       </Flex>
     </Flex>
