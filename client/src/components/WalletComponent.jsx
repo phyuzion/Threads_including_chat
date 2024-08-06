@@ -51,7 +51,7 @@ const WalletInterface = () => {
           </Flex>
         </>
       )}
-      <Box transform="scale(0.8)" transformOrigin="top left">
+      <Box transform="scale(0.7)" transformOrigin="center">
         <WalletMultiButton />
       </Box>
     </Box>

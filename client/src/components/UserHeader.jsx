@@ -62,18 +62,22 @@ function UserHeader({ user }) {
   const followerCount = updatedUser?.followers.length || user.followers.length;
 
   return (
-    <VStack alignItems={'start'} w="full" p={[2, 4]} spacing={[2, 4]}>
-      <Flex justifyContent={'space-between'} w="full" alignItems="center" flexDirection={['column', 'row']}>
-        <Box mb={[4, 0]}>
-          <Text fontSize={['xl', '2xl']} fontWeight="bold">
-            {user?.username}
-          </Text>
-          <Text fontSize={['sm', 'md']}>{user?.bio}</Text>
-          <WalletComponent />
-        </Box>
-        <Box textAlign="center">
+    <Flex w="full" p={[2, 4]} flexDirection="column" spacing={[2, 4]}>
+      <Flex
+        w="full"
+        flexDirection={['column', 'row']}
+        justifyContent="space-between"
+        alignItems="stretch"
+      >
+        <Flex
+          w={['full', '50%']}
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          mt={[4, 0]}
+        >
           <Avatar name={user?.name} size={{ base: 'xl', md: '2xl' }} src={user?.profilePic} mb={[2, 4]} />
-          <Box mt={2}>
+          <Box mt={2} textAlign="center">
             {currentUser?.loginUser?._id === user?._id ? (
               <>
                 <Button onClick={onOpen} size="sm">
@@ -83,18 +87,34 @@ function UserHeader({ user }) {
               </>
             ) : (
               <>
-                <Button onClick={handleFollowButtonClick} isLoading={isFlwBtnLoading} size="sm">
+                <Button onClick={handleFollowButtonClick} isLoading={isFlwBtnLoading} size={["xs","sm"]} margin={1}>
                   {isFollowing ? 'Unfollow' : 'Follow'}
                 </Button>
-                <Button onClick={handleSendMessage} size="sm" ml={2}>
+                <Button onClick={handleSendMessage} size={["xs","sm"]} margin={1}>
                   Message
                 </Button>
               </>
             )}
           </Box>
-        </Box>
+        </Flex>
+        <Flex
+          w={['full', '50%']}
+          flexDirection="column"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Text fontSize={['xl', '2xl']} fontWeight="bold">
+            {user?.username}
+          </Text>
+          <Text fontSize={['sm', 'md']}>
+            {user?.bio}
+          </Text>
+          <Box mt="auto" alignSelf="center">
+            <WalletComponent />
+          </Box>
+        </Flex>
       </Flex>
-      <Flex justifyContent="space-between" w="full" alignItems="center">
+      <Flex justifyContent="space-between" w="full" alignItems="center" mt={[0, 1]}>
         <Text fontSize={['sm', 'md']} color="gray.light">{followerCount} Followers</Text>
         <Box>
           <Menu>
@@ -110,7 +130,8 @@ function UserHeader({ user }) {
         </Box>
       </Flex>
       <Divider />
-    </VStack>
+    </Flex>
+
   );
 }
 
