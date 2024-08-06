@@ -1,15 +1,12 @@
 import { Avatar, Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { currentConversationAtom } from '../atoms/convAtoms';
 import userAtom from '../atoms/userAtom';
 import { BsCheck2All, BsQuestion } from 'react-icons/bs';
 import { NavLink } from 'react-router-dom';
 
-const Message = ({ message }) => {
-  const currentConversation = useRecoilValue(currentConversationAtom);
+const Message = ({ message, otherUser }) => {
   const currentUser = useRecoilValue(userAtom);
-
   const [imgLoaded, setImageLoaded] = useState(false);
 
   const isCurrentUser = currentUser?.loginUser?._id === message.sender;
@@ -23,9 +20,9 @@ const Message = ({ message }) => {
     >
       <Flex alignItems={'center'} justifyContent="space-between" mb={1}>
         <Flex alignItems={'center'} gap={2}>
-          <Avatar size={'xs'} src={isCurrentUser ? currentUser?.loginUser?.profilePic : currentConversation.userProfilePic} />
+          <Avatar size={'xs'} src={isCurrentUser ? currentUser?.loginUser?.profilePic : otherUser?.profilePic} />
           <Text fontSize={'xs'} fontWeight={700}>
-            {isCurrentUser ? currentUser?.loginUser?.username : currentConversation.username}
+            {isCurrentUser ? currentUser?.loginUser.username : otherUser?.username}
           </Text>
         </Flex>
         {isCurrentUser && (

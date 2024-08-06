@@ -21,7 +21,7 @@ import messageNotificationSound from '../assets/sounds/message.mp3';
 import { gql, useLazyQuery } from '@apollo/client';
 import { GetMessages } from '../apollo/queries';
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import useGetUserProfile from '../hooks/useGetUserProfile'; // 훅을 임포트합니다.
+import getUserProfile from '../hooks/useGetUserProfile';
 
 const GET_MESSAGES = gql`
   ${GetMessages}
@@ -38,9 +38,9 @@ const MessageContainer = () => {
   const showToast = useShowToast();
   const { socket, onlineUsers } = useSocket();
 
-  const { user: otherUser, isLoading: loadingUser } = useGetUserProfile(); // 훅을 사용합니다.
+  const { user: otherUser, isLoading: loadingUser } = getUserProfile();
 
-  const isOnline = onlineUsers?.includes(otherUser?.username);
+  const isOnline = onlineUsers?.includes(otherUser?._id);
 
   const latestMessageRef = useRef(null);
 
@@ -67,7 +67,7 @@ const MessageContainer = () => {
     if (lastMessageFromOtherUser) {
       socket.emit('markMessagesAsSeen', {
         conversationId: messages[0]?.conversationId,
-        userId: otherUser?.username,
+        userId: otherUser?._id,
       });
     }
 
@@ -113,15 +113,19 @@ const MessageContainer = () => {
       setLoadingMessages(true);
       setMessages([]);
       try {
-        queryMessages({ variables: { otherUserId: username } });
+        if (otherUser) {
+          queryMessages({ variables: { otherUserId: otherUser._id } });
+        }
       } catch (err) {
         console.log(err);
         showToast('Error', err.message, 'error');
       }
     };
 
-    getMessages();
-  }, [showToast, username]);
+    if (otherUser) {
+      getMessages();
+    }
+  }, [showToast, otherUser]);
 
   if (loadingUser) {
     return (
@@ -223,7 +227,7 @@ const MessageContainer = () => {
                 direction={'column'}
                 ref={messages.length - 1 === index ? latestMessageRef : null}
               >
-                <Message message={message} />
+                <Message message={message} otherUser={otherUser} />
               </Flex>
             ))}
       </Flex>
