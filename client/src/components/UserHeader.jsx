@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
   Box,
@@ -28,6 +28,15 @@ function UserHeader({ user }) {
   const currentUser = useRecoilValue(userAtom);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    if (user?.followers.some(follower => follower.followId === currentUser?.loginUser?._id)) {
+      setIsFollowing(true);
+    } else {
+      setIsFollowing(false);
+    }
+  }, [user, currentUser]);
 
   const CopyUrl = async () => {
     const currentURL = window.location.href;
@@ -35,10 +44,15 @@ function UserHeader({ user }) {
     toast({ title: 'Copied!', status: 'success' });
   };
 
-  const { following, isFlwBtnLoading, handleFollowUnFollow } = useHandleFollowUnFollow(user);
+  const { isFlwBtnLoading, handleFollowUnFollow } = useHandleFollowUnFollow(user);
 
   const handleSendMessage = () => {
     navigate(`/chat/${user.username}`);
+  };
+
+  const handleFollowButtonClick = () => {
+    handleFollowUnFollow();
+    setIsFollowing(!isFollowing);
   };
 
   return (
@@ -63,8 +77,8 @@ function UserHeader({ user }) {
               </>
             ) : (
               <>
-                <Button onClick={handleFollowUnFollow} isLoading={isFlwBtnLoading} size="sm">
-                  {following ? 'Unfollow' : 'Follow'}
+                <Button onClick={handleFollowButtonClick} isLoading={isFlwBtnLoading} size="sm">
+                  {isFollowing ? 'Unfollow' : 'Follow'}
                 </Button>
                 <Button onClick={handleSendMessage} size="sm" ml={2}>
                   Message
