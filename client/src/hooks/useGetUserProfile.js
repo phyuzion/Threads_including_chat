@@ -8,18 +8,19 @@ const GET_PROFILE_BY_NAME = gql`
   ${GetProfileByName}
 `;
 
-const getUserProfile = () => {
+const getUserProfile = (usernameFromProps) => {
+  const { username: usernameFromParams } = useParams();
+  const username = usernameFromProps || usernameFromParams;
+
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const showToast = useShowToast();
 
-  const { username } = useParams();
-  
-
-  //console.log(' getProfileName username: ',username)
-  const { loading , error , data }=  useQuery(GET_PROFILE_BY_NAME,{
-    variables: {username},
+  const { loading, error, data, refetch } = useQuery(GET_PROFILE_BY_NAME, {
+    variables: { username },
+    skip: !username, // Skip the query if username is not provided
     onCompleted: (result) => {
-      console.log('getProfileName result: ',result)
+      console.log('getProfileName result: ', result);
       if (result?.getProfileByName?.isFrozen) {
         setUser(null);
         return;
@@ -28,23 +29,20 @@ const getUserProfile = () => {
       setIsLoading(false);
     },
     onError: (error) => {
-      console.log('getUserProfileName error : ',error,' post: ',post)
+      console.log('getUserProfileName error : ', error);
+      showToast('Error', error.message, 'error');
     },
     fetchPolicy: "network-only",
-  })
-  console.log('getUserProfile loading: ',loading)
+  });
 
-    //setIsLoading(true)
+  useEffect(() => {
+    if (data) {
+      setUser(data.getProfileByName);
+    }
+    setIsLoading(loading);
+  }, [data, loading]);
 
-
-  if(error) {
-    console.log('getUserProfile error : ',error)
-   
-  }
-
- 
-  console.log(' getUserProfile user: ',user , ' isLoading : ',isLoading)
-  return { user, isLoading };
+  return { user, isLoading, error, refetch };
 };
 
 export default getUserProfile;

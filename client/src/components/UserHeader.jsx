@@ -22,6 +22,7 @@ import userAtom from '../atoms/userAtom.js';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow.js';
 import UpdateProfilePage from '../pages/UpdateProfilePage';
 import WalletComponent from './WalletComponent.jsx';
+import getUserProfile from '../hooks/useGetUserProfile';
 
 function UserHeader({ user }) {
   const toast = useToast();
@@ -30,13 +31,15 @@ function UserHeader({ user }) {
   const navigate = useNavigate();
   const [isFollowing, setIsFollowing] = useState(false);
 
+  const { user: updatedUser, refetch } = getUserProfile(user.username);
+
   useEffect(() => {
-    if (user?.followers.some(follower => follower.followId === currentUser?.loginUser?._id)) {
+    if (updatedUser?.followers.some(follower => follower.followId === currentUser?.loginUser?._id)) {
       setIsFollowing(true);
     } else {
       setIsFollowing(false);
     }
-  }, [user, currentUser]);
+  }, [updatedUser, currentUser]);
 
   const CopyUrl = async () => {
     const currentURL = window.location.href;
@@ -49,11 +52,14 @@ function UserHeader({ user }) {
   const handleFollowButtonClick = async () => {
     await handleFollowUnFollow();
     setIsFollowing(!isFollowing);
+    refetch(); // 사용자 데이터를 다시 가져와서 업데이트
   };
 
   const handleSendMessage = () => {
     navigate(`/chat/${user.username}`);
   };
+
+  const followerCount = updatedUser?.followers.length || user.followers.length;
 
   return (
     <VStack alignItems={'start'} w="full" p={[2, 4]} spacing={[2, 4]}>
@@ -89,7 +95,7 @@ function UserHeader({ user }) {
         </Box>
       </Flex>
       <Flex justifyContent="space-between" w="full" alignItems="center">
-        <Text fontSize={['sm', 'md']} color="gray.light">{user?.followers.length} Followers</Text>
+        <Text fontSize={['sm', 'md']} color="gray.light">{followerCount} Followers</Text>
         <Box>
           <Menu>
             <MenuButton>
