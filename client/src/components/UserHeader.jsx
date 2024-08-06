@@ -17,15 +17,17 @@ import {
 } from '@chakra-ui/react';
 import { CgMoreO } from 'react-icons/cg';
 import { useRecoilValue } from 'recoil';
+import { useNavigate } from 'react-router-dom';
 import userAtom from '../atoms/userAtom.js';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow.js';
 import UpdateProfilePage from '../pages/UpdateProfilePage';
-import WalletComponent from './WalletComponent.jsx'
+import WalletComponent from './WalletComponent.jsx';
 
 function UserHeader({ user }) {
   const toast = useToast();
   const currentUser = useRecoilValue(userAtom);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const CopyUrl = async () => {
     const currentURL = window.location.href;
@@ -34,6 +36,10 @@ function UserHeader({ user }) {
   };
 
   const { following, isFlwBtnLoading, handleFollowUnFollow } = useHandleFollowUnFollow(user);
+
+  const handleSendMessage = () => {
+    navigate(`/chat/${user.username}`);
+  };
 
   return (
     <VStack alignItems={'start'} w="full" p={[2, 4]} spacing={[2, 4]}>
@@ -56,9 +62,14 @@ function UserHeader({ user }) {
                 <UpdateProfilePage isOpen={isOpen} onClose={onClose} />
               </>
             ) : (
-              <Button onClick={handleFollowUnFollow} isLoading={isFlwBtnLoading} size="sm">
-                {following ? 'Unfollow' : 'Follow'}
-              </Button>
+              <>
+                <Button onClick={handleFollowUnFollow} isLoading={isFlwBtnLoading} size="sm">
+                  {following ? 'Unfollow' : 'Follow'}
+                </Button>
+                <Button onClick={handleSendMessage} size="sm" ml={2}>
+                  Message
+                </Button>
+              </>
             )}
           </Box>
         </Box>
