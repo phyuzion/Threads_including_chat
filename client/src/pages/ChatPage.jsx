@@ -11,13 +11,12 @@ import {
 } from '@chakra-ui/react';
 import { BsSearchHeartFill } from 'react-icons/bs';
 import Conversation from '../components/Conversation';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { conversationsAtom, currentConversationAtom } from '../atoms/convAtoms';
+import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import { useSocket } from '../context/SocketContext';
 import { gql, useLazyQuery } from '@apollo/client';
 import { GetProfileByName, GetConversations } from '../apollo/queries';
-import MessageContainer from '../components/MessageContainer';
+import { useNavigate } from 'react-router-dom';
 
 const GET_USER_PROFILE_BY_NAME = gql`
   ${GetProfileByName}
@@ -27,15 +26,14 @@ const GET_CONVERSATIONS = gql`
 `;
 
 const ChatPage = () => {
-  const [conversations, setConversations] = useRecoilState(conversationsAtom);
-  const [currentConversation, setCurrentConversation] = useRecoilState(currentConversationAtom);
-  const currentUser = useRecoilValue(userAtom);
-
+  const [conversations, setConversations] = useState([]);
   const [loadingConversations, setLoadingConversations] = useState(true);
   const [searchText, setSearchText] = useState('');
-  const [searchingConversation, setSearchingConversation] = useState();
+  const [searchingConversation, setSearchingConversation] = useState(false);
 
+  const currentUser = useRecoilValue(userAtom);
   const { socket, onlineUsers } = useSocket();
+  const navigate = useNavigate();
 
   useEffect(() => {
     socket?.on('newMessage', (newMessage) => {
@@ -49,7 +47,6 @@ const ChatPage = () => {
           }
           return conversation;
         });
-
         return updatedConversation;
       });
     });
@@ -66,11 +63,13 @@ const ChatPage = () => {
           }
           return conversation;
         });
-
         return updatedConversation;
       });
     });
-    return () => socket?.off('newMessage');
+    return () => {
+      socket?.off('newMessage');
+      socket?.off('messagesSeen');
+    };
   }, [socket]);
 
   const [queryConversations, { loading, error, data }] = useLazyQuery(GET_CONVERSATIONS, {
@@ -81,13 +80,15 @@ const ChatPage = () => {
       if (data?.getConversations) {
         setConversations(data?.getConversations);
       }
+      setLoadingConversations(false);
     },
     onError: (error) => {
       console.log(error);
+      setLoadingConversations(false);
     },
   });
 
-  const [handleSearch, { loading_, error_, data_ }] = useLazyQuery(GET_USER_PROFILE_BY_NAME, {
+  const [handleSearch, { loading: loadingSearch, data: searchData }] = useLazyQuery(GET_USER_PROFILE_BY_NAME, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
@@ -96,115 +97,70 @@ const ChatPage = () => {
         return;
       }
       const searchedUser = data?.getProfileByName;
-      if (conversations.find((conversation) => conversation.participants[0]._id === currentUser._id)) {
-        const conversation_ = {
-          _id: conversations.find((conversation) => conversation.participants[0]._id === searchedUser._id.toString()),
-          userId: searchedUser._id.toString(),
-          username: searchedUser.username,
-          userProfilePic: searchedUser.profilePic,
-        };
-        console.log(' ChatPage conversation_ : ', conversation_);
-        setCurrentConversation(conversation_);
-        return;
-      }
-
-      const mockConversation = {
-        mock: true,
-        _id: Date.now(),
-        participants: [
-          {
-            _id: searchedUser._id.toString(),
-            username: searchedUser.username,
-            profilePic: searchedUser.profilePic,
-          },
-        ],
-        lastMessage: {
-          text: '',
-          sender: '',
-        },
-      };
-
-      setConversations((prevConv) => {
-        return [mockConversation, ...prevConv];
-      });
+      navigate(`/chat/${searchedUser.username}`);
     },
     onError: (error) => {
-      console.error('getPostsByHashTag error:', error);
+      console.error('handleSearch error:', error);
+      setSearchingConversation(false);
     },
   });
 
   useEffect(() => {
-    const getConversations = async () => {
-      setLoadingConversations(true);
-      setCurrentConversation({});
-      try {
-        console.log('getConversations ');
-        queryConversations();
-      } catch (error) {
-        console.log('getConversations :', error);
-      } finally {
-        setLoadingConversations(false);
-      }
-    };
-    getConversations();
+    queryConversations();
   }, []);
 
   const handleConversationSearch = async (e) => {
     e.preventDefault();
-    console.log('handleConversationSearch ');
+    console.log('handleConversationSearch');
     setSearchingConversation(true);
     try {
       handleSearch({ variables: { username: searchText } });
     } catch (error) {
       console.log(error);
-    } finally {
       setSearchingConversation(false);
     }
   };
 
   return (
     <Box position="relative">
-      {!currentConversation?._id ? (
-        <Flex direction={'column'} gap={[2, 3, 4]} mt={[4, 6, 8]}>
-          <Text fontWeight={700} color={useColorModeValue('grey.600', 'grey.400')}>
-            Your Conversations
-          </Text>
-          <form onSubmit={handleConversationSearch}>
-            <Flex alignItems={'center'} gap={2}>
-              <Input
-                placeholder='Search user to start conversation'
-                onChange={(e) => setSearchText(e.target.value)}
-                value={searchText}
-              ></Input>
-              <Button size={'md'} type={'submit'} isLoading={searchingConversation}>
-                <BsSearchHeartFill />
-              </Button>
-            </Flex>
-          </form>
-          {loadingConversations &&
-            [0, 1, 2, 3, 4].map((_, i) => (
-              <Flex key={i} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
-                <Box>
-                  <SkeletonCircle size={'10'} />
-                </Box>
-                <Flex w={'full'} flexDirection={'column'} gap={3}>
-                  <Skeleton h={'10px'} w={'80px'} />
-                  <Skeleton h={'8px'} w={'90%'} />
-                </Flex>
+      <Flex direction={'column'} gap={[2, 3, 4]} mt={[4, 6, 8]}>
+        <Text fontWeight={700} color={useColorModeValue('grey.600', 'grey.400')}>
+          Your Conversations
+        </Text>
+        <form onSubmit={handleConversationSearch}>
+          <Flex alignItems={'center'} gap={2}>
+            <Input
+              placeholder='Search user to start conversation'
+              onChange={(e) => setSearchText(e.target.value)}
+              value={searchText}
+            />
+            <Button size={'md'} type={'submit'} isLoading={searchingConversation}>
+              <BsSearchHeartFill />
+            </Button>
+          </Flex>
+        </form>
+        {loadingConversations &&
+          [0, 1, 2, 3, 4].map((_, i) => (
+            <Flex key={i} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
+              <Box>
+                <SkeletonCircle size={'10'} />
+              </Box>
+              <Flex w={'full'} flexDirection={'column'} gap={3}>
+                <Skeleton h={'10px'} w={'80px'} />
+                <Skeleton h={'8px'} w={'90%'} />
               </Flex>
-            ))}
-          {!loadingConversations &&
-            conversations?.map((conversation) => (
-              <Conversation
-                isOnline={onlineUsers?.includes(conversation?.participants[0]?._id)}
-                key={conversation._id}
-                conversation={conversation}
-              />
-            ))}
-        </Flex>
-      ) : (
-        <MessageContainer />
-      )}
+            </Flex>
+          ))}
+        {!loadingConversations &&
+          conversations.map((conversation) => (
+            <Conversation
+              isOnline={onlineUsers?.includes(conversation?.participants[0]?._id)}
+              key={conversation._id}
+              conversation={conversation}
+              onClick={() => navigate(`/chat/${conversation.participants[0].username}`)}
+            />
+          ))}
+      </Flex>
     </Box>
   );
 };

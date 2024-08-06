@@ -10,9 +10,8 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { currentConversationAtom } from '../atoms/convAtoms';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import useShowToast from '../hooks/useShowToast';
 import Message from './Message';
 import MessageInput from './MessageInput';
@@ -22,15 +21,15 @@ import messageNotificationSound from '../assets/sounds/message.mp3';
 import { gql, useLazyQuery } from '@apollo/client';
 import { GetMessages } from '../apollo/queries';
 import { ArrowBackIcon } from '@chakra-ui/icons';
+import useGetUserProfile from '../hooks/useGetUserProfile'; // 훅을 임포트합니다.
 
 const GET_MESSAGES = gql`
   ${GetMessages}
 `;
 
 const MessageContainer = () => {
-  const currentConversation = useRecoilValue(currentConversationAtom);
+  const { username } = useParams();
   const currentUser = useRecoilValue(userAtom);
-  const setCurrentConversation = useSetRecoilState(currentConversationAtom);
   const navigate = useNavigate();
 
   const [messages, setMessages] = useState([]);
@@ -39,7 +38,9 @@ const MessageContainer = () => {
   const showToast = useShowToast();
   const { socket, onlineUsers } = useSocket();
 
-  const isOnline = onlineUsers?.includes(currentConversation.userId);
+  const { user: otherUser, isLoading: loadingUser } = useGetUserProfile(); // 훅을 사용합니다.
+
+  const isOnline = onlineUsers?.includes(otherUser?.username);
 
   const latestMessageRef = useRef(null);
 
@@ -65,14 +66,14 @@ const MessageContainer = () => {
 
     if (lastMessageFromOtherUser) {
       socket.emit('markMessagesAsSeen', {
-        conversationId: currentConversation._id,
-        userId: currentConversation.userId,
+        conversationId: messages[0]?.conversationId,
+        userId: otherUser?.username,
       });
     }
 
     socket.on('messagesSeen', ({ conversationId }) => {
       console.log('MessageContainer messagesSeen');
-      if (conversationId === currentConversation._id) {
+      if (conversationId === messages[0]?.conversationId) {
         setMessages((prevMessages) => {
           return prevMessages.map((message) => {
             if (message?.sender === currentUser._id) {
@@ -86,7 +87,7 @@ const MessageContainer = () => {
         });
       }
     });
-  }, [socket, currentUser._id, messages, currentConversation]);
+  }, [socket, currentUser._id, messages, otherUser]);
 
   useEffect(() => {
     latestMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -99,9 +100,11 @@ const MessageContainer = () => {
       if (data?.getMessages) {
         setMessages(data?.getMessages);
       }
+      setLoadingMessages(false);
     },
     onError: (error) => {
-      showToast('Error', error, 'error');
+      showToast('Error', error.message, 'error');
+      setLoadingMessages(false);
     },
   });
 
@@ -110,21 +113,32 @@ const MessageContainer = () => {
       setLoadingMessages(true);
       setMessages([]);
       try {
-        if (currentConversation.mock) return;
-        queryMessages({ variables: { otherUserId: currentConversation.userId } });
+        queryMessages({ variables: { otherUserId: username } });
       } catch (err) {
         console.log(err);
         showToast('Error', err.message, 'error');
-      } finally {
-        setLoadingMessages(false);
       }
     };
 
     getMessages();
-  }, [showToast, currentConversation._id, currentConversation.mock]);
+  }, [showToast, username]);
 
-  // for chat message's unique key. ( will tell to Sujith for set right unique key)
-  let keyNumber = 0;
+  if (loadingUser) {
+    return (
+      <Flex
+        flex={70}
+        bg={useColorModeValue('gray.200', 'gray.dark')}
+        borderRadius={'md'}
+        p={2}
+        direction={'column'}
+        height="90vh"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text>Loading user profile...</Text>
+      </Flex>
+    );
+  }
 
   return (
     <Flex
@@ -148,13 +162,10 @@ const MessageContainer = () => {
       >
         <IconButton
           icon={<ArrowBackIcon />}
-          onClick={() => {
-            setCurrentConversation({});
-            navigate('/chat');
-          }}
+          onClick={() => navigate('/chat')}
         />
         <Avatar
-          src={currentConversation.userProfilePic}
+          src={otherUser?.profilePic}
           size={{
             base: 'xs',
             sm: 'sm',
@@ -163,7 +174,7 @@ const MessageContainer = () => {
         />
         <Stack gap={1}>
           <Text fontWeight={700} display={'flex'} alignItems={'center'} gap={1}>
-            {currentConversation.username}
+            {otherUser?.username}
           </Text>
           {isOnline ? (
             <Text fontWeight={400} fontSize={'xs'} color={'green.400'}>
@@ -206,18 +217,15 @@ const MessageContainer = () => {
                 {i % 2 !== 0 && <SkeletonCircle size={7} />}
               </Flex>
             ))
-          : messages?.map((message) => {
-              keyNumber++; // for unique key
-              return (
-                <Flex
-                  key={keyNumber}  // added unique key prop
-                  direction={'column'}
-                  ref={messages?.length - 1 === messages?.indexOf(message) ? latestMessageRef : null}
-                >
-                  <Message message={message} />
-                </Flex>
-              );
-            })}
+          : messages.map((message, index) => (
+              <Flex
+                key={index}
+                direction={'column'}
+                ref={messages.length - 1 === index ? latestMessageRef : null}
+              >
+                <Message message={message} />
+              </Flex>
+            ))}
       </Flex>
 
       {/* Footer */}

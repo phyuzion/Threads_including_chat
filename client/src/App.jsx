@@ -1,9 +1,5 @@
 import { React, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  useMediaQuery,
-} from '@chakra-ui/react';
+import { Box, Container, useMediaQuery } from '@chakra-ui/react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from './atoms/userAtom';
@@ -20,6 +16,7 @@ import SettingsPage from './pages/SettingsPage';
 import setupApolloClient from "./apollo/apolloindex.js";
 import SideBar from './components/SideBar';
 import SuggestedUsers from './components/SuggestedUsers';
+import MessageContainer from './components/MessageContainer'; // MessageContainer import
 
 function App() {
   const user = useRecoilValue(userAtom);
@@ -73,6 +70,7 @@ function App() {
               />
               <Route path='/:username/post/:postId' element={<PostPage />} />
               <Route path='/chat' element={user ? <ChatPage /> : <Navigate to={'/auth'} />} />
+              <Route path='/chat/:username' element={user ? <MessageContainer /> : <Navigate to={'/auth'} />} /> {/* 추가된 부분 */}
               <Route path='/settings' element={user ? <SettingsPage /> : <Navigate to={'/auth'} />} />
             </Routes>
           </Container>
