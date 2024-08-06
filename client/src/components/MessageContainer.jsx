@@ -2,7 +2,7 @@ import {
   Avatar,
   Divider,
   Flex,
-  Image,
+  IconButton,
   Skeleton,
   SkeletonCircle,
   Stack,
@@ -10,9 +10,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { currentConversationAtom } from '../atoms/convAtoms';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { currentConversationAtom, conversationsAtom } from '../atoms/convAtoms';
 import useShowToast from '../hooks/useShowToast';
 import Message from './Message';
 import MessageInput from './MessageInput';
@@ -21,15 +21,17 @@ import userAtom from '../atoms/userAtom';
 import messageNotificationSound from '../assets/sounds/message.mp3';
 import { gql, useLazyQuery } from '@apollo/client';
 import { GetMessages } from '../apollo/queries';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+
 const GET_MESSAGES = gql`
   ${GetMessages}
 `;
 
-
 const MessageContainer = () => {
   const currentConversation = useRecoilValue(currentConversationAtom);
-  console.log('MessageContainer currentConversation: ',currentConversation)
   const currentUser = useRecoilValue(userAtom);
+  const setCurrentConversation = useSetRecoilState(currentConversationAtom);
+  const navigate = useNavigate();
 
   const [messages, setMessages] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
@@ -43,7 +45,7 @@ const MessageContainer = () => {
 
   useEffect(() => {
     socket.on('newMessage', (newMessage) => {
-      console.log(' MessageConatiner newMessage: ',newMessage)
+      console.log('MessageContainer newMessage: ', newMessage);
       setMessages((prevMessages) => {
         return [...prevMessages, newMessage];
       });
@@ -69,7 +71,7 @@ const MessageContainer = () => {
     }
 
     socket.on('messagesSeen', ({ conversationId }) => {
-      console.log('MessageContainer messagesSeen')
+      console.log('MessageContainer messagesSeen');
       if (conversationId === currentConversation._id) {
         setMessages((prevMessages) => {
           return prevMessages.map((message) => {
@@ -109,19 +111,7 @@ const MessageContainer = () => {
       setMessages([]);
       try {
         if (currentConversation.mock) return;
-        queryMessages({variables: { otherUserId: currentConversation.userId }})
-        // const res = await fetch(`api/messages/${currentConversation.userId}`, {
-        //   method: 'GET',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
-        // const data = await res.json();
-        // if (data.error) {
-        //   showToast('Error', data.error, 'error');
-        //   return;
-        // }
-        // setMessages(data);
+        queryMessages({ variables: { otherUserId: currentConversation.userId } });
       } catch (err) {
         console.log(err);
         showToast('Error', err.message, 'error');
@@ -140,38 +130,60 @@ const MessageContainer = () => {
       borderRadius={'md'}
       p={2}
       direction={'column'}
+      height="90vh"
     >
       {/* Header */}
-      <NavLink to={`/${currentConversation.username}`}>
-        <Flex alignItems={'center'} p={2} gap={2} w={'full'}>
-          <Avatar
-            src={currentConversation.userProfilePic}
-            size={{
-              base: 'xs',
-              sm: 'sm',
-              md: 'md',
-            }}
-          />
-          <Stack gap={1}>
-            <Text fontWeight={700} display={'flex'} alignItems={'center'} gap={1}>
-              {currentConversation.username} <Image src='/verified.png' w={4} />
+      <Flex
+        alignItems={'center'}
+        p={2}
+        gap={2}
+        w={'full'}
+        position="sticky"
+        top={0}
+        bg={useColorModeValue('gray.200', 'gray.dark')}
+        zIndex={1}
+      >
+        <IconButton
+          icon={<ArrowBackIcon />}
+          onClick={() => {
+            setCurrentConversation({});
+            navigate('/chat');
+          }}
+        />
+        <Avatar
+          src={currentConversation.userProfilePic}
+          size={{
+            base: 'xs',
+            sm: 'sm',
+            md: 'md',
+          }}
+        />
+        <Stack gap={1}>
+          <Text fontWeight={700} display={'flex'} alignItems={'center'} gap={1}>
+            {currentConversation.username}
+          </Text>
+          {isOnline ? (
+            <Text fontWeight={400} fontSize={'xs'} color={'green.400'}>
+              Online
             </Text>
-            {isOnline ? (
-              <Text fontWeight={400} fontSize={'xs'} color={'green.400'}>
-                Online
-              </Text>
-            ) : (
-              <Text fontWeight={400} fontSize={'xs'} color={'gray'}>
-                Offline
-              </Text>
-            )}
-          </Stack>
-        </Flex>
-        <Divider />
-      </NavLink>
+          ) : (
+            <Text fontWeight={400} fontSize={'xs'} color={'gray'}>
+              Offline
+            </Text>
+          )}
+        </Stack>
+      </Flex>
+      <Divider />
 
       {/* Body */}
-      <Flex flexDirection={'column'} gap={2} overflowY={'auto'} my={4} p={1} h={'550px'}>
+      <Flex
+        flexDirection={'column'}
+        gap={2}
+        overflowY={'auto'}
+        flex={1}
+        my={4}
+        p={1}
+      >
         {loadingMessages
           ? [...Array(5)].map((_, i) => (
               <Flex
@@ -194,16 +206,26 @@ const MessageContainer = () => {
           : messages?.map((message) => {
               return (
                 <Flex
-                  key={message?._id}
+                  key={message._id}
                   direction={'column'}
                   ref={messages?.length - 1 === messages?.indexOf(message) ? latestMessageRef : null}
                 >
-                  <Message message={message} />
+                  <Message message={message} key={message._id} />
                 </Flex>
               );
             })}
       </Flex>
-      <MessageInput setMessages={setMessages} />
+
+      {/* Footer */}
+      <Flex
+        position="sticky"
+        bottom={0}
+        bg={useColorModeValue('gray.200', 'gray.dark')}
+        zIndex={1}
+        width="100%"
+      >
+        <MessageInput setMessages={setMessages} />
+      </Flex>
     </Flex>
   );
 };

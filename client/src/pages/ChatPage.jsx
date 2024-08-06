@@ -11,23 +11,20 @@ import {
 } from '@chakra-ui/react';
 import { BsSearchHeartFill } from 'react-icons/bs';
 import Conversation from '../components/Conversation';
-import { GiConversation } from 'react-icons/gi';
-import MessageContainer from '../components/MessageContainer';
-import useShowToast from '../hooks/useShowToast';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { conversationsAtom, currentConversationAtom } from '../atoms/convAtoms';
 import userAtom from '../atoms/userAtom';
 import { useSocket } from '../context/SocketContext';
 import { gql, useLazyQuery } from '@apollo/client';
-import { GetProfileByName } from "../apollo/queries.js";
+import { GetProfileByName, GetConversations } from '../apollo/queries';
+import MessageContainer from '../components/MessageContainer';
+
 const GET_USER_PROFILE_BY_NAME = gql`
   ${GetProfileByName}
 `;
-import { GetConversations } from '../apollo/queries';
 const GET_CONVERSATIONS = gql`
   ${GetConversations}
 `;
-
 
 const ChatPage = () => {
   const [conversations, setConversations] = useRecoilState(conversationsAtom);
@@ -38,7 +35,6 @@ const ChatPage = () => {
   const [searchText, setSearchText] = useState('');
   const [searchingConversation, setSearchingConversation] = useState();
 
-  //const showToast = useShowToast();
   const { socket, onlineUsers } = useSocket();
 
   useEffect(() => {
@@ -76,46 +72,39 @@ const ChatPage = () => {
     });
     return () => socket?.off('newMessage');
   }, [socket]);
-  
+
   const [queryConversations, { loading, error, data }] = useLazyQuery(GET_CONVERSATIONS, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      console.log('Chat Page: queryConversations ',data?.getConversations)
+      console.log('Chat Page: queryConversations ', data?.getConversations);
       if (data?.getConversations) {
         setConversations(data?.getConversations);
       }
     },
     onError: (error) => {
-      console.log(error)
-      //showToast('Error', error, 'error');
+      console.log(error);
     },
   });
+
   const [handleSearch, { loading_, error_, data_ }] = useLazyQuery(GET_USER_PROFILE_BY_NAME, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      console.log('handleSearch data: ',data)
-      if (data?.getProfileByName?._id.toString() == currentUser._id) {
-        //showToast('Error', 'You cannot search for yourself', 'error');
+      console.log('handleSearch data: ', data);
+      if (data?.getProfileByName?._id.toString() === currentUser._id) {
         return;
       }
-      const searchedUser = data?.getProfileByName
+      const searchedUser = data?.getProfileByName;
       if (conversations.find((conversation) => conversation.participants[0]._id === currentUser._id)) {
         const conversation_ = {
           _id: conversations.find((conversation) => conversation.participants[0]._id === searchedUser._id.toString()),
           userId: searchedUser._id.toString(),
           username: searchedUser.username,
-          userProfilePic: searchedUser.profilePic,          
-        }
-        console.log(' ChatPage conversation_ : ', conversation_)
-        setCurrentConversation(conversation_);        
-        // setCurrentConversation({
-        //   _id: conversations.find((conversation) => conversation.participants[0]._id === searchedUser._id.toString()),
-        //   userId: searchedUser._id.toString(),
-        //   username: searchedUser.username,
-        //   userProfilePic: searchedUser.profilePic,
-        // });
+          userProfilePic: searchedUser.profilePic,
+        };
+        console.log(' ChatPage conversation_ : ', conversation_);
+        setCurrentConversation(conversation_);
         return;
       }
 
@@ -137,11 +126,10 @@ const ChatPage = () => {
 
       setConversations((prevConv) => {
         return [mockConversation, ...prevConv];
-      });      
+      });
     },
     onError: (error) => {
       console.error('getPostsByHashTag error:', error);
-      //showToast('Error', error.message, 'error');
     },
   });
 
@@ -150,23 +138,10 @@ const ChatPage = () => {
       setLoadingConversations(true);
       setCurrentConversation({});
       try {
-        console.log('getConversations ')
-        queryConversations()
-        // const res = await fetch('/api/messages/conversations', {
-        //   method: 'GET',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
-        // const data = await res.json();
-        // if (data.error) {
-        //   showToast('Error', data.error, 'error');
-        // }
-
-        // setConversations(data);
+        console.log('getConversations ');
+        queryConversations();
       } catch (error) {
-        console.log('getConversations :',error)
-        //showToast('Error', error.message, 'error');
+        console.log('getConversations :', error);
       } finally {
         setLoadingConversations(false);
       }
@@ -176,13 +151,12 @@ const ChatPage = () => {
 
   const handleConversationSearch = async (e) => {
     e.preventDefault();
-    console.log('handleConversationSearch ')
+    console.log('handleConversationSearch ');
     setSearchingConversation(true);
     try {
       handleSearch({ variables: { username: searchText } });
     } catch (error) {
-      console.log(error)
-     // showToast('Error', error.message, 'error');
+      console.log(error);
     } finally {
       setSearchingConversation(false);
     }
@@ -190,13 +164,11 @@ const ChatPage = () => {
 
   return (
     <Box
-      position={'absolute'}
-      left={'50%'}
       w={{ base: '100%', md: '80%', lg: '950px' }}
-      transform={'translateX(-50%)'}
+      mx={'auto'}
     >
-      <Flex direction={{ base: 'column', md: 'row' }} w={{ base: '400px', md: 'full' }} mx={'auto'} gap={4}>
-        <Flex direction={'column'} flex={30} gap={2} w={{ sm: '250px', md: 'full' }}>
+      {!currentConversation?._id ? (
+        <Flex direction={'column'} gap={4} p={4}>
           <Text fontWeight={700} color={useColorModeValue('grey.600', 'grey.400')}>
             Your Conversations
           </Text>
@@ -233,24 +205,9 @@ const ChatPage = () => {
               />
             ))}
         </Flex>
-
-        {!currentConversation?._id ? (
-          <Flex
-            flex={70}
-            direction={'column'}
-            borderRadius={'md'}
-            justifyContent={'center'}
-            alignItems={'center'}
-            p={2}
-            height={'400px'}
-          >
-            <GiConversation size={150} />
-            <Text>Select Conversation to start messaging</Text>
-          </Flex>
-        ) : (
-          <MessageContainer />
-        )}
-      </Flex>
+      ) : (
+        <MessageContainer />
+      )}
     </Box>
   );
 };

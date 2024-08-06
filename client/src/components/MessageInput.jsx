@@ -21,11 +21,11 @@ import { conversationsAtom, currentConversationAtom } from '../atoms/convAtoms';
 import usePreviewImage from '../hooks/usePreviewImage';
 import { BsFillImageFill } from 'react-icons/bs';
 import { Send_Message } from '../apollo/mutations';
-import { gql,useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 
 const MessageInput = ({ setMessages }) => {
   const [messageText, setMessageText] = useState('');
-  const [isSendingMessage, setIsSendingMessage] = useState();
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
 
   const currentConversation = useRecoilValue(currentConversationAtom);
   const setConversations = useSetRecoilState(conversationsAtom);
@@ -46,11 +46,11 @@ const MessageInput = ({ setMessages }) => {
 
     setIsSendingMessage(true);
     try {
-      let data
-      if(previewImage) {
+      let data;
+      if (previewImage) {
         const formData = new FormData();
         formData.append('file', previewImage);
-  
+
         const user_ = JSON.parse(localStorage.getItem('user') || '{}');
         const res = await fetch(MESSAGE_IMG_URL, {
           method: 'POST',
@@ -61,17 +61,16 @@ const MessageInput = ({ setMessages }) => {
         });
         data = await res.json();
       }
-      console.log('handleSendMessage : ', messageText)
+      console.log('handleSendMessage : ', messageText);
       const response = await SEND_MESSAGE_COMMAND({
         variables: {
           receiverId: currentConversation.userId,
           text: messageText,
-          img: (data) ? data.url : ""
-        }
-
+          img: data ? data.url : "",
+        },
       });
-      console.log(' response: ',response)
-      const result = response?.data?.sendMessage
+      console.log(' response: ', response);
+      const result = response?.data?.sendMessage;
 
       setConversations((prevConv) => {
         return prevConv.map((conv) => {
@@ -96,14 +95,14 @@ const MessageInput = ({ setMessages }) => {
   };
 
   return (
-    <Flex gap={2} align={'center'}>
-      <form onSubmit={handleSendMessage} style={{ flex: 95 }}>
-        <InputGroup>
+    <Flex gap={2} align={'center'} width="100%">
+      <form onSubmit={handleSendMessage} style={{ flex: 95, width: '100%' }}>
+        <InputGroup width="100%">
           <Input
             placeholder='Type Your Message...'
             onChange={(e) => setMessageText(e.target.value)}
             value={messageText}
-          ></Input>
+          />
           <InputRightElement>
             {isSendingMessage ? (
               <Spinner size={'sm'} />
