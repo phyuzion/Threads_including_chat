@@ -11,6 +11,11 @@ import { SocketContextProvider } from './context/SocketContext.jsx';
 import { ApolloProvider } from '@apollo/client';
 import setupApolloClient from './apollo/apolloindex.js';
 
+import 'regenerator-runtime/runtime';
+
+import { Buffer } from 'buffer';
+window.Buffer = Buffer;
+
 const styles = {
   global: (props) => ({
     body: {
