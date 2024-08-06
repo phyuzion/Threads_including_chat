@@ -24,7 +24,7 @@ const GET_LATEST_POST = gql`
 const HomePage = () => {
   const [posts, setPosts] = useRecoilState(postsAtom);
 
-  const [queryType, setQueryType] = useState('FEED');
+  const [queryType, setQueryType] = useState('LATEST');
 
   // const { loading, error, data } = useQuery(GET_FEED_POST, {
   //   variables: { skip: 0 , limit: 10 },
@@ -92,7 +92,7 @@ const HomePage = () => {
         rightIcon={<ViewIcon />}
         onClick={handleQueryChange}
       >
-        {queryType === 'LATEST' ? 'FEEDS' : 'LATEST'}
+        {queryType === 'LATEST' ? 'LATEST' : 'FEED'}
       </Button>
     </Box>
   );

@@ -17,6 +17,8 @@ import {
   ModalBody,
   useDisclosure,
   useToast,
+  Textarea,
+  Text,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useRecoilState } from 'recoil';
@@ -32,6 +34,9 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
   const PROFILE_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
   const [user, setUser] = useRecoilState(userAtom);
   console.log('UpdateProfilePage user:', user);
+
+  const [bioText, setBioText] = useState('');
+
   const [inputs, setInputs] = useState({
     email: user?.loginUser?.email || '',
     password: user?.loginUser?.password || '',
@@ -165,10 +170,16 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
     setInputs((prev) => ({ ...prev, [field]: value }));
   };
 
+
+  const handleTextChange = (e) => {
+    setBioText(e.target.value.slice(0, 500));
+  };
+
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent maxW="md" p={0} m={0}>
+      <ModalContent maxW="md" p={0} m={0} maxHeight={'90vh'} overflowY={'auto'}>
         <ModalBody p={0} m={0}>
           <form onSubmit={handleUpdateProfile} style={{ width: '100%' }}>
             <Flex align={'center'} justify={'center'} p={0} w={'100%'}>
@@ -191,6 +202,20 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                     <Input type='file' hidden ref={profilePicRef} onChange={handleProfilePicChange} accept="image/*" />
                   </Center>
                 </FormControl>
+
+                <Textarea
+                  placeholder='Write your BIO here'
+                  value={bioText}
+                  onChange={handleTextChange}
+                  size='lg'
+                  resize='none'
+                  color={'white'}
+                  maxLength={500}
+                />
+                <Flex justifyContent='flex-end' width='100%'>
+                  <Text color='gray.400'>{bioText.length}/500</Text>
+                </Flex>
+
                 <FormControl>
                   <FormLabel fontSize={['sm', 'md']}>Email</FormLabel>
                   <Input
