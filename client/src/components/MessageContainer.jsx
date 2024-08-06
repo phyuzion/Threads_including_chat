@@ -240,7 +240,7 @@ const MessageContainer = () => {
         zIndex={1}
         width="100%"
       >
-        <MessageInput setMessages={setMessages} />
+        <MessageInput setMessages={setMessages} otherUser={otherUser} /> {/* 여기서 otherUser를 전달 */}
       </Flex>
     </Flex>
   );

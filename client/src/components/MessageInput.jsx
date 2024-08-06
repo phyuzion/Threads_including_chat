@@ -17,17 +17,16 @@ import React, { useRef, useState } from 'react';
 import { IoSendSharp } from 'react-icons/io5';
 import useShowToast from '../hooks/useShowToast';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { conversationsAtom, currentConversationAtom } from '../atoms/convAtoms';
+import { conversationsAtom } from '../atoms/convAtoms';
 import usePreviewImage from '../hooks/usePreviewImage';
 import { BsFillImageFill } from 'react-icons/bs';
 import { Send_Message } from '../apollo/mutations';
 import { gql, useMutation } from '@apollo/client';
 
-const MessageInput = ({ setMessages }) => {
+const MessageInput = ({ setMessages, otherUser }) => {
   const [messageText, setMessageText] = useState('');
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
-  const currentConversation = useRecoilValue(currentConversationAtom);
   const setConversations = useSetRecoilState(conversationsAtom);
 
   const { handleImageChange, previewImage, setPreviewImage } = usePreviewImage();
@@ -64,7 +63,7 @@ const MessageInput = ({ setMessages }) => {
       console.log('handleSendMessage : ', messageText);
       const response = await SEND_MESSAGE_COMMAND({
         variables: {
-          receiverId: currentConversation.userId,
+          receiverId: otherUser._id,
           text: messageText,
           img: data ? data.url : "",
         },
@@ -74,7 +73,7 @@ const MessageInput = ({ setMessages }) => {
 
       setConversations((prevConv) => {
         return prevConv.map((conv) => {
-          if (conv._id === currentConversation._id) {
+          if (conv.participants.includes(otherUser._id)) {
             return {
               ...conv,
               lastMessage: { text: messageText, sender: result?.sender },
