@@ -46,13 +46,13 @@ function UserHeader({ user }) {
 
   const { isFlwBtnLoading, handleFollowUnFollow } = useHandleFollowUnFollow(user);
 
-  const handleSendMessage = () => {
-    navigate(`/chat/${user.username}`);
+  const handleFollowButtonClick = async () => {
+    await handleFollowUnFollow();
+    setIsFollowing(!isFollowing);
   };
 
-  const handleFollowButtonClick = () => {
-    handleFollowUnFollow();
-    setIsFollowing(!isFollowing);
+  const handleSendMessage = () => {
+    navigate(`/chat/${user.username}`);
   };
 
   return (

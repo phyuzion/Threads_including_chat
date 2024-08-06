@@ -63,6 +63,7 @@ const SuggestedUsers = ({ onClose }) => {
     await refetch(); // Ensure the list is updated by refetching the data
     queryMessages({ variables: { skip: 0, limit: 10, following: true } });
     onClose(); // Close the sidebar
+    window.location.reload(); // Force reload the page to update UserHeader
   };
 
   const visibleSuggestedUsers = showMoreSuggested ? data?.getSuggestedUsers : data?.getSuggestedUsers.slice(0, MAX_VISIBLE_USERS);

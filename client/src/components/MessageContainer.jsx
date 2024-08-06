@@ -97,8 +97,16 @@ const MessageContainer = () => {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      if (data?.getMessages) {
-        setMessages(data?.getMessages);
+      if (data?.getMessages?.length === 0) {
+        showToast({
+          title: 'Start new chat',
+          description: 'Starting a new chat with this user.',
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        setMessages(data.getMessages);
       }
       setLoadingMessages(false);
     },
