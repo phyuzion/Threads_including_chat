@@ -32,7 +32,7 @@ const CreatePost = () => {
   const imageInputRef = useRef();
   const videoInputRef = useRef();
   const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage(); // webP or JPEG
-  const { handleVideoChange, previewVideo, setPreviewVideo } = usePreviewVideo();
+  const { handleVideoChange, previewVideo, setPreviewVideo, videoFile } = usePreviewVideo(); // Add video file
   const user = useRecoilValue(userAtom);
   const toast = useToast();
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false);
@@ -79,7 +79,11 @@ const CreatePost = () => {
 
     try {
       setIsCreatePostLoading(true);
-      const fileToUpload = previewImage ? processedImage : videoInputRef.current.files[0]; // webP or JPEG
+      const fileToUpload = previewImage ? processedImage : videoFile; // Use Video file
+
+      if (!fileToUpload) {
+        throw new Error('No file to upload');
+      }
 
       const formData = new FormData();
       formData.append('file', fileToUpload);

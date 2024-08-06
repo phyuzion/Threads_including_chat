@@ -4,6 +4,7 @@ import useShowToast from './useShowToast';
 
 const usePreviewVideo = () => {
   const [previewVideo, setPreviewVideo] = useState(null);
+  const [videoFile, setVideoFile] = useState(null); // Add videofile
   const showToast = useShowToast();
 
   const handleVideoChange = (e) => {
@@ -19,6 +20,7 @@ const usePreviewVideo = () => {
     if (file.type.startsWith('video/')) {
       const url = URL.createObjectURL(file);
       setPreviewVideo(url);
+      setVideoFile(file); // videoFile 설정
     } else {
       showToast('Invalid file type', 'Please select a video file', 'error');
       setPreviewVideo(null);
@@ -29,6 +31,7 @@ const usePreviewVideo = () => {
     handleVideoChange,
     previewVideo,
     setPreviewVideo,
+    videoFile, // return videofile
   };
 };
 
