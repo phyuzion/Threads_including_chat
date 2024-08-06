@@ -12,9 +12,9 @@ const getMessages = async (req, res) => {
     });
 
     if (!conversation) {
-      return res.status(404).json({ error: 'Conversation not found' });
+      // if none, return empty.
+      return res.status(200).json([]);
     }
-
     const messages = await Message.find({
       conversationId: conversation._id,
     });
