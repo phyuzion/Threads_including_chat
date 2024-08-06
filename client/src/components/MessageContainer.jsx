@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { currentConversationAtom, conversationsAtom } from '../atoms/convAtoms';
+import { currentConversationAtom } from '../atoms/convAtoms';
 import useShowToast from '../hooks/useShowToast';
 import Message from './Message';
 import MessageInput from './MessageInput';
@@ -123,6 +123,9 @@ const MessageContainer = () => {
     getMessages();
   }, [showToast, currentConversation._id, currentConversation.mock]);
 
+  // for chat message's unique key. ( will tell to Sujith for set right unique key)
+  let keyNumber = 0;
+
   return (
     <Flex
       flex={70}
@@ -204,13 +207,14 @@ const MessageContainer = () => {
               </Flex>
             ))
           : messages?.map((message) => {
+              keyNumber++; // for unique key
               return (
                 <Flex
-                  key={message._id}
+                  key={keyNumber}  // added unique key prop
                   direction={'column'}
                   ref={messages?.length - 1 === messages?.indexOf(message) ? latestMessageRef : null}
                 >
-                  <Message message={message} key={message._id} />
+                  <Message message={message} />
                 </Flex>
               );
             })}
