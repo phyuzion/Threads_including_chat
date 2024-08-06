@@ -163,12 +163,9 @@ const ChatPage = () => {
   };
 
   return (
-    <Box
-      w={{ base: '100%', md: '80%', lg: '950px' }}
-      mx={'auto'}
-    >
+    <Box position="relative">
       {!currentConversation?._id ? (
-        <Flex direction={'column'} gap={4} p={4}>
+        <Flex direction={'column'} gap={[2, 3, 4]} mt={[4, 6, 8]}>
           <Text fontWeight={700} color={useColorModeValue('grey.600', 'grey.400')}>
             Your Conversations
           </Text>

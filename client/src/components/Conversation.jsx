@@ -26,21 +26,8 @@ const Conversation = ({ conversation, isOnline }) => {
   return (
     <Flex
       gap={3}
-      my={1}
       alignItems={'center'}
       p={1}
-      _hover={{
-        cursor: 'pointer',
-        bg: useColorModeValue('gray.600', 'gray.800'),
-        color: 'white',
-      }}
-      bg={
-        currentConversation?._id === conversation._id
-          ? colorMode.colorMode === 'light'
-            ? 'gray.400'
-            : 'gray.dark'
-          : ''
-      }
       onClick={() =>
         setCurrentConversation({
           _id: conversation._id,
@@ -51,42 +38,31 @@ const Conversation = ({ conversation, isOnline }) => {
         })
       }
     >
-      <WrapItem>
-        <Avatar
-          src={otherUser.profilePic}
-          size={{
-            base: 'xs',
-            sm: 'sm',
-            md: 'md',
-          }}
-        >
-          {isOnline && <AvatarBadge bg={'green.500'} boxSize={'1em'} />}
-        </Avatar>
-      </WrapItem>
-
+      <Avatar
+        src={otherUser.profilePic}
+        size={{
+          base: 'xs',
+          sm: 'sm',
+          md: 'md',
+        }}
+      >
+        {isOnline && <AvatarBadge bg={'green.500'} boxSize={'1em'} />}
+      </Avatar>
       <Stack direction={'column'} fontSize={'sm'}>
         <Text fontWeight={700} display={'flex'} alignItems={'center'} gap={1}>
           {otherUser.username}
-          <Image src='/verified.png' w={4} />
         </Text>
         <Text fontSize={'xs'} display={'flex'} alignItems={'center'} gap={1}>
-          {currentUser?._id?.toString() === otherUser?._id?.toString() ? (
-            <Box alignSelf={'flex-end'} ml={1} color={lastMessage.seen ? 'blue.400' : ''}>
-              <BsCheck2All size={12} />
-            </Box>
-          ) : (
-            ''
-          )}
           {lastMessage.text
-            ? lastMessage.text.length > 18
-              ? lastMessage.text.substring(0, 18) + '...'
-              : lastMessage.text
-            : lastMessage.sender && (
-                <>
-                  <BsFillImageFill size={12} />
-                  Sent A Photo
-                </>
-              )}
+          ? lastMessage.text.length > 18
+            ? lastMessage.text.substring(0, 18) + '...'
+            : lastMessage.text
+          : lastMessage.sender && (
+              <>
+                <BsFillImageFill size={12} />
+                Sent A Photo
+              </>
+            )}
         </Text>
       </Stack>
     </Flex>
