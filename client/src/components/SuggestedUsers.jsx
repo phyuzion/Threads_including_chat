@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Skeleton, SkeletonCircle, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SuggestedUser } from './SuggestedUser';
 import { FollowingUser } from './FollowingUser';
 import useShowToast from '../hooks/useShowToast';
@@ -13,7 +13,7 @@ const GET_FOLLOWS_USERS = gql`
   ${GetFollows}
 `;
 
-const SuggestedUsers = () => {
+const SuggestedUsers = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showMoreSuggested, setShowMoreSuggested] = useState(false);
   const showToast = useShowToast();
@@ -46,6 +46,13 @@ const SuggestedUsers = () => {
     }
   });
 
+  useEffect(() => {
+    if (data) {
+      refetch(); // Ensure the list is updated by refetching the data
+      queryMessages({ variables: { skip: 0, limit: 10, following: true } });
+    }
+  }, [data, refetch, queryMessages]);
+
   const MAX_VISIBLE_USERS = 5;
 
   const toggleShowMoreSuggested = () => {
@@ -53,8 +60,9 @@ const SuggestedUsers = () => {
   };
 
   const handleFollow = async (userId) => {
-    await refetch();  // Ensure the list is updated by refetching the data
+    await refetch(); // Ensure the list is updated by refetching the data
     queryMessages({ variables: { skip: 0, limit: 10, following: true } });
+    onClose(); // Close the sidebar
   };
 
   const visibleSuggestedUsers = showMoreSuggested ? data?.getSuggestedUsers : data?.getSuggestedUsers.slice(0, MAX_VISIBLE_USERS);
@@ -79,7 +87,7 @@ const SuggestedUsers = () => {
               </Flex>
             ))
           : followingUsers.map((user) => (
-              <FollowingUser key={user._id} user={user} />
+              <FollowingUser key={user._id} user={user} onClose={onClose} />
             ))}
       </Flex>
       <Box mb={4} /> {/* Placeholder for spacing */}
@@ -100,7 +108,7 @@ const SuggestedUsers = () => {
               </Flex>
             ))
           : visibleSuggestedUsers.map((user) => (
-              <SuggestedUser key={user._id} user={user} onFollow={handleFollow} />
+              <SuggestedUser key={user._id} user={user} onFollow={handleFollow} onClose={onClose} />
             ))}
         {!isLoading && data?.getSuggestedUsers.length > MAX_VISIBLE_USERS && (
           <Button onClick={toggleShowMoreSuggested} variant="link" colorScheme="blue">

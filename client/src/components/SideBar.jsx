@@ -52,7 +52,7 @@ function SideBar() {
         >
           <DrawerCloseButton />
           <DrawerBody>
-            <SuggestedUsers />
+            <SuggestedUsers onClose={onClose} />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

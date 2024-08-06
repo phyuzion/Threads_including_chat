@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow';
 
-export const SuggestedUser = ({ user, onFollow }) => {
+export const SuggestedUser = ({ user, onFollow, onClose }) => {
   const { following, isFlwBtnLoading, handleFollowUnFollow } = useHandleFollowUnFollow(user);
 
   const handleFollowClick = async () => {
@@ -11,11 +11,12 @@ export const SuggestedUser = ({ user, onFollow }) => {
     if (!following) {
       onFollow(user._id); // Follow 성공 시, 부모 컴포넌트에 알림
     }
+    onClose(); // Close the sidebar
   };
 
   return (
     <Flex gap={2} justifyContent={'space-between'} alignItems={'center'}>
-      <Flex as={Link} to={`/${user.username}`} gap={2}>
+      <Flex as={Link} to={`/${user.username}`} gap={2} onClick={onClose}>
         <Avatar size={'sm'} src={user.profilePic} />
         <Flex direction={'column'} fontSize="sm">
           <Text fontWeight={400}>{user.username}</Text>
@@ -40,3 +41,5 @@ export const SuggestedUser = ({ user, onFollow }) => {
     </Flex>
   );
 };
+
+export default SuggestedUser;
