@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow';
 
 export const SuggestedUser = ({ user, onFollow }) => {
-  const { following, isFlwBtnLoading, handelFollowUnFollow } = useHandleFollowUnFollow(user);
+  const { following, isFlwBtnLoading, handleFollowUnFollow } = useHandleFollowUnFollow(user);
 
   const handleFollowClick = async () => {
-    await handelFollowUnFollow();
+    await handleFollowUnFollow();
     if (!following) {
       onFollow(user._id); // Follow 성공 시, 부모 컴포넌트에 알림
     }

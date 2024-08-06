@@ -16,7 +16,7 @@ const useHandleFollowUnFollow = (user) => {
   const [FOLLOW_UNFOLLOW_COMMAND] = useMutation(FOLLOW_UNFOLLOW,{fetchPolicy: 'network-only'});
   const showToast = useShowToast();
 
-  const handelFollowUnFollow = async () => {
+  const handleFollowUnFollow = async () => {
     if (!currentUser) {
       showToast('Error', 'You must be logged in', 'error');
       return;
@@ -67,7 +67,7 @@ const useHandleFollowUnFollow = (user) => {
 
   };
 
-  return { following, isFlwBtnLoading, handelFollowUnFollow };
+  return { following, isFlwBtnLoading, handleFollowUnFollow };
 };
 
 export default useHandleFollowUnFollow;
