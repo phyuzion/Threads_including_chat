@@ -8,6 +8,7 @@ import {
   SkeletonCircle,
   Text,
   useColorModeValue,
+  useToast
 } from '@chakra-ui/react';
 import { BsSearchHeartFill } from 'react-icons/bs';
 import Conversation from '../components/Conversation';
@@ -34,6 +35,8 @@ const ChatPage = () => {
   const currentUser = useRecoilValue(userAtom);
   const { socket, onlineUsers } = useSocket();
   const navigate = useNavigate();
+
+  const toast = useToast();
 
   useEffect(() => {
     socket?.on('newMessage', (newMessage) => {
@@ -93,7 +96,15 @@ const ChatPage = () => {
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
       console.log('handleSearch data: ', data);
-      if (data?.getProfileByName?._id.toString() === currentUser._id) {
+      if (data?.getProfileByName?._id.toString() === currentUser?.loginUser?._id) {
+        toast({
+          title: "You cannot chat with yourself.",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        setSearchText(''); // Clear the search input
+        setSearchingConversation(false);
         return;
       }
       const searchedUser = data?.getProfileByName;
