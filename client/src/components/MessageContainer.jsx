@@ -90,7 +90,7 @@ const MessageContainer = () => {
   }, [socket, currentUser._id, messages, otherUser]);
 
   useEffect(() => {
-    latestMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+    latestMessageRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messages]);
 
   const [queryMessages, { loading, error, data }] = useLazyQuery(GET_MESSAGES, {
@@ -151,7 +151,7 @@ const MessageContainer = () => {
       borderRadius={'md'}
       p={2}
       direction={'column'}
-      height="90vh"
+      height="85vh"
     >
       {/* Header */}
       <Flex
@@ -161,7 +161,6 @@ const MessageContainer = () => {
         w={'full'}
         position="sticky"
         top={0}
-        bg={useColorModeValue('gray.200', 'gray.dark')}
         zIndex={1}
       >
         <IconButton
@@ -236,7 +235,6 @@ const MessageContainer = () => {
       <Flex
         position="sticky"
         bottom={0}
-        bg={useColorModeValue('gray.200', 'gray.dark')}
         zIndex={1}
         width="100%"
       >
