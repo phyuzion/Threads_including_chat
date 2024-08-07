@@ -32,6 +32,7 @@ function SignupCard() {
     username: '',
     email: '',
     password: '',
+    bio:''
   });
   const [passwordError, setPasswordError] = useState(false);
   const setUser = useSetRecoilState(userAtom);
