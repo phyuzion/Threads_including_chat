@@ -45,7 +45,7 @@ const ChatPage = () => {
           if (newMessage.conversationId === conversation._id) {
             return {
               ...conversation,
-              lastMessage: { text: newMessage.text, sender: newMessage.sender, seen: newMessage.seen },
+              lastMessage: { text: newMessage.text, sender: newMessage.sender, seen: newMessage.seen , img: newMessage.img},
             };
           }
           return conversation;

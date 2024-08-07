@@ -60,7 +60,7 @@ module.exports = {
 
         signupUser : async (_,args,{req, res}) => {
             try {
-                const { name, username, password, email } = args;
+                const { name, username, password, email , bio } = args;
                 const user = await User.findOne({ $or: [{ email }, { username }] });
                 if (user) {
                   throwServerError('User already exits')
@@ -72,6 +72,7 @@ module.exports = {
                   email,
                   username,
                   password: hashedPassword,
+                  bio
                 });
                 const user_ = await newUser.save();
                 return transformUser(user_)

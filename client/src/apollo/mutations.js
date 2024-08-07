@@ -35,12 +35,12 @@ export const replyToPost = `mutation ReplyToPost($postId: String!, $text: String
     username
   }
 }`
-export const signupUser = ` mutation SignupUser($username: String, $password: String, $email: String) {
-  signupUser(username: $username, password: $password, email: $email) {
+export const signupUser = ` mutation SignupUser($username: String, $password: String, $email: String, $bio: String) {
+  signupUser(username: $username, password: $password, email: $email, bio: $bio) {
     _id
     username
     email
-    
+    bio
   }
 }
 `

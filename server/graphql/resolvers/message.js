@@ -79,12 +79,14 @@ module.exports = {
                         participants: [senderId, receiverId],
                         lastMessage: {
                         text,
+                        img: (img) ? img : '',
                         sender: senderId,
                         },
                     });
                 } else {
                     conversation.lastMessage = {
                         text,
+                        img: (img) ? img : '',
                         sender: senderId,
                     };
                     conversation.save();
@@ -94,7 +96,7 @@ module.exports = {
                     sender: senderId,
                     conversationId: conversation._id,
                     text,
-                    img: img || '',
+                    img: (img) ? img : '',
                 });    
                 //const userSocketId = getUserSocketIds(receiverId);
                 emitSendMessage(receiverId, message)

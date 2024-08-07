@@ -169,6 +169,7 @@ export const GetConversations = `query GetConversations {
     lastMessage {
       text
       sender
+      img
       seen
     }
   }

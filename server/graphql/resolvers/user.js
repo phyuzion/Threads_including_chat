@@ -63,7 +63,7 @@ module.exports = {
        // console.log(' getUserProfile id: ',postedBy)
         try {
           const user = await User.findById(postedBy).select('-password').select('-updatedAt').select('-jwtToken');
-          console.log('user: ',user)
+         // console.log('user: ',user)
           if(user) {
             return user
           } else {

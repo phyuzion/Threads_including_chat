@@ -58,6 +58,7 @@ const MessageInput = ({ setMessages, otherUser }) => {
         formData.append('file', fileToUpload);
 
         const user_ = JSON.parse(localStorage.getItem('user') || '{}');
+        console.log('handleSendMessage  user_ : ',user_)
         const res = await fetch(MESSAGE_IMG_URL, {
           method: 'POST',
           headers: {
@@ -90,7 +91,7 @@ const MessageInput = ({ setMessages, otherUser }) => {
           if (conv.participants.includes(otherUser._id)) {
             return {
               ...conv,
-              lastMessage: { text: messageText, sender: result?.sender },
+              lastMessage: { text: messageText, img:result?.img, sender: result?.sender },
             };
           }
           return conv;

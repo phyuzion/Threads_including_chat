@@ -12,6 +12,7 @@ const conversationSchema = new Schema(
     ],
     lastMessage: {
       text: String,
+      img: String,
       sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

@@ -47,6 +47,7 @@ type User {
 type LastMessage {
     text: String
     sender: String
+    img: String
     seen: Boolean
 }
 

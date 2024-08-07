@@ -32,6 +32,7 @@ type User {
     name: String!
     username: String!
     email: String!
+    bio: String!
     password: String
     jwtToken: String
 }
@@ -50,7 +51,7 @@ type Mutation {
     replyToPost(postId: String!, text: String!): Reply
 
 
-    signupUser(name: String!, username: String, password: String, email: String): User
+    signupUser(name: String!, username: String, password: String, email: String , bio : String): User
     loginUser(username: String!, password: String!): User
     logoutUser: Boolean
     followUnFollow(followId: String!): Boolean

@@ -74,7 +74,7 @@ module.exports = {
             try {
                 const aggregation = QUERY_USER_FOLLOWING_FEEDS(req.user._id,skip , limit )
                 const results = await User.aggregate(aggregation)
-                console.log('get feed posts : ', results)
+                //console.log('get feed posts : ', results)
                 
                 return results[0].Posts
               } catch (error) {
