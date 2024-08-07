@@ -108,10 +108,10 @@ const SuggestedUsers = ({ onClose }) => {
                 </Flex>
               </Flex>
             ))
-          : visibleSuggestedUsers.map((user) => (
+          : visibleSuggestedUsers?.map((user) => (
               <SuggestedUser key={user._id} user={user} onFollow={handleFollow} onClose={onClose} />
             ))}
-        {!isLoading && data?.getSuggestedUsers.length > MAX_VISIBLE_USERS && (
+        {!isLoading && data?.getSuggestedUsers?.length > MAX_VISIBLE_USERS && (
           <Button onClick={toggleShowMoreSuggested} variant="link" colorScheme="blue">
             {showMoreSuggested ? 'Show Less' : 'More...'}
           </Button>

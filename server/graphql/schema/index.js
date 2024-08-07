@@ -38,6 +38,7 @@ type User {
     _id: String
     username: String!
     email: String!
+    bio: String
     password: String
     jwtToken: String
     followers: [Follow]
@@ -120,7 +121,7 @@ type Mutation {
     loginUser(username: String!, password: String!): User
     logoutUser: Boolean
     followUnFollow(followId: String!): User
-    updateUser(email: String,password: String,profilePic: String): User
+    updateUser(email: String,password: String,profilePic: String, bio: String): User
     freezeAccount: Boolean!
 
     sendMessage(receiverId: String, text: String , img: String): Message

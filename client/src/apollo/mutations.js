@@ -77,11 +77,12 @@ export const freezeAccount = `mutation Mutation {
   freezeAccount
 }`
 
-export const Update_User = `mutation Mutation($email: String, $password: String, $profilePic: String) {
-  updateUser(email: $email, password: $password, profilePic: $profilePic) {
+export const Update_User = `mutation UpdateUser($email: String, $password: String, $profilePic: String, $bio: String) {
+  updateUser(email: $email, password: $password, profilePic: $profilePic, bio: $bio) {
     _id
     username
     email
+    bio
     password
     jwtToken
     followers {

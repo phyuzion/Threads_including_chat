@@ -89,7 +89,8 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
       const variables = {
         email: inputs.email || null,
         password: inputs.password || null,
-        profilePic: previewUrl || null,       
+        profilePic: previewUrl || null,    
+        bio: bioText || null   
       }
       console.log('updateProfile inputs:', inputs);
       const response = await UPDATE_USER_COMMAND({
@@ -108,16 +109,18 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
           ...prevUser,
           loginUser: {
             ...prevUser.loginUser,
-            email: inputs.email || prevUser.loginUser.email,
-            profilePic: previewUrl || prevUser.loginUser.profilePic,
+            email: inputs.email || prevUser?.loginUser?.email,
+            profilePic: previewUrl || prevUser?.loginUser?.profilePic,
+            bio: inputs.bio ||  prevUser?.loginUser?.bio
           },
         }));
         localStorage.setItem('user', JSON.stringify({
           ...user,
           loginUser: {
             ...user.loginUser,
-            email: inputs.email || user.loginUser.email,
-            profilePic: previewUrl || user.loginUser.profilePic,
+            email: inputs.email || user?.loginUser?.email,
+            profilePic: previewUrl || user?.loginUser?.profilePic,
+            bio: inputs.bio ||  user?.loginUser?.bio
           },
         }));
         setIsSubmitBtnLoading(false);

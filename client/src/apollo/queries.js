@@ -95,6 +95,7 @@ export const GetProfileByName = `query GetProfileByName($username: String!) {
     _id
     username
     email
+    bio
     followers {
       followId
       startDate
@@ -112,6 +113,7 @@ export const GetUserProfile = `query GetUserProfile($postedBy: String!) {
     _id
     username
     email
+    bio
     password
     jwtToken
     followers {

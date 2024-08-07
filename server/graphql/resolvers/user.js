@@ -98,7 +98,7 @@ module.exports = {
         if(!req.user) {
           throwForbiddenError()
         }        
-        const { email, password, profilePic } = args
+        const { email, password, profilePic , bio } = args
         console.log('updateUser args ',args)
         let session
         if (config.DB_TYPE == "ATLAS") {
@@ -118,6 +118,7 @@ module.exports = {
           }
           user.profilePic = profilePic || user.profilePic
           user.email = email || user.email;
+          user.bio = bio || user.bio
           user = await user.save({ session });
           console.log(' saved user : ',user)
           await Post.updateMany(
