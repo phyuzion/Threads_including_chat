@@ -28,15 +28,16 @@ const MessageInput = ({ setMessages, otherUser }) => {
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
   const setConversations = useSetRecoilState(conversationsAtom);
-
-  const { handleImageChange, previewImage, setPreviewImage } = usePreviewImage();
+  
+  const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage(); // webP or JPEG
+  
   const messageMediaRef = useRef();
   const { onClose } = useDisclosure();
   const showToast = useShowToast();
 
   const SEND_MESSAGE_ = gql`${Send_Message}`;
   const [SEND_MESSAGE_COMMAND] = useMutation(SEND_MESSAGE_);
-  const MESSAGE_IMG_URL = `${import.meta.env.VITE_MEDIA_MESSAGE_URL}`;
+  const MESSAGE_IMG_URL = `${import.meta.env.VITE_MEDIA_SERVER_URL}`;
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -47,8 +48,14 @@ const MessageInput = ({ setMessages, otherUser }) => {
     try {
       let data;
       if (previewImage) {
+        const fileToUpload = processedImage;
+
+        if (!fileToUpload) {
+          throw new Error('No file to upload');
+        }
+
         const formData = new FormData();
-        formData.append('file', previewImage);
+        formData.append('file', fileToUpload);
 
         const user_ = JSON.parse(localStorage.getItem('user') || '{}');
         const res = await fetch(MESSAGE_IMG_URL, {
@@ -58,17 +65,24 @@ const MessageInput = ({ setMessages, otherUser }) => {
           },
           body: formData,
         });
+        
         data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Failed to upload image');
+        }
       }
+
       console.log('handleSendMessage : ', messageText);
       const response = await SEND_MESSAGE_COMMAND({
         variables: {
           receiverId: otherUser._id,
           text: messageText,
-          img: data ? data.url : "",
+          img: previewImage ? data.url : '',
         },
       });
-      console.log(' response: ', response);
+
+      console.log('response: ', response);
       const result = response?.data?.sendMessage;
 
       setConversations((prevConv) => {
@@ -88,6 +102,7 @@ const MessageInput = ({ setMessages, otherUser }) => {
       setMessages((prevState) => [...prevState, result]);
     } catch (error) {
       showToast('Error', error.message, 'error');
+      console.error('Send message error:', error);
     } finally {
       setIsSendingMessage(false);
     }
@@ -113,12 +128,12 @@ const MessageInput = ({ setMessages, otherUser }) => {
       </form>
 
       <Flex flex={5} cursor={'pointer'}>
-        <Input type={'file'} hidden ref={messageMediaRef} onChange={handleImageChange} />
+        <Input type={'file'} hidden ref={messageMediaRef} onChange={handleImageChange} accept='image/*' />
         <BsFillImageFill onClick={() => messageMediaRef.current.click()} size={20} />
       </Flex>
 
       <Modal
-        isOpen={previewImage}
+        isOpen={!!previewImage}
         onClose={() => {
           onClose();
           setPreviewImage('');

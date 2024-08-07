@@ -6,6 +6,8 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
+import { BsFillImageFill } from 'react-icons/bs';
+
 const Conversation = ({ conversation, isOnline, onClick }) => {
   const otherUser = conversation.participants[0];
   const lastMessage = conversation.lastMessage;
