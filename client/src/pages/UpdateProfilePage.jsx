@@ -208,7 +208,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
 
                 <Textarea
                   placeholder='Write your BIO here'
-                  value={bioText}
+                  value={bioText || user?.loginUser?.bio}
                   onChange={handleTextChange}
                   size='lg'
                   resize='none'
