@@ -15,7 +15,7 @@ const { isAuthenticated } = require('../middleware/is-auth')
 const userSocketMap = {};
 let iosocket
 async function startIOServer(server) {
-  console.log(' origin : ', `${config.CORS_ORIGIN}`)
+  console.log(' origin : ', 'https://ess-lux.net')
   const io = new Server(server, {
     cors: {
       origin: config.CORS_ORIGIN,
