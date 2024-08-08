@@ -19,7 +19,11 @@ async function startIOServer(server) {
   const io = new Server(server, {
     cors: {
       origin: `${config.CORS_ORIGIN}`,
+      //origin: ['*:*'],
       methods: ['GET', 'POST'],
+      allowedHeaders: ["my-custom-header"],
+      credentials: true
+  
     },
   });
   io.on('connection', (socket) => {
