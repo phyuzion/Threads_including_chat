@@ -180,7 +180,7 @@ module.exports = {
         signupUser : async (_,args,{req, res}) => {
           console.log('args ; ',args)
             try {
-                const { username, password, email } = args;
+                const { username, password, email , bio } = args;
                 const user = await User.findOne({ $or: [{ email }, { username }] });
                 if (user) {
                   throwServerError('User already exits')
