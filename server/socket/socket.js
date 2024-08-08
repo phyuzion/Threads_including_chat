@@ -11,9 +11,9 @@ const Message = require('../models/messageModel')
 const Conversation = require('../models/conversationModel')
 const { isAuthenticated } = require('../middleware/is-auth')
 
-let io
-const userSocketMap = {};
 
+const userSocketMap = {};
+let iosocket
 async function startIOServer(server) {
   console.log(' origin : ', `${config.CORS_ORIGIN}`)
   const io = new Server(server, {
@@ -56,7 +56,7 @@ async function startIOServer(server) {
 async function startApolloServer(schema) {
   const app = express() 
   const httpServer = http.createServer(app)
-  io = await startIOServer(httpServer)
+  iosocket = await startIOServer(httpServer)
   // const schema = graphqlTools.makeExecutableSchema({
   //   typeDefs,
   //   resolvers,
@@ -80,14 +80,14 @@ async function startApolloServer(schema) {
 
   await server.start()
 
-  return { io, server, app, httpServer }
+  return { iosocket, server, app, httpServer }
 }
 
 
 function emitSendMessage(userId, message) {
   const socketId = userSocketMap[userId];
   if (socketId) {
-    io.to(socketId).emit('newMessage', message);
+    iosocket.to(socketId).emit('newMessage', message);
   } else {
     console.error(`No socket found for userId: ${userId}`);
   }
