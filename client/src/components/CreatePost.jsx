@@ -59,7 +59,6 @@ const CreatePost = () => {
 
     return { cleanedText, hashtags };
   };
-
   const handleCreatePost = async () => {
     if (!postText.trim() && !previewImage && !previewVideo) {
       toast({
@@ -71,34 +70,33 @@ const CreatePost = () => {
       });
       return;
     }
-
+  
     const { cleanedText, hashtags } = extractHashtags(postText);
-
+  
     console.log('Input Text', cleanedText);
     console.log('Input hashtags', hashtags);
-
+  
     try {
       setIsCreatePostLoading(true);
-      const fileToUpload = previewImage ? processedImage : videoFile; // Use Video file
-
-      if (!fileToUpload) {
-        throw new Error('No file to upload');
+      const fileToUpload = previewImage ? processedImage : videoFile; // Use Video file if present
+      let data = { url: "" };
+  
+      if (fileToUpload) {
+        const formData = new FormData();
+        formData.append('file', fileToUpload);
+  
+        const user_ = JSON.parse(localStorage.getItem('user') || '{}');
+        const res = await fetch(UPLOAD_URL, {
+          method: 'POST',
+          headers: {
+            Authorization: user_?.loginUser?.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : '',
+          },
+          body: formData,
+        });
+  
+        data = await res.json();
       }
-
-      const formData = new FormData();
-      formData.append('file', fileToUpload);
-
-      const user_ = JSON.parse(localStorage.getItem('user') || '{}');
-      const res = await fetch(UPLOAD_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: user_?.loginUser?.jwtToken ? `Bearer ${user_.loginUser.jwtToken}` : '',
-        },
-        body: formData,
-      });
-
-      const data = await res.json();
-
+  
       const response = await CREATE_POST_COMMAND({
         variables: {
           text: JSON.stringify(cleanedText),
@@ -107,7 +105,7 @@ const CreatePost = () => {
           hashtags: hashtags
         }
       });
-
+  
       if (response?.data) {
         setPosts([response.data.createPost, ...posts]);
         onClose();
@@ -128,6 +126,7 @@ const CreatePost = () => {
       setIsCreatePostLoading(false);
     }
   };
+  
 
   return (
     <div>
@@ -207,10 +206,10 @@ const CreatePost = () => {
                 size='lg'
                 resize='none'
                 color={'white'}
-                maxLength={500}
+                maxLength={200}
               />
               <Flex justifyContent='flex-end' width='100%'>
-                <Text color='gray.400'>{postText.length}/500</Text>
+                <Text color='gray.400'>{postText.length}/200</Text>
               </Flex>
             </VStack>
           </ModalBody>
