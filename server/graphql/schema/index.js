@@ -117,7 +117,7 @@ type Mutation {
     replyToPost(postId: String!, text: String!): Reply
 
 
-    signupUser(username: String, password: String, email: String): User
+    signupUser(username: String, password: String, email: String , bio: String): User
     loginUser(username: String!, password: String!): User
     logoutUser: Boolean
     followUnFollow(followId: String!): User
