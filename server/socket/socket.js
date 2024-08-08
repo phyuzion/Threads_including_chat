@@ -15,6 +15,7 @@ let io
 const userSocketMap = {};
 
 async function startIOServer(server) {
+  console.log(' origin : ', `${config.CORS_ORIGIN}`)
   const io = new Server(server, {
     cors: {
       origin: `${config.CORS_ORIGIN}`,
