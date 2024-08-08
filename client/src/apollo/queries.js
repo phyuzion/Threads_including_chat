@@ -6,6 +6,7 @@ export const GetLatestPost = `query GetLatestPosts($skip: Int!, $limit: Int!) {
     img
     video
     likes
+    star
     replies {
       _id
       userId
@@ -26,6 +27,7 @@ export const GetPostsByHashtag = `query GetPostsByHashTag($hashtag: String!, $sk
     img
     video
     likes
+    star
     replies {
       _id
       userId
@@ -47,6 +49,7 @@ export const GetFeedPosts = ` query GetFeedPosts($skip: Int!, $limit: Int!) {
     img
     video
     likes
+    star
     replies {
       _id
       userId
@@ -68,6 +71,7 @@ export const GetPost = `query GetPost($postId: String) {
     video
     createdAt
     likes
+    star
     hashtags
     replies {
       _id
@@ -138,6 +142,7 @@ export const GetUserPosts = `query GetUserPosts($username: String!) {
     img
     video
     likes
+    star
     hashtags
     replies {
       _id

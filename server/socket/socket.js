@@ -20,7 +20,6 @@ async function startIOServer(server) {
     cors: {
       origin: config.CORS_ORIGIN,
       methods: ['GET', 'POST'],
-      withCredentials: true
     },
   });
   io.on('connection', (socket) => {

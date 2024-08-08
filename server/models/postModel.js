@@ -16,6 +16,9 @@ const postSchema = new Schema(
     hashtags: {
       type: [String],
     },
+    star: {
+      type: Number,
+    },
     img: {
       type: String,
     },

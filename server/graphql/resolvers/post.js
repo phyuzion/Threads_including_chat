@@ -85,6 +85,27 @@ module.exports = {
 
     },
     Mutation: {
+      updateStarCount: async (_,args,{req, res}) => { 
+        if(!req.user) {
+          throwForbiddenError()
+        }
+        const { postId } = args
+
+        const post = await Post.findOneAndUpdate(
+          {_id: postId},
+          {
+            $inc: { star : 1}
+          },
+          {
+            returnOriginal: false
+          }
+        )
+        if(post) {
+          return post.star
+        } else {
+          return 0
+        }
+      },
         createPost: async (_,args,{req, res}) => {
 
             if(!req.user) {

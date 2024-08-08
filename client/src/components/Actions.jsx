@@ -20,7 +20,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import postsAtom from '../atoms/postsAtom';
 import { gql, useMutation } from "@apollo/client";
-import { likeUnLikePost, replyToPost } from "../apollo/mutations.js";
+import { likeUnLikePost, replyToPost ,Update_Star_Count } from "../apollo/mutations.js";
 
 const Actions = ({ post }) => {
   const user = useRecoilValue(userAtom);
@@ -29,15 +29,18 @@ const Actions = ({ post }) => {
   const [isLiking, setIsLiking] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [reply, setReply] = useState('');
-  const [stars, setStars] = useState(post.stars || 0);
+  const [stars, setStars] = useState(post.star || 0);
 
   const toast = useToast();
   //here must merge
   const { isOpen, onOpen, onClose } = useDisclosure();
   const LIKE_UNLIKE_POST = gql`${likeUnLikePost}`;
   const REPLY_TO_POST = gql`${replyToPost}`;
+  const UPATE_STAR_COUNT = gql`${Update_Star_Count}`
   const [LIKE_UNLIKE_POST_COMMAND] = useMutation(LIKE_UNLIKE_POST, { fetchPolicy: 'network-only' });
   const [REPLY_POST_COMMAND] = useMutation(REPLY_TO_POST, { fetchPolicy: 'network-only' });
+  const [UPATE_STAR_COUNT_COMMAND] = useMutation(UPATE_STAR_COUNT, { fetchPolicy: 'network-only' });
+
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -117,8 +120,10 @@ const Actions = ({ post }) => {
     setIsReplying(false);
   };
 
-  const handleStarClick = () => {
-    setStars(stars + 1);
+  const handleStarClick = async () => {
+    const response = await UPATE_STAR_COUNT_COMMAND({ variables: { postId: post._id } });
+    console.log(response?.data?.updateStarCount);
+    setStars(response?.data?.updateStarCount);
   };
 
   const formatNumber = (num) => {

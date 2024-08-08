@@ -16,6 +16,7 @@ type Post {
     _id: String!
     postedBy: String!
     text: String!
+    star: Int
     img: String
     video: String
     likes: [String]
@@ -115,6 +116,7 @@ type Mutation {
     deletePost(postId: String): Boolean!
     likeUnLikePost(postId: String): Boolean!
     replyToPost(postId: String!, text: String!): Reply
+    updateStarCount(postId: String!): Int!
 
 
     signupUser(username: String, password: String, email: String , bio: String): User

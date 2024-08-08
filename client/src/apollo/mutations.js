@@ -107,3 +107,7 @@ export const Send_Message = `mutation Mutation($receiverId: String, $text: Strin
   }
 }`
 
+export const Update_Star_Count = `mutation UpdateStarCount($postId: String!) {
+  updateStarCount(postId: $postId)
+}`
+
