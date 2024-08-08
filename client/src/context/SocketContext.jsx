@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import io from 'socket.io-client';
-
+const SOCKET_URL = `${import.meta.env.VITE_MEDIA_SOCKET_URL}`;
 const SocketContext = createContext();
 
 export const useSocket = () => {
@@ -16,7 +16,7 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     console.log('SocketContextProvider!!! ')
-    const socket = io('http://localhost:5000', {
+    const socket = io(SOCKET_URL, {
       query: {
         userId: user?._id,
       },
