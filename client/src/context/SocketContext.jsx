@@ -18,7 +18,7 @@ export const SocketContextProvider = ({ children }) => {
     console.log('SocketContextProvider!!! ')
     const socket = io(SOCKET_URL, {
       query: {
-        userId: user?._id,
+        userId: user?.loginUser?._id,
       },
     });
     console.log('socket : ',socket)
