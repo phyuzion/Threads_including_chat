@@ -11,9 +11,10 @@ module.exports = {
         getLatestPosts: async (_,args,{req, res}) => {
           const { skip,limit } = args
           console.log(' getLatestPost : ',args)
-          result =  await Post.find({}).limit(limit)
-              .skip(skip)
-              .sort({createdAt: -1})
+          result =  await Post.find({}).sort({
+            createdAt: -1,
+          }).skip(skip)
+          .limit(limit)
               console.log(result)
           return result
 
@@ -54,11 +55,11 @@ module.exports = {
             
                 if (!user) throwServerError('User not found' );
             
-                const posts = await Post.find({ postedBy: user._id }).limit(limit)
-                .skip(skip)
-                .sort({
+                const posts = await Post.find({ postedBy: user._id }).sort({
                   createdAt: -1,
-                });
+                }).skip(skip)
+                .limit(limit)
+
                 if (!posts) throwServerError('No posts not found' );
                 return transformPosts(posts)
               } catch (error) {
