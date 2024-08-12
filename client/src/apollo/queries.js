@@ -134,16 +134,15 @@ export const GetUserProfile = `query GetUserProfile($postedBy: String!) {
 
 `
 
-export const GetUserPosts = `query GetUserPosts($username: String!) {
-  getUserPosts(username: $username) {
+export const GetUserPosts = `query GetUserPosts($username: String, $skip: Int!, $limit: Int!) {
+  getUserPosts(username: $username, skip: $skip, limit: $limit) {
     _id
     postedBy
     text
+    star
     img
     video
     likes
-    star
-    hashtags
     replies {
       _id
       userId
@@ -151,6 +150,7 @@ export const GetUserPosts = `query GetUserPosts($username: String!) {
       userProfilePic
       username
     }
+    hashtags
     createdAt
   }
 }`

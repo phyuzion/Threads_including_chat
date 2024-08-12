@@ -100,7 +100,7 @@ type Query {
 
     getLatestPosts(skip: Int! , limit: Int!): [Post]
     getPost(postId: String): Post
-    getUserPosts(username: String): [Post]
+    getUserPosts(username: String,skip: Int! , limit: Int!): [Post]
     getFeedPosts(skip: Int! , limit: Int!): [Post]
     getPostsByHashTag(hashtag: String!, skip: Int! , limit: Int!): [Post]
 

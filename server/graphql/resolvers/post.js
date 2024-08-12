@@ -48,13 +48,15 @@ module.exports = {
             if(!req.user) {
                 throwForbiddenError()
             }
-            const { username } = args;
+            const { username , skip , limit } = args;
             try {
                 const user = await User.findOne({ username });
             
                 if (!user) throwServerError('User not found' );
             
-                const posts = await Post.find({ postedBy: user.id }).sort({
+                const posts = await Post.find({ postedBy: user._id }).limit(limit)
+                .skip(skip)
+                .sort({
                   createdAt: -1,
                 });
                 if (!posts) throwServerError('No posts not found' );
