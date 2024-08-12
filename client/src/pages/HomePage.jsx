@@ -1,13 +1,11 @@
-import { gql, useQuery ,useLazyQuery } from "@apollo/client";
-import React, { useEffect, useState } from 'react';
+import { gql, useLazyQuery } from "@apollo/client";
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Flex, Spinner, Text, Box, Button } from '@chakra-ui/react';
 import { ViewIcon } from '@chakra-ui/icons';
 import Post from '../components/Post';
 import { useRecoilState } from 'recoil';
 import postsAtom from '../atoms/postsAtom';
 import { GetFeedPosts, GetLatestPost } from "../apollo/queries.js";
-
-//import { GetFeedPosts, GetLatestPosts } from "../apollo/queries.js";
 
 const GET_FEED_POST = gql`
   ${GetFeedPosts}
@@ -17,59 +15,75 @@ const GET_LATEST_POST = gql`
   ${GetLatestPost}
 `;
 
-//const GET_LATEST_POST = gql`
-//  ${GetLatestPosts}
-//`;
-
 const HomePage = () => {
   const [posts, setPosts] = useRecoilState(postsAtom);
-
   const [queryType, setQueryType] = useState('LATEST');
+  const [skip, setSkip] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
 
-  // const { loading, error, data } = useQuery(GET_FEED_POST, {
-  //   variables: { skip: 0 , limit: 10 },
-  //   onCompleted: (data) => {
-  //     setPosts(data.getFeedPosts);
-  //   },
-  //   onError: (error) => {
-  //     console.error('Error fetching feed posts:', error);
-  //   }
-  // });
-
-
-  
-  const [ refetch,{loading, error, data} ] = useLazyQuery(
-    queryType == 'FEED' ? GET_FEED_POST : GET_LATEST_POST,
+  const [refetch, { loading, data }] = useLazyQuery(
+    queryType === 'FEED' ? GET_FEED_POST : GET_LATEST_POST,
     {
-      variables: { skip: 0 , limit: 10 },
+      variables: { skip, limit: 10 },
       onCompleted: (data) => {
-        setPosts(queryType === 'FEED' ? data?.getFeedPosts : data?.getLatestPosts);
+        const newPosts = queryType === 'FEED' ? data?.getFeedPosts : data?.getLatestPosts;
+        
+        if (newPosts.length < 10) {
+          setHasMore(false); // 더 이상 로드할 데이터가 없음을 표시
+        }
+
+        // 여기에 중복 제거 로직 추가
+        setPosts((prevPosts) => {
+          const allPosts = [...prevPosts, ...newPosts];
+          const uniquePosts = Array.from(new Set(allPosts.map(post => post._id)))
+            .map(id => allPosts.find(post => post._id === id));
+          return uniquePosts;
+        });
       },
       onError: (error) => {
         console.error(`Error fetching ${queryType.toLowerCase()} posts:`, error);
-      }
+      },
     }
   );
 
-  useEffect(() => {
-    refetch();
-  }, []);
-  
-  useEffect(() => {
-    refetch();
-  }, [queryType, refetch]);
+  const lastPostElementRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
 
-  
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setSkip((prevSkip) => prevSkip + 10);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
+
+  useEffect(() => {
+    setSkip(0); // 쿼리 타입이 변경될 때 skip을 초기화
+    setPosts([]); // 포스트 초기화
+    setHasMore(true); // 데이터 로드 가능 상태로 변경
+    refetch();
+  }, [queryType]);
+
+  useEffect(() => {
+    if (skip > 0) {
+      refetch();
+    }
+  }, [skip]);
+
   const handleQueryChange = () => {
     const newQueryType = queryType === 'LATEST' ? 'FEED' : 'LATEST';
-    console.log('newQueryType: ',newQueryType)
     setQueryType(newQueryType);
-    setPosts([]); // Reset posts to ensure the loading state is shown
   };
 
   return (
     <Box position="relative">
-      {loading ? (
+      {loading && skip === 0 ? (
         <Flex justifyContent={'center'} gap={[2, 3, 4]} mt={[4, 6, 8]}>
           <Spinner size={'xl'} />
         </Flex>
@@ -78,8 +92,12 @@ const HomePage = () => {
           <Text fontSize={['md', 'lg', 'xl']}>You must follow someone</Text>
         </Flex>
       ) : (
-        posts.map((post) => {
-          return <Post key={post._id} post={post} />;
+        posts.map((post, index) => {
+          if (posts.length === index + 1) {
+            return <Post ref={lastPostElementRef} key={post._id} post={post} />;
+          } else {
+            return <Post key={post._id} post={post} />;
+          }
         })
       )}
       <Box mb={20}></Box> {/* Add space at the bottom */}

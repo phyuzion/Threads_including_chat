@@ -14,7 +14,7 @@ const GET_USER_PROFILE = gql`
   ${GetUserProfile}
 `;
 
-function Post({ post, user: propUser, handleDelete }) {
+const Post = React.forwardRef(({ post, user: propUser, handleDelete }, ref) => {
   const [postedByUser, setPostedByUser] = useState(propUser || null);
   const currentUser = useRecoilValue(userAtom);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -38,7 +38,7 @@ function Post({ post, user: propUser, handleDelete }) {
   }
 
   return (
-    <Box pb={3}>
+    <Box pb={3} ref={ref}>
       <Flex gap={[2, 3, 4]} mb={0} pt={[3, 4, 5]} pb={0}>
         <Flex flexDirection={'column'} alignItems={'center'}>
           <Link to={`/${postedByUser.username}`}>
@@ -156,6 +156,6 @@ function Post({ post, user: propUser, handleDelete }) {
       )}
     </Box>
   );
-}
+});
 
 export default Post;

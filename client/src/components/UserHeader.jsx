@@ -34,10 +34,9 @@ function UserHeader({ user }) {
   const { user: updatedUser, refetch } = getUserProfile(user.username);
 
   useEffect(() => {
-    if (updatedUser?.followers.some(follower => follower.followId === currentUser?.loginUser?._id)) {
-      setIsFollowing(true);
-    } else {
-      setIsFollowing(false);
+    if (updatedUser && currentUser) {
+      const isUserFollowing = updatedUser?.followers.some(follower => follower.followId === currentUser?.loginUser?._id);
+      setIsFollowing(isUserFollowing);
     }
   }, [updatedUser, currentUser]);
 
@@ -52,7 +51,9 @@ function UserHeader({ user }) {
   const handleFollowButtonClick = async () => {
     await handleFollowUnFollow();
     setIsFollowing(!isFollowing);
-    refetch(); // 사용자 데이터를 다시 가져와서 업데이트
+    
+    // 변경: 상태만 업데이트하고 refetch는 생략하여 불필요한 전체 리렌더링 방지
+    // refetch();
   };
 
   const handleSendMessage = () => {
@@ -131,7 +132,6 @@ function UserHeader({ user }) {
       </Flex>
       <Divider />
     </Flex>
-
   );
 }
 
