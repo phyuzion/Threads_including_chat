@@ -11,7 +11,7 @@ const {
     {
       Posts: {
         $sortArray: {
-          input: "$Posts",
+          input: "$feedPosts",
           sortBy: {
             createdAt: -1
           }
@@ -167,8 +167,8 @@ const QUERY_USER_FOLLOWING_FEEDS = (userId,skip,limit) => {
     return [
         MATCH_USER_ID(userId),   
         LOOKUP_STAGE("Post","following.followId","postedBy","feedPosts"),
-        PROJECT_FIELD_SLICE("feedPosts",skip,limit),
-        PROJECT_SORT_CREATED_AT_POSTS
+        PROJECT_SORT_CREATED_AT_POSTS,
+        PROJECT_FIELD_SLICE("Posts",skip,limit),
 
     ]
 }
