@@ -1,6 +1,7 @@
 import { gql, useLazyQuery } from "@apollo/client";
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Flex, Spinner, Text, Box, Button, Stack, useColorModeValue } from '@chakra-ui/react';
+import { Flex, Spinner, Text, Box, Button } from '@chakra-ui/react';
+import { ViewIcon } from '@chakra-ui/icons';
 import Post from '../components/Post';
 import { useRecoilState } from 'recoil';
 import postsAtom from '../atoms/postsAtom';
@@ -78,10 +79,6 @@ const HomePage = () => {
   const handleQueryChange = () => {
     const newQueryType = queryType === 'LATEST' ? 'FEED' : 'LATEST';
     setQueryType(newQueryType);
-    setSkip(0); // skip을 초기화하여 첫 페이지부터 새로 가져옴
-    setPosts([]); // 기존 포스트 목록을 초기화
-    setHasMore(true); // 더 로드할 수 있도록 상태 초기화
-    refetch(); // 쿼리 재실행
   };
 
   return (
@@ -104,40 +101,17 @@ const HomePage = () => {
         })
       )}
       <Box mb={20}></Box> {/* Add space at the bottom */}
-      <Stack
-        direction="row"
-        spacing={0}
-        position="fixed"
+      <Button
+        position={'fixed'}
         bottom={[4, 6, 10]}
         left={[4, 6, 10]}
         bg={'gray.dark'}
-        borderRadius="md"
-        overflow="hidden"
+        color={'white'}
+        rightIcon={<ViewIcon />}
         onClick={handleQueryChange}
       >
-        <Box
-          flex="1"
-          textAlign="center"
-          padding="9px"
-          fontWeight='bold'
-          color={queryType === 'LATEST' ? 'black' : 'gray.500'}
-          bg={queryType === 'LATEST' ? 'white' : 'transparent'}
-          transition="background-color 0.3s ease"
-        >
-          LATEST
-        </Box>
-        <Box
-          flex="1"
-          textAlign="center"
-          padding="9px"
-          fontWeight='bold'
-          color={queryType === 'FEED' ? 'black' : 'gray.500'}
-          bg={queryType === 'FEED' ? 'white' : 'transparent'}
-          transition="background-color 0.3s ease"
-        >
-          FEED
-        </Box>
-      </Stack>
+        {queryType === 'LATEST' ? 'LATEST' : 'FEED'}
+      </Button>
     </Box>
   );
 };
