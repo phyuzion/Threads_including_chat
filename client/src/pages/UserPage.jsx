@@ -22,7 +22,8 @@ function UserPage() {
   const { user, isLoading: isUserLoading } = getUserProfile();
 
   const { loading: isPostsLoading, error: postsError, data: postsData } = useQuery(GET_USER_POSTS, {
-    variables: { username , skip: 0, limit: 10 },
+    variables: { username: username , skip: 0, limit: 10 },
+    fetchPolicy: 'network-only',
     onCompleted: (data) => {
       setPosts(data.getUserPosts);
     },
