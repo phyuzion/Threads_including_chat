@@ -7,7 +7,7 @@ import {
   SkeletonCircle,
   Stack,
   Text,
-  useColorModeValue,
+  Box,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -46,10 +46,7 @@ const MessageContainer = () => {
 
   useEffect(() => {
     socket.on('newMessage', (newMessage) => {
-      console.log('MessageContainer newMessage: ', newMessage);
-      setMessages((prevMessages) => {
-        return [...prevMessages, newMessage];
-      });
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
 
       if (!document.hasFocus()) {
         const sound = new Audio(messageNotificationSound);
@@ -61,10 +58,7 @@ const MessageContainer = () => {
   }, [socket]);
 
   useEffect(() => {
-    const lastMessageFromOtherUser =
-      messages.length && messages[messages.length - 1].sender !== currentUser._id;
-    //console.log('currentConversation:  ',currentConversation._id)
-    if (lastMessageFromOtherUser) {
+    if (messages.length && messages[messages.length - 1].sender !== currentUser._id) {
       socket.emit('markMessagesAsSeen', {
         conversationId: messages[0]?.conversationId,
         userId: otherUser?._id,
@@ -72,19 +66,10 @@ const MessageContainer = () => {
     }
 
     socket.on('messagesSeen', ({ conversationId }) => {
-      console.log('MessageContainer messagesSeen');
       if (conversationId === messages[0]?.conversationId) {
-        setMessages((prevMessages) => {
-          return prevMessages.map((message) => {
-            if (message?.sender === currentUser._id) {
-              return {
-                ...message,
-                seen: true,
-              };
-            }
-            return message;
-          });
-        });
+        setMessages((prevMessages) =>
+          prevMessages.map((message) => (message.sender === currentUser._id ? { ...message, seen: true } : message))
+        );
       }
     });
   }, [socket, currentUser._id, messages, otherUser]);
@@ -93,7 +78,7 @@ const MessageContainer = () => {
     latestMessageRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messages]);
 
-  const [queryMessages, { loading, error, data }] = useLazyQuery(GET_MESSAGES, {
+  const [queryMessages, { loading }] = useLazyQuery(GET_MESSAGES, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
@@ -117,21 +102,10 @@ const MessageContainer = () => {
   });
 
   useEffect(() => {
-    const getMessages = async () => {
+    if (otherUser) {
       setLoadingMessages(true);
       setMessages([]);
-      try {
-        if (otherUser) {
-          queryMessages({ variables: { otherUserId: otherUser._id } });
-        }
-      } catch (err) {
-        console.log(err);
-        showToast('Error', err.message, 'error');
-      }
-    };
-
-    if (otherUser) {
-      getMessages();
+      queryMessages({ variables: { otherUserId: otherUser._id } });
     }
   }, [showToast, otherUser]);
 
@@ -139,15 +113,15 @@ const MessageContainer = () => {
     return (
       <Flex
         flex={70}
-        bg={useColorModeValue('gray.200', 'gray.dark')}
-        borderRadius={'md'}
-        p={2}
-        direction={'column'}
+        bg="#FFFFFF"
+        borderRadius="md"
+        p={4}
+        direction="column"
         height="90vh"
         justifyContent="center"
         alignItems="center"
       >
-        <Text>Loading user profile...</Text>
+        <Text color="#333333">Loading user profile...</Text>
       </Flex>
     );
   }
@@ -155,98 +129,74 @@ const MessageContainer = () => {
   return (
     <Flex
       flex={70}
-      bg={useColorModeValue('gray.200', 'gray.dark')}
-      borderRadius={'md'}
-      p={2}
-      direction={'column'}
+      bg="#FFFFFF"
+      borderRadius="md"
+      p={4}
+      direction="column"
       height="85vh"
     >
       {/* Header */}
-      <Flex
-        alignItems={'center'}
-        p={2}
-        gap={2}
-        w={'full'}
-        position="sticky"
-        top={0}
-        zIndex={1}
-      >
+      <Flex alignItems="center" p={4} bg="#F5F5F5" borderRadius="md">
         <IconButton
           icon={<ArrowBackIcon />}
           onClick={() => navigate('/chat')}
+          bg="#FFFFFF"
+          color="#333333"
+          _hover={{ bg: '#E0E0E0' }}
+          _active={{ bg: '#CCCCCC' }}
+          border="1px solid #CCCCCC"
+          size="md"
+          borderRadius="full"
+          mr={3}
         />
-        <Avatar
-          src={otherUser?.profilePic}
-          size={{
-            base: 'xs',
-            sm: 'sm',
-            md: 'md',
-          }}
-        />
-        <Stack gap={1}>
-          <Text fontWeight={700} display={'flex'} alignItems={'center'} gap={1}>
+        <Avatar src={otherUser?.profilePic} size="md" />
+        <Stack spacing={0} ml={3}>
+          <Text fontWeight="bold" color="#333333">
             {otherUser?.username}
           </Text>
-          {isOnline ? (
-            <Text fontWeight={400} fontSize={'xs'} color={'green.400'}>
-              Online
-            </Text>
-          ) : (
-            <Text fontWeight={400} fontSize={'xs'} color={'gray'}>
-              Offline
-            </Text>
-          )}
+          <Text fontSize="sm" color={isOnline ? '#28A745' : '#888888'}>
+            {isOnline ? 'Online' : 'Offline'}
+          </Text>
         </Stack>
       </Flex>
-      <Divider />
+
+      <Divider my={4} />
 
       {/* Body */}
-      <Flex
-        flexDirection={'column'}
-        gap={2}
-        overflowY={'auto'}
-        flex={1}
-        my={4}
-        p={1}
-      >
+      <Box flex="1" overflowY="auto" p={4}>
         {loadingMessages
-          ? [...Array(5)].map((_, i) => (
-              <Flex
-                key={i}
-                gap={2}
-                alignItems={'center'}
-                p={1}
-                borderRadius={'md'}
-                alignSelf={i % 2 === 0 ? 'flex-start' : 'flex-end'}
-              >
-                {i % 2 === 0 && <SkeletonCircle size={7} />}
-                <Flex flexDir={'column'} gap={2}>
-                  <Skeleton h='8px' w='250px' />
-                  <Skeleton h='8px' w='250px' />
-                  <Skeleton h='8px' w='250px' />
+          ? Array(5)
+              .fill()
+              .map((_, i) => (
+                <Flex
+                  key={i}
+                  gap={2}
+                  alignItems="center"
+                  py={2}
+                >
+                  {i % 2 === 0 && <SkeletonCircle size={8} />}
+                  <Flex direction="column" gap={2}>
+                    <Skeleton h="8px" w="200px" />
+                    <Skeleton h="8px" w="200px" />
+                  </Flex>
+                  {i % 2 !== 0 && <SkeletonCircle size={8} />}
                 </Flex>
-                {i % 2 !== 0 && <SkeletonCircle size={7} />}
-              </Flex>
-            ))
+              ))
           : messages.map((message, index) => (
               <Flex
                 key={index}
-                direction={'column'}
+                direction="column"
+                alignSelf={message.sender === currentUser._id ? 'flex-end' : 'flex-start'}
                 ref={messages.length - 1 === index ? latestMessageRef : null}
               >
                 <Message message={message} otherUser={otherUser} />
               </Flex>
             ))}
-      </Flex>
+      </Box>
 
       {/* Footer */}
-      <Flex
-        position="sticky"
-        bottom={0}
-        zIndex={1}
-        width="100%"
-      >
-        <MessageInput setMessages={setMessages} otherUser={otherUser} /> {/* 여기서 otherUser를 전달 */}
+      <Flex mt={2} borderTop="1px solid #E0E0E0">
+        <MessageInput setMessages={setMessages} otherUser={otherUser} />
       </Flex>
     </Flex>
   );

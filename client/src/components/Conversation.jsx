@@ -1,5 +1,6 @@
 import {
   Avatar,
+  AvatarBadge,
   Flex,
   Stack,
   Text,
@@ -15,35 +16,34 @@ const Conversation = ({ conversation, isOnline, onClick }) => {
   return (
     <Flex
       gap={3}
-      alignItems={'center'}
-      p={1}
+      alignItems="center"
+      p={3}
       onClick={onClick}
+      borderRadius="md"
+      _hover={{ bg: "#F5F5F5" }}
+      cursor="pointer"
     >
       <Avatar
         src={otherUser.profilePic}
-        size={{
-          base: 'xs',
-          sm: 'sm',
-          md: 'md',
-        }}
+        size="md"
       >
-        {isOnline && <AvatarBadge bg={'green.500'} boxSize={'1em'} />}
+        {isOnline && <AvatarBadge bg="#28A745" boxSize="1em" />}
       </Avatar>
-      <Stack direction={'column'} fontSize={'sm'}>
-        <Text fontWeight={700} display={'flex'} alignItems={'center'} gap={1}>
+      <Stack spacing={1}>
+        <Text fontWeight="bold" color="#333333">
           {otherUser.username}
         </Text>
-        <Text fontSize={'xs'} display={'flex'} alignItems={'center'} gap={1}>
-          {lastMessage.text
-          ? lastMessage.text.length > 18
-            ? lastMessage.text.substring(0, 18) + '...'
-            : lastMessage.text
-          : lastMessage.sender && (
-              <>
-                <BsFillImageFill size={12} />
-                Sent A Photo
-              </>
-            )}
+        <Text fontSize="sm" color="#666666" display="flex" alignItems="center" gap={1}>
+          {lastMessage?.text
+            ? lastMessage.text.length > 20
+              ? lastMessage.text.substring(0, 20) + '...'
+              : lastMessage.text
+            : lastMessage?.sender && (
+                <>
+                  <BsFillImageFill size={14} color="#888888" />
+                  <Text as="span" color="#888888">Sent A Photo</Text>
+                </>
+              )}
         </Text>
       </Stack>
     </Flex>

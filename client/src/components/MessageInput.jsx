@@ -28,9 +28,8 @@ const MessageInput = ({ setMessages, otherUser }) => {
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
   const setConversations = useSetRecoilState(conversationsAtom);
-  
-  const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage(); // webP or JPEG
-  
+  const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage();
+
   const messageMediaRef = useRef();
   const { onClose } = useDisclosure();
   const showToast = useShowToast();
@@ -49,16 +48,10 @@ const MessageInput = ({ setMessages, otherUser }) => {
       let data;
       if (previewImage) {
         const fileToUpload = processedImage;
-
-        if (!fileToUpload) {
-          throw new Error('No file to upload');
-        }
-
         const formData = new FormData();
         formData.append('file', fileToUpload);
 
         const user_ = JSON.parse(localStorage.getItem('user') || '{}');
-        console.log('handleSendMessage  user_ : ',user_)
         const res = await fetch(MESSAGE_IMG_URL, {
           method: 'POST',
           headers: {
@@ -68,13 +61,9 @@ const MessageInput = ({ setMessages, otherUser }) => {
         });
         
         data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.message || 'Failed to upload image');
-        }
+        if (!res.ok) throw new Error(data.message || 'Failed to upload image');
       }
 
-      console.log('handleSendMessage : ', messageText);
       const response = await SEND_MESSAGE_COMMAND({
         variables: {
           receiverId: otherUser._id,
@@ -82,21 +71,14 @@ const MessageInput = ({ setMessages, otherUser }) => {
           img: previewImage ? data.url : '',
         },
       });
-
-      console.log('response: ', response);
       const result = response?.data?.sendMessage;
 
-      setConversations((prevConv) => {
-        return prevConv.map((conv) => {
-          if (conv.participants.includes(otherUser._id)) {
-            return {
-              ...conv,
-              lastMessage: { text: messageText, img:result?.img, sender: result?.sender },
-            };
-          }
-          return conv;
-        });
-      });
+      setConversations((prevConv) =>
+        prevConv.map((conv) => conv.participants.includes(otherUser._id)
+          ? { ...conv, lastMessage: { text: messageText, img: result?.img, sender: result?.sender } }
+          : conv
+        )
+      );
 
       setMessageText('');
       setPreviewImage('');
@@ -110,49 +92,57 @@ const MessageInput = ({ setMessages, otherUser }) => {
   };
 
   return (
-    <Flex gap={2} align={'center'} width="100%">
-      <form onSubmit={handleSendMessage} style={{ flex: 95, width: '100%' }}>
+    <Flex gap={2} align="center" width="100%" p={2} bg="#F5F5F5" borderRadius="md">
+      <form onSubmit={handleSendMessage} style={{ flex: 1 }}>
         <InputGroup width="100%">
           <Input
-            placeholder='Type Your Message...'
+            placeholder="Type Your Message..."
             onChange={(e) => setMessageText(e.target.value)}
             value={messageText}
+            bg="#FFFFFF"
+            borderColor="#CCCCCC"
+            _placeholder={{ color: '#888888' }}
+            _focus={{ borderColor: '#999999' }}
           />
           <InputRightElement>
             {isSendingMessage ? (
-              <Spinner size={'sm'} />
+              <Spinner size="sm" color="#48639D" />
             ) : (
-              <IoSendSharp onClick={handleSendMessage} cursor={'pointer'} />
+              <IoSendSharp onClick={handleSendMessage} cursor="pointer" color="#48639D" />
             )}
           </InputRightElement>
         </InputGroup>
       </form>
 
-      <Flex flex={5} cursor={'pointer'}>
-        <Input type={'file'} hidden ref={messageMediaRef} onChange={handleImageChange} accept='image/*' />
-        <BsFillImageFill onClick={() => messageMediaRef.current.click()} size={20} />
+      <Flex
+        flexShrink={0}
+        cursor="pointer"
+        onClick={() => messageMediaRef.current.click()}
+        p={2}
+        bg="#E0E0E0"
+        borderRadius="md"
+      >
+        <Input type="file" hidden ref={messageMediaRef} onChange={handleImageChange} accept="image/*" />
+        <BsFillImageFill size={20} color="#333333" />
       </Flex>
 
-      <Modal
-        isOpen={!!previewImage}
-        onClose={() => {
-          onClose();
-          setPreviewImage('');
-        }}
-      >
+      <Modal isOpen={!!previewImage} onClose={() => {
+        onClose();
+        setPreviewImage('');
+      }}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Selected Media</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Flex w={'full'}>
-              <Image src={previewImage} alt='Message Media' />
+            <Flex w="full" justify="center">
+              <Image src={previewImage} alt="Message Media" borderRadius="md" />
             </Flex>
-            <Flex justifyContent={'flex-end'} my={2}>
+            <Flex justifyContent="flex-end" mt={4}>
               {isSendingMessage ? (
-                <Spinner size={'md'} />
+                <Spinner size="md" color="blue.500" />
               ) : (
-                <IoSendSharp size={24} cursor={'pointer'} onClick={handleSendMessage} />
+                <IoSendSharp size={24} cursor="pointer" color="#007AFF" onClick={handleSendMessage} />
               )}
             </Flex>
           </ModalBody>

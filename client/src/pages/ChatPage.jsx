@@ -7,8 +7,7 @@ import {
   Skeleton,
   SkeletonCircle,
   Text,
-  useColorModeValue,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
 import { BsSearchHeartFill } from 'react-icons/bs';
 import Conversation from '../components/Conversation';
@@ -35,7 +34,6 @@ const ChatPage = () => {
   const currentUser = useRecoilValue(userAtom);
   const { socket, onlineUsers } = useSocket();
   const navigate = useNavigate();
-
   const toast = useToast();
 
   useEffect(() => {
@@ -45,7 +43,7 @@ const ChatPage = () => {
           if (newMessage.conversationId === conversation._id) {
             return {
               ...conversation,
-              lastMessage: { text: newMessage.text, sender: newMessage.sender, seen: newMessage.seen , img: newMessage.img},
+              lastMessage: { text: newMessage.text, sender: newMessage.sender, seen: newMessage.seen, img: newMessage.img },
             };
           }
           return conversation;
@@ -55,7 +53,6 @@ const ChatPage = () => {
     });
 
     socket?.on('messagesSeen', ({ conversationId }) => {
-      console.log(conversationId);
       setConversations((prevConversations) => {
         const updatedConversation = prevConversations.map((conversation) => {
           if (conversationId === conversation._id) {
@@ -79,98 +76,93 @@ const ChatPage = () => {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      console.log('Chat Page: queryConversations ', data?.getConversations);
       if (data?.getConversations) {
         setConversations(data?.getConversations);
       }
       setLoadingConversations(false);
     },
     onError: (error) => {
-      console.log(error);
       setLoadingConversations(false);
     },
   });
 
-  const [handleSearch, { loading: loadingSearch, data: searchData }] = useLazyQuery(GET_USER_PROFILE_BY_NAME, {
+  const [handleSearch, { loading: loadingSearch }] = useLazyQuery(GET_USER_PROFILE_BY_NAME, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      console.log('handleSearch data: ', data);
       if (data?.getProfileByName?._id.toString() === currentUser?.loginUser?._id) {
         toast({
-          title: "You cannot chat with yourself.",
-          status: "warning",
+          title: 'You cannot chat with yourself.',
+          status: 'warning',
           duration: 3000,
           isClosable: true,
         });
-        setSearchText(''); // Clear the search input
+        setSearchText('');
         setSearchingConversation(false);
         return;
       }
-      const searchedUser = data?.getProfileByName;
-      navigate(`/chat/${searchedUser.username}`);
+      navigate(`/chat/${data?.getProfileByName.username}`);
     },
-    onError: (error) => {
-      console.error('handleSearch error:', error);
-      setSearchingConversation(false);
-    },
+    onError: () => setSearchingConversation(false),
   });
 
   useEffect(() => {
     queryConversations();
   }, []);
 
-  const handleConversationSearch = async (e) => {
+  const handleConversationSearch = (e) => {
     e.preventDefault();
-    console.log('handleConversationSearch');
     setSearchingConversation(true);
-    try {
-      handleSearch({ variables: { username: searchText } });
-    } catch (error) {
-      console.log(error);
-      setSearchingConversation(false);
-    }
+    handleSearch({ variables: { username: searchText } });
   };
 
   return (
-    <Box position="relative">
-      <Flex direction={'column'} gap={[2, 3, 4]} mt={[4, 6, 8]}>
-        <Text fontWeight={700} color={useColorModeValue('grey.600', 'grey.400')}>
-          Your Conversations
-        </Text>
+    <Box position="relative" p={4} maxW="lg" mx="auto">
+      <Flex direction="column" gap={4} mt={6}>
+        
         <form onSubmit={handleConversationSearch}>
-          <Flex alignItems={'center'} gap={2}>
+          <Flex alignItems="center" gap={2}>
             <Input
-              placeholder='Search user to start conversation'
+              placeholder="Search for a user..."
               onChange={(e) => setSearchText(e.target.value)}
               value={searchText}
+              borderColor="gray.300"
+              _placeholder={{ color: 'gray.500' }}
+              _focus={{ borderColor: 'blue.400' }}
             />
-            <Button size={'md'} type={'submit'} isLoading={searchingConversation}>
+            <Button
+              size="md"
+              type="submit"
+              isLoading={searchingConversation}
+              bg="blue.400"
+              color="white"
+              _hover={{ bg: 'blue.500' }}
+              borderRadius="md"
+            >
               <BsSearchHeartFill />
             </Button>
           </Flex>
         </form>
-        {loadingConversations &&
-          [0, 1, 2, 3, 4].map((_, i) => (
-            <Flex key={i} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
-              <Box>
-                <SkeletonCircle size={'10'} />
-              </Box>
-              <Flex w={'full'} flexDirection={'column'} gap={3}>
-                <Skeleton h={'10px'} w={'80px'} />
-                <Skeleton h={'8px'} w={'90%'} />
-              </Flex>
-            </Flex>
-          ))}
-        {!loadingConversations &&
-          conversations.map((conversation) => (
-            <Conversation
-              isOnline={onlineUsers?.includes(conversation?.participants[0]?._id)}
-              key={conversation._id}
-              conversation={conversation}
-              onClick={() => navigate(`/chat/${conversation.participants[0].username}`)}
-            />
-          ))}
+        {loadingConversations
+          ? Array(5)
+              .fill()
+              .map((_, i) => (
+                <Flex key={i} gap={4} alignItems="center" p={2} borderRadius="md">
+                  <SkeletonCircle size="10" />
+                  <Flex w="full" flexDirection="column" gap={2}>
+                    <Skeleton h="10px" w="60%" />
+                    <Skeleton h="8px" w="80%" />
+                  </Flex>
+                </Flex>
+              ))
+          : conversations.map((conversation) => (
+              <Conversation
+                isOnline={onlineUsers?.includes(conversation?.participants[0]?._id)}
+                key={conversation._id}
+                conversation={conversation}
+                onClick={() => navigate(`/chat/${conversation.participants[0].username}`)}
+              />
+            ))}
       </Flex>
     </Box>
   );
