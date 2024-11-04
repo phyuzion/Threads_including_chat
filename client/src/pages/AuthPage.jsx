@@ -26,7 +26,7 @@ import { useRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom.js';
 import { gql, useMutation, useApolloClient } from "@apollo/client";
 import { loginUser } from "../apollo/mutations.js";
-import SignUpCard from '../components/SignUpCard.jsx'; // SignUpCard를 가져옵니다.
+import SignUpCard from '../components/SignupCard.jsx'; // SignUpCard를 가져옵니다.
 
 const LOGIN_USER = gql`${loginUser}`;
 
