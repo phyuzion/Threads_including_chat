@@ -70,8 +70,13 @@ function Header() {
     window.location.href = '/';
   };
 
-  const iconSize = useBreakpointValue({ base: 20, md: 24, lg: 24 }); // 아이콘 크기 조정
-  const iconColor = "#4A5568"; // 기본 아이콘 색상
+  const iconSize = useBreakpointValue({ base: 20, md: 24, lg: 24 });
+  const iconColor = "#4A5568"; // 아이콘 색상
+  const borderColor = "#CBD5E0"; // gray.300에 해당하는 색상 코드
+  const placeholderColor = "#A0AEC0"; // gray.500에 해당하는 색상 코드
+  const activeTextColor = "#718096"; // gray.600에 해당하는 색상 코드
+  const backgroundColor = "#EDF2F7"; // gray.100에 해당하는 색상 코드
+  const focusRingColor = "rgba(72, 187, 120, 0.4)"; // 포커스 링 색상
 
   return (
     <Flex
@@ -98,10 +103,13 @@ function Header() {
                   placeholder="Search hashtag"
                   size="sm"
                   height="35px"
-                  borderColor="gray.300"
+                  borderColor={borderColor}
                   borderWidth="1px"
                   borderRadius="full"
-                  _placeholder={{ color: 'gray.500' }}
+                  _placeholder={{ color: placeholderColor }}
+                  _focus={{
+                    boxShadow: `0 0 0 3px ${focusRingColor}`, // 포커스 링 색상 적용
+                  }}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -121,8 +129,8 @@ function Header() {
               </InputGroup>
             </Flex>
           ) : searchActive ? (
-            <Flex alignItems="center" gap={3} bg="gray.100" borderRadius="full" height="35px" px={3}>
-              <Text fontSize="sm" color="gray.600" isTruncated>{'#' + searchQuery}</Text>
+            <Flex alignItems="center" gap={3} bg={backgroundColor} borderRadius="full" height="35px" px={3}>
+              <Text fontSize="sm" color={activeTextColor} isTruncated>{'#' + searchQuery}</Text>
               <IconButton
                 aria-label="Clear search"
                 icon={<AiOutlineClose size={iconSize} />}
@@ -162,7 +170,7 @@ function Header() {
           <Menu>
             <MenuButton as={IconButton} aria-label="Menu" icon={<GiHamburgerMenu size={iconSize} color={iconColor} />} variant="ghost" size="sm" mx={1} />
             <MenuList>
-              <MenuItem icon={<FiLogOut size={20} />} onClick={logout}>Logout</MenuItem>
+              <MenuItem icon={<FiLogOut size={20} color={iconColor} />} onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
