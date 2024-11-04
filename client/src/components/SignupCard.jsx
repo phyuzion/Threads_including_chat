@@ -1,21 +1,19 @@
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
   Flex,
   FormControl,
-  FormLabel,
-  Heading,
   Input,
   InputGroup,
   InputRightElement,
-  Link,
   Stack,
   Text,
-  useColorModeValue,
+  Heading,
   useToast,
+  Link,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import authScreenAtom from '../atoms/authAtom.js';
 import userAtom from '../atoms/userAtom.js';
@@ -24,18 +22,16 @@ import { signupUser } from "../apollo/mutations.js";
 
 const SIGNUP_USER = gql`${signupUser}`;
 
-function SignupCard() {
+function SignUpCard() {
   const [showPassword, setShowPassword] = useState(false);
   const [_, setAuthScreen] = useRecoilState(authScreenAtom);
   const [SIGNUP_USER_COMMAND] = useMutation(SIGNUP_USER);
   const [inputs, setInputs] = useState({
     username: '',
     email: '',
-    password: '',
-    bio:''
+    password: ''
   });
-  const [passwordError, setPasswordError] = useState(false);
-  const setUser = useSetRecoilState(userAtom);
+
 
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -43,15 +39,11 @@ function SignupCard() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
-    if (name === 'password' && value.length >= 8) {
-      setPasswordError(false);
-    }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
     if (inputs.password.length < 8) {
-      setPasswordError(true);
       toast({
         title: 'Signup failed',
         description: "Password must be at least 8 characters long.",
@@ -63,9 +55,7 @@ function SignupCard() {
     }
     try {
       setIsLoading(true);
-      console.log('inputs: ', inputs);
       const response = await SIGNUP_USER_COMMAND({ variables: inputs });
-      console.log('response.data', response.data);
       setAuthScreen('login');
       toast({
         title: 'Account created.',
@@ -75,7 +65,6 @@ function SignupCard() {
         isClosable: true,
       });
     } catch (error) {
-      console.log(error);
       toast({
         title: 'Signup failed',
         description: "Username or email is already in use. Please try a different one.",
@@ -89,83 +78,78 @@ function SignupCard() {
   };
 
   return (
-    <form onSubmit={handleSignup}>
-      <Flex minH={'60vh'} align={'center'} justify={'center'}>
-        <Stack spacing={8} mx={'auto'} maxW={['90%', '80%', '70%', '60%']} py={[4, 6, 8]} px={[4, 6, 8]}>
-          <Stack align={'center'}>
-            <Heading fontSize={['xl', '2xl', '3xl']} textAlign={'center'}>
-              Sign up
-            </Heading>
-          </Stack>
-          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={[4, 6, 8]}>
-            <Stack spacing={4}>
-              <FormControl isRequired>
-                <FormLabel fontSize={['sm', 'md', 'lg']}>Username</FormLabel>
-                <Input
-                  type='text'
-                  name='username'
-                  onChange={handleInputChange}
-                  value={inputs.username}
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel fontSize={['sm', 'md', 'lg']}>Email address</FormLabel>
-                <Input
-                  type='email'
-                  name='email'
-                  onChange={handleInputChange}
-                  value={inputs.email}
-                />
-              </FormControl>
-              <FormControl isRequired isInvalid={passwordError}>
-                <FormLabel fontSize={['sm', 'md', 'lg']}>Password</FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    name='password'
-                    onChange={handleInputChange}
-                    value={inputs.password}
-                    borderColor={passwordError ? 'red.500' : 'inherit'}
-                  />
-                  <InputRightElement h={'full'}>
-                    <Button
-                      variant={'ghost'}
-                      onClick={() => setShowPassword((showPassword) => !showPassword)}
-                    >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-              <Stack spacing={6} pt={2}>
-                <Button
-                  loadingText='Signing Up...'
-                  size='lg'
-                  bg={'blue.400'}
-                  color={'white'}
-                  _hover={{
-                    bg: 'blue.500',
-                  }}
-                  type={'submit'}
-                  isLoading={isLoading}
-                >
-                  Sign up
+    <form onSubmit={handleSignup} style={{ width: '100%', height: '100%' }}>
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        w="100%"
+        h="100%"
+        p={[4, 6, 8]}
+        bg="white" // 전체 배경을 흰색으로 설정
+        borderRadius="lg"
+        boxShadow="lg"
+      >
+        <Stack spacing={6} w="100%">
+          <Heading fontSize="2xl" textAlign="center">Sign Up</Heading>
+          <FormControl isRequired>
+            <Input
+              type="text"
+              name="username"
+              onChange={handleInputChange}
+              value={inputs.username}
+              placeholder="Username"
+              bg="#e5e5e5"
+              border={0}
+              _placeholder={{ color: '#a3a3a3' }}
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <Input
+              type="email"
+              name="email"
+              onChange={handleInputChange}
+              value={inputs.email}
+              placeholder="Email"
+              bg="#e5e5e5"
+              border={0}
+              _placeholder={{ color: '#a3a3a3' }}
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <InputGroup>
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                onChange={handleInputChange}
+                value={inputs.password}
+                placeholder="Password"
+                bg="#e5e5e5"
+                border={0}
+                _placeholder={{ color: '#a3a3a3' }}
+              />
+              <InputRightElement>
+                <Button variant="ghost" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                 </Button>
-              </Stack>
-              <Stack pt={6}>
-                <Text fontSize={['sm', 'md']} align={'center'}>
-                  Already a user?{' '}
-                  <Link color={'blue.400'} onClick={() => setAuthScreen('login')}>
-                    Login
-                  </Link>
-                </Text>
-              </Stack>
-            </Stack>
-          </Box>
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+          <Button
+            loadingText="Signing Up..."
+            size="lg"
+            bg="#48639D"
+            color="white"
+            _hover={{ bg: "#d0d3da" }}
+            type="submit"
+            isLoading={isLoading}
+          >
+            Sign up
+          </Button>
         </Stack>
       </Flex>
     </form>
   );
 }
 
-export default SignupCard;
+export default SignUpCard;
