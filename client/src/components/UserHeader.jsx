@@ -14,10 +14,13 @@ import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom.js';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow.js';
 import getUserProfile from '../hooks/useGetUserProfile';
+import UpdateProfilePage from '../pages/UpdateProfilePage'; // UpdateProfilePage 컴포넌트를 가져옵니다.
+import { useDisclosure } from '@chakra-ui/react';
 
 function UserHeader({ user }) {
   const toast = useToast();
   const currentUser = useRecoilValue(userAtom);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isFollowing, setIsFollowing] = useState(false);
 
   const { user: updatedUser } = getUserProfile(user.username);
@@ -49,7 +52,7 @@ function UserHeader({ user }) {
       {/* Profile Background with Username */}
       <Box
         position="relative"
-        bgImage={user.profilePic ? `url(${user.profilePic})` : 'url(/path/to/anonymous_image.png)'} // 익명 이미지 경로 설정
+        bgImage={user.profilePic ? `url(${user.profilePic})` : 'url(/path/to/anonymous_image.png)'}
         bgSize="cover"
         bgPosition="center"
         borderRadius="lg"
@@ -77,29 +80,46 @@ function UserHeader({ user }) {
       {/* Bio and Follower Count */}
       <VStack spacing={1} mb={4}>
         <Text fontSize="sm" color="#333333">
-          {user.bio || 'This user has no bio.'} {/* Bio가 없을 때 기본 텍스트 표시 */}
+          {user.bio || 'This user has no bio.'}
         </Text>
         <Text fontSize="xs" color="#666666">
           {followerCount} Followers
         </Text>
       </VStack>
 
-      {/* Follow and Share Buttons */}
+      {/* Follow/Edit Profile and Share Buttons */}
       <Flex gap={2} justify="center">
-        {currentUser?.loginUser?._id !== user._id && (
-          <Button
-            onClick={handleFollowButtonClick}
-            isLoading={isFlwBtnLoading}
-            leftIcon={<Icon as={FaUserPlus} />}
-            size="sm"
-            bg="#48639D"
-            color="white"
-            borderRadius="md"
-            px={4}
-            _hover={{ bg: '#3E5377' }}
-          >
-            {isFollowing ? 'Unfollow' : 'Follow'}
-          </Button>
+        {currentUser?.loginUser?._id === user._id ? (
+          <>
+            <Button
+              onClick={onOpen}
+              size="sm"
+              bg="#48639D"
+              color="white"
+              borderRadius="full"
+              px={4}
+              _hover={{ bg: '#3E5377' }}
+            >
+              Edit Profile
+            </Button>
+            <UpdateProfilePage isOpen={isOpen} onClose={onClose} />
+          </>
+        ) : (
+          <>
+            <Button
+              onClick={handleFollowButtonClick}
+              isLoading={isFlwBtnLoading}
+              leftIcon={<Icon as={FaUserPlus} />}
+              size="sm"
+              bg="#48639D"
+              color="white"
+              borderRadius="full"
+              px={4}
+              _hover={{ bg: '#3E5377' }}
+            >
+              {isFollowing ? 'Unfollow' : 'Follow'}
+            </Button>
+          </>
         )}
 
         <Button
@@ -109,7 +129,7 @@ function UserHeader({ user }) {
           variant="outline"
           borderColor="#333333"
           onClick={CopyUrl}
-          borderRadius="md"
+          borderRadius="full"
           px={4}
         >
           Share Profile

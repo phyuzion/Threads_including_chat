@@ -24,13 +24,17 @@ export const SuggestedUser = ({ user, onFollow, onClose }) => {
         </Flex>
       </Flex>
       {!following && (
+        
         <Button
-          size="xs"
-          color="white"
-          bg="#3182CE"
-          onClick={handleFollowClick}
-          isLoading={isFlwBtnLoading}
-          _hover={{ bg: "#63B3ED" }}
+        size="xs"
+        bg="#48639D"
+        color="white"
+        borderRadius="xl"
+        px={4}
+        _hover={{ bg: '#3E5377' }}
+        onClick={handleFollowClick}
+        isLoading={isFlwBtnLoading}
+        
         >
           Follow
         </Button>
