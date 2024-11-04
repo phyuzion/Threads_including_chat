@@ -1,27 +1,29 @@
-import { Avatar, Divider, Flex, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { Avatar, Divider, Flex, Text, Box } from '@chakra-ui/react';
+import React from 'react';
 
 function Comment({ reply, isLastReply }) {
   return (
-    <div>
-      <Flex gap={4} py={2} my={2} w={'full'}>
-        <Avatar size={'sm'} src={reply.userProfilePic} />
-        <Flex w={'full'} gap={1} flexDirection={'column'}>
-          <Flex
-            w={'full'}
-            alignItems={'center'}
-            justifyContent={'space-between'}
-          >
-            <Text fontSize={'sm'} fontWeight={'bold'}>
-              {reply.username}
-            </Text>
-          </Flex>
-
-          <Text>{reply.text}</Text>
+    <Box py={2}>
+      <Flex gap={3} alignItems="flex-start">
+        {/* 사용자 프로필 이미지 */}
+        <Avatar size="sm" src={reply.userProfilePic} />
+        
+        {/* 댓글 본문 */}
+        <Flex direction="column" flex="1">
+          <Text fontSize="sm" fontWeight="bold" color="gray.700">
+            {reply.username}
+          </Text>
+          <Text fontSize="sm" color="gray.600" mt={1}>
+            {reply.text}
+          </Text>
         </Flex>
       </Flex>
-      {!isLastReply ? <Divider /> : null}
-    </div>
+      
+      {/* 구분선 */}
+      {!isLastReply && (
+        <Divider my={2} borderColor="gray.200" />
+      )}
+    </Box>
   );
 }
 

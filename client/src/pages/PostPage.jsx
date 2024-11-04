@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Spinner, Text, Divider } from '@chakra-ui/react';
+import { Flex, Spinner, Text, Divider, Box } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import postsAtom from '../atoms/postsAtom';
@@ -46,13 +46,13 @@ function PostPage() {
 
   if (!user && isLoading) {
     return (
-      <Flex justifyContent={'center'}>
-        <Spinner size={'xl'} />
+      <Flex justifyContent={'center'} mt={8}>
+        <Spinner size={'xl'} color="#48639D" />
       </Flex>
     );
   }
 
-  if (!currentPost) return <Text>No post found.</Text>;
+  if (!currentPost) return <Text textAlign="center" mt={4}>No post found.</Text>;
 
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
@@ -64,13 +64,28 @@ function PostPage() {
   };
 
   return (
-    <>
-      <Post post={currentPost} user={user} handleDelete={currentUser?.loginUser?._id === currentPost.postedBy ? handleDelete : undefined} />
-      <Divider my={4} />
-      {currentPost.replies?.map((reply) => (
-        <Comment key={reply._id} reply={reply} isLastReply={currentPost.replies[currentPost.replies.length - 1] === reply} />
-      ))}
-    </>
+    <Box p={4} bg="white" borderRadius="md" boxShadow="sm">
+      <Post
+        post={currentPost}
+        user={user}
+        handleDelete={currentUser?.loginUser?._id === currentPost.postedBy ? handleDelete : undefined}
+      />
+      <Divider my={4} borderColor="#e0e0e0" />
+      
+      {currentPost.replies?.length > 0 ? (
+        currentPost.replies.map((reply) => (
+          <Comment
+            key={reply._id}
+            reply={reply}
+            isLastReply={currentPost.replies[currentPost.replies.length - 1] === reply}
+          />
+        ))
+      ) : (
+        <Text textAlign="center" fontSize="sm" color="gray.600" mt={4}>
+          No comments yet.
+        </Text>
+      )}
+    </Box>
   );
 }
 
