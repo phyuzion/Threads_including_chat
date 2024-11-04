@@ -31,8 +31,8 @@ const CreatePost = () => {
   const [postText, setPostText] = useState('');
   const imageInputRef = useRef();
   const videoInputRef = useRef();
-  const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage(); // webP or JPEG
-  const { handleVideoChange, previewVideo, setPreviewVideo, videoFile } = usePreviewVideo(); // Add video file
+  const { handleImageChange, previewImage, setPreviewImage, processedImage } = usePreviewImage();
+  const { handleVideoChange, previewVideo, setPreviewVideo, videoFile } = usePreviewVideo();
   const user = useRecoilValue(userAtom);
   const toast = useToast();
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false);
@@ -59,6 +59,7 @@ const CreatePost = () => {
 
     return { cleanedText, hashtags };
   };
+
   const handleCreatePost = async () => {
     if (!postText.trim() && !previewImage && !previewVideo) {
       toast({
@@ -70,21 +71,18 @@ const CreatePost = () => {
       });
       return;
     }
-  
+
     const { cleanedText, hashtags } = extractHashtags(postText);
-  
-    console.log('Input Text', cleanedText);
-    console.log('Input hashtags', hashtags);
-  
+
     try {
       setIsCreatePostLoading(true);
-      const fileToUpload = previewImage ? processedImage : videoFile; // Use Video file if present
+      const fileToUpload = previewImage ? processedImage : videoFile;
       let data = { url: "" };
-  
+
       if (fileToUpload) {
         const formData = new FormData();
         formData.append('file', fileToUpload);
-  
+
         const user_ = JSON.parse(localStorage.getItem('user') || '{}');
         const res = await fetch(UPLOAD_URL, {
           method: 'POST',
@@ -93,10 +91,10 @@ const CreatePost = () => {
           },
           body: formData,
         });
-  
+
         data = await res.json();
       }
-  
+
       const response = await CREATE_POST_COMMAND({
         variables: {
           text: JSON.stringify(cleanedText),
@@ -105,7 +103,7 @@ const CreatePost = () => {
           hashtags: hashtags
         }
       });
-  
+
       if (response?.data) {
         setPosts([response.data.createPost, ...posts]);
         onClose();
@@ -126,7 +124,6 @@ const CreatePost = () => {
       setIsCreatePostLoading(false);
     }
   };
-  
 
   return (
     <div>
@@ -134,105 +131,123 @@ const CreatePost = () => {
         position={'fixed'}
         bottom={[4, 6, 10]}
         right={[4, 6, 10]}
-        bg={'gray.dark'}
+        bg={'#48639D'}
         color={'white'}
         leftIcon={<AddIcon />}
         onClick={onOpen}
+        borderRadius="full"
+        _hover={{ bg: '#3E5377' }}
       >
         Post
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
-        <ModalContent bg={'gray.dark'} borderRadius="md" boxShadow="xl">
+        <ModalContent bg={'white'} borderRadius="2xl" boxShadow="2xl" p={2}>
           <ModalBody pt={[4, 6, 8]}>
             <VStack spacing={4}>
               {!previewImage && !previewVideo && (
-              <>
-              <Flex alignItems={'center'} justifyContent={'center'} gap={2}>
-                <Input type='file' hidden ref={imageInputRef} onChange={handleImageChange} accept='image/*' />
-                <Input type='file' hidden ref={videoInputRef} onChange={handleVideoChange} accept='video/*' />
-                <Box
-                  display='flex'
-                  alignItems='center'
-                  bg='gray.600'
-                  borderRadius='md'
-                  p={[1, 2, 3]}
-                  cursor='pointer'
-                  onClick={() => imageInputRef.current.click()}
-                >
-                  <BsFileImageFill size={20} color='white' />
-                  <Text ml={2} color='white'>
-                    Image
-                  </Text>
-                </Box>
-                <Box
-                  display='flex'
-                  alignItems='center'
-                  bg='gray.600'
-                  borderRadius='md'
-                  p={[1, 2, 3]}
-                  cursor='pointer'
-                  onClick={() => videoInputRef.current.click()}
-                >
-                  <IoMdVideocam size={24} color='white' />
-                  <Text ml={2} color='white'>
-                    Video
-                  </Text>
-                </Box>
-              </Flex>
-              </>
+                <Flex justifyContent="center" gap={4} width="100%">
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    bg="#f9f9f9"
+                    borderRadius="md"
+                    p={4}
+                    width="50%"
+                    cursor="pointer"
+                    onClick={() => imageInputRef.current.click()}
+                    boxShadow="sm"
+                    _hover={{ boxShadow: "md" }}
+                  >
+                    <BsFileImageFill size={30} color="#48639D" />
+                    <Text mt={2} color="#48639D">
+                      Upload Image
+                    </Text>
+                    <Input type="file" hidden ref={imageInputRef} onChange={handleImageChange} accept="image/*" />
+                  </Box>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    bg="#f9f9f9"
+                    borderRadius="md"
+                    p={4}
+                    width="50%"
+                    cursor="pointer"
+                    onClick={() => videoInputRef.current.click()}
+                    boxShadow="sm"
+                    _hover={{ boxShadow: "md" }}
+                  >
+                    <IoMdVideocam size={30} color="#48639D" />
+                    <Text mt={2} color="#48639D">
+                      Upload Video
+                    </Text>
+                    <Input type="file" hidden ref={videoInputRef} onChange={handleVideoChange} accept="video/*" />
+                  </Box>
+                </Flex>
               )}
               {previewImage && (
                 <Flex m={1} w={'full'} position={'relative'}>
-                  <img src={previewImage} alt='Preview' />
-                  <Button size='sm' onClick={() => setPreviewImage(null)} position={'absolute'} top={2} right={2}>
+                  <img src={previewImage} alt='Preview' style={{ borderRadius: '8px', maxHeight: '300px', width: '100%', objectFit: 'cover' }} />
+                  <Button size='sm' onClick={() => setPreviewImage(null)} position={'absolute'} top={2} right={2} bg='#a83232' color='white' borderRadius='full'>
                     <CloseIcon />
                   </Button>
                 </Flex>
               )}
               {previewVideo && (
                 <Flex m={1} w={'full'} position={'relative'}>
-                  <video width='100%' controls src={previewVideo} />
-                  <Button size='sm' onClick={() => setPreviewVideo(null)} position={'absolute'} top={2} right={2}>
+                  <video width='100%' controls src={previewVideo} style={{ borderRadius: '8px', maxHeight: '300px' }} />
+                  <Button size='sm' onClick={() => setPreviewVideo(null)} position={'absolute'} top={2} right={2} bg='#a83232' color='white' borderRadius='full'>
                     <CloseIcon />
                   </Button>
                 </Flex>
               )}
               <Textarea
-                placeholder='Write your post details here'
+                placeholder='Write your post details here...'
                 value={postText}
                 onChange={handleTextChange}
                 size='lg'
                 resize='none'
-                color={'white'}
+                color={'black'}
+                bg={'#f9f9f9'}
+                borderRadius="md"
+                border="1px solid #e0e0e0"
+                _focus={{ boxShadow: 'none', bg: '#f1f1f1' }}
                 maxLength={200}
               />
               <Flex justifyContent='flex-end' width='100%'>
-                <Text color='gray.400'>{postText.length}/200</Text>
+                <Text color='#aaaaaa'>{postText.length}/200</Text>
               </Flex>
             </VStack>
           </ModalBody>
-          <ModalFooter bg={'gray.dark'}>
+          <ModalFooter bg={'white'}>
             <Button
-              bg={'red.400'}
+              bg={'#a83232'}
               color={'white'}
               _hover={{
-                bg: 'red.500',
+                bg: '#8f2727',
               }}
               mr={3}
               onClick={onClose}
+              borderRadius="full"
+              width="48%"
             >
               Cancel
             </Button>
             <Button
-              bg={'blue.400'}
+              bg={'#48639D'}
               color={'white'}
               _hover={{
-                bg: 'blue.500',
+                bg: '#3E5377',
               }}
               onClick={handleCreatePost}
               isLoading={isCreatePostLoading}
+              borderRadius="full"
+              width="48%"
             >
               Post
             </Button>
