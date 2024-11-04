@@ -5,7 +5,6 @@ import {
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
-  DrawerHeader,
   DrawerOverlay,
   Button,
   useDisclosure,
@@ -14,7 +13,7 @@ import { FaUsers } from 'react-icons/fa';
 import SuggestedUsers from './SuggestedUsers';
 
 function SideBar() {
-  const { isOpen, onOpen, onClose } = useDisclosure({ preserveScrollBarGap: true, motionPreset: 'none' });
+  const { isOpen, onOpen, onClose } = useDisclosure({ preserveScrollBarGap: true });
   const btnRef = React.useRef();
 
   return (
@@ -24,34 +23,22 @@ function SideBar() {
         position={'fixed'}
         top={['30%', '35%', '40%']}
         right={[2, 4, 6]}
-        bg={'gray.dark'}
-        color={'white'}
+        bg="#2D3748"
+        color="white"
         leftIcon={<FaUsers />}
         onClick={onOpen}
-        borderBottomLeftRadius={'0px'}
-        borderBottomEndRadius={'0px'}
+        borderBottomLeftRadius="0"
+        borderBottomEndRadius="0"
         height={[8, 10, 12]}
+        _hover={{ bg: "#4A5568" }}
       >
         Follow
       </Button>
-      <Drawer
-        isOpen={isOpen}
-        placement="right"
-        onClose={onClose}
-        finalFocusRef={btnRef}
-      >
+      <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
         <DrawerOverlay />
-        <DrawerContent
-          backgroundColor={'gray.dark'}
-          maxW={['200px', '250px']}
-          h={'80%'}
-          mt={'10%'}
-          mb={'10%'}
-          borderTopLeftRadius={'20px'}
-          borderBottomLeftRadius={'20px'}
-        >
-          <DrawerCloseButton />
-          <DrawerBody>
+        <DrawerContent bg="white" maxW={['280px', '320px']} h="80%" mt="10%" mb="10%" borderTopLeftRadius="lg" borderBottomLeftRadius="lg">
+          <DrawerCloseButton color="gray.600" />
+          <DrawerBody py={4}>
             <SuggestedUsers onClose={onClose} />
           </DrawerBody>
         </DrawerContent>

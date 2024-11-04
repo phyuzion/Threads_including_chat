@@ -9,31 +9,28 @@ export const SuggestedUser = ({ user, onFollow, onClose }) => {
   const handleFollowClick = async () => {
     await handleFollowUnFollow();
     if (!following) {
-      onFollow(user._id); // Follow 성공 시, 부모 컴포넌트에 알림
+      onFollow(user._id);
     }
-    onClose(); // Close the sidebar
+    onClose();
   };
 
   return (
-    <Flex gap={2} justifyContent={'space-between'} alignItems={'center'}>
-      <Flex as={Link} to={`/${user.username}`} gap={2} onClick={onClose}>
-        <Avatar size={'sm'} src={user.profilePic} />
-        <Flex direction={'column'} fontSize="sm">
-          <Text fontWeight={400}>{user.username}</Text>
-          <Text fontSize="xs">{user.name}</Text>
+    <Flex gap={3} justifyContent="space-between" alignItems="center" p={2} borderBottom="1px solid #e2e8f0">
+      <Flex as={Link} to={`/${user.username}`} gap={3} alignItems="center" onClick={onClose}>
+        <Avatar size="sm" src={user.profilePic} />
+        <Flex direction="column" fontSize="sm">
+          <Text fontWeight="bold" color="gray.700">{user.username}</Text>
+          <Text fontSize="xs" color="gray.500">{user.name}</Text>
         </Flex>
       </Flex>
       {!following && (
         <Button
-          size={'xs'}
-          color={'white'}
-          bg={'blue.400'}
+          size="xs"
+          color="white"
+          bg="#3182CE"
           onClick={handleFollowClick}
           isLoading={isFlwBtnLoading}
-          _hover={{
-            color: 'white',
-            opacity: '.8',
-          }}
+          _hover={{ bg: "#63B3ED" }}
         >
           Follow
         </Button>
