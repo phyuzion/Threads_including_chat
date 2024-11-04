@@ -30,10 +30,9 @@ const HomePage = () => {
         const newPosts = queryType === 'FEED' ? data?.getFeedPosts : data?.getLatestPosts;
         
         if (newPosts.length < 10) {
-          setHasMore(false); // 더 이상 로드할 데이터가 없음을 표시
+          setHasMore(false); 
         }
 
-        // 여기에 중복 제거 로직 추가
         setPosts((prevPosts) => {
           const allPosts = [...prevPosts, ...newPosts];
           const uniquePosts = Array.from(new Set(allPosts.map(post => post._id)))
@@ -64,9 +63,9 @@ const HomePage = () => {
   );
 
   useEffect(() => {
-    setSkip(0); // 쿼리 타입이 변경될 때 skip을 초기화
-    setPosts([]); // 포스트 초기화
-    setHasMore(true); // 데이터 로드 가능 상태로 변경
+    setSkip(0);
+    setPosts([]);
+    setHasMore(true);
     refetch();
   }, [queryType]);
 
@@ -82,33 +81,37 @@ const HomePage = () => {
   };
 
   return (
-    <Box position="relative">
+    <Box position="relative" bg="white" minH="100vh" p={4}>
       {loading && skip === 0 ? (
-        <Flex justifyContent={'center'} gap={[2, 3, 4]} mt={[4, 6, 8]}>
-          <Spinner size={'xl'} />
+          <Flex justifyContent={'center'} mt={[4, 6, 8]}>
+          <Spinner size="xl" color="gray.500" />
         </Flex>
       ) : (!posts || posts.length === 0) ? (
-        <Flex justifyContent={'center'} gap={[2, 3, 4]} mt={[10, 15, 20]}>
-          <Text fontSize={['md', 'lg', 'xl']}>You must follow someone</Text>
+        <Flex justifyContent={'center'} mt={[10, 15, 20]}>
+          <Text fontSize="lg" color="gray.500">You must follow someone to see posts.</Text>
         </Flex>
       ) : (
-        posts.map((post, index) => {
-          if (posts.length === index + 1) {
-            return <Post ref={lastPostElementRef} key={post._id} post={post} />;
-          } else {
-            return <Post key={post._id} post={post} />;
-          }
-        })
+        <Flex direction="column" gap={6} px={[2, 4, 6]}>
+          {posts.map((post, index) => {
+            if (posts.length === index + 1) {
+              return <Post ref={lastPostElementRef} key={post._id} post={post} />;
+            } else {
+              return <Post key={post._id} post={post} />;
+            }
+          })}
+        </Flex>
       )}
-      <Box mb={20}></Box> {/* Add space at the bottom */}
       <Button
-        position={'fixed'}
-        bottom={[4, 6, 10]}
-        left={[4, 6, 10]}
-        bg={'gray.dark'}
-        color={'white'}
+        position="fixed"
+        bottom={[4, 6, 8]}
+        left={[4, 6, 8]}
+        bg="#48639D"
+        color="white"
         rightIcon={<ViewIcon />}
         onClick={handleQueryChange}
+        _hover={{ bg: "#d0d3da" }}
+        borderRadius="full"
+        px={6} // 버튼이 완전히 둥글게 보이도록 패딩을 추가
       >
         {queryType === 'LATEST' ? 'LATEST' : 'FEED'}
       </Button>
