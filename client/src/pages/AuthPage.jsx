@@ -27,7 +27,7 @@ import userAtom from '../atoms/userAtom.js';
 import { gql, useMutation, useApolloClient,useLazyQuery } from "@apollo/client";
 import { loginUser } from "../apollo/mutations.js";
 import { GetRandomPostImage } from "../apollo/queries.js";
-import SignUpCard from '../components/SignupCard.jsx'; // SignUpCard를 가져옵니다.
+import SignUpCard from '../components/SignUpCard.jsx'; // SignUpCard를 가져옵니다.
 
 
 const LOGIN_USER = gql`${loginUser}`;
@@ -200,7 +200,7 @@ function AuthPage() {
           display={['none', 'none', 'block']}
           bg="#eaeaea"
           position="relative"
-          height="100%"
+          overflow="hidden"
         >
           <Image
             src={randomImage}
@@ -208,8 +208,11 @@ function AuthPage() {
             objectFit="cover"
             width="100%"
             height="100%"
+            minWidth="100%" // 가로로 꽉 채우기
+            minHeight="100%" // 세로로 꽉 채우기
           />
         </Box>
+
         <Modal isOpen={isOpen} onClose={onClose} size="lg"> {/* `size="lg"`로 모달 크기 설정 */}
           <ModalOverlay />
           <ModalContent maxW="600px" borderRadius="lg" p={0}> {/* 패딩을 0으로 설정 */}
