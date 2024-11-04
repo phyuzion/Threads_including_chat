@@ -1,65 +1,61 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ChakraProvider, ColorModeScript, extendTheme } from '@chakra-ui/react';
-import { mode } from '@chakra-ui/theme-tools';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import './index.css';
 import { RecoilRoot } from 'recoil';
 import { SocketContextProvider } from './context/SocketContext.jsx';
-
 import { ApolloProvider } from '@apollo/client';
 import setupApolloClient from './apollo/apolloindex.js';
-
-import 'regenerator-runtime/runtime';
-
 import { Buffer } from 'buffer';
 window.Buffer = Buffer;
 
-const styles = {
-  global: (props) => ({
-    body: {
-      color: mode('gray.800', 'WhiteAlpha.900')(props),
-      bg: mode('white', 'transparent')(props),
-      backgroundImage: "url('/ess-bg.png')",
-      backgroundSize: 'cover',
-      backgroundPosition: 'center top',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed',
-      fontSize: ['sm', 'md', 'lg']
+const theme = extendTheme({
+    styles: {
+        global: {
+            "body": {
+                backgroundColor: "#f9f9f9", // 라이트 모드 배경색
+                color: "#333",              // 기본 텍스트 색상
+                fontFamily: "'Inter', sans-serif", // 기본 폰트 설정
+                margin: 0,
+                padding: 0,
+            },
+            "::-webkit-scrollbar": {
+                width: "7px",
+            },
+            "::-webkit-scrollbar-track": {
+                backgroundColor: "#f9f9f9",
+            },
+            "::-webkit-scrollbar-thumb": {
+                backgroundColor: "#bbb",
+                borderRadius: "4px",
+            },
+        },
     },
-  }),
-};
-
-const config = {
-  initialColorMode: 'dark',
-  useSystemColorMode: true,
-};
-
-const colors = {
-  gray: {
-    light: '#616161',
-    dark: '#1e1e1e',
-  },
-};
-
-const theme = extendTheme({ config, styles, colors });
+    config: {
+        initialColorMode: 'light',  // 라이트 모드로 강제 설정
+        useSystemColorMode: false,  // 시스템 색상 모드 사용 안 함
+    },
+    colors: {
+        gray: {
+            light: '#616161',
+            dark: '#1e1e1e',
+        },
+    },
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
-  <ApolloProvider client={setupApolloClient()}>
-  <RecoilRoot>
-    <BrowserRouter>
-      <ChakraProvider theme={theme}>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-
-         <SocketContextProvider> 
-          <App />
-         </SocketContextProvider> 
-
-      </ChakraProvider>
-    </BrowserRouter>
-  </RecoilRoot>
-  </ApolloProvider>
-  // </React.StrictMode>
+    <ApolloProvider client={setupApolloClient()}>
+        <RecoilRoot>
+            <BrowserRouter>
+                <ChakraProvider theme={theme}>
+                    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+                    <SocketContextProvider> 
+                        <App />
+                    </SocketContextProvider> 
+                </ChakraProvider>
+            </BrowserRouter>
+        </RecoilRoot>
+    </ApolloProvider>
 );

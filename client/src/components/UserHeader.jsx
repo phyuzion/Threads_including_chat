@@ -21,7 +21,6 @@ import { useNavigate } from 'react-router-dom';
 import userAtom from '../atoms/userAtom.js';
 import useHandleFollowUnFollow from '../hooks/useHandleFollowUnFollow.js';
 import UpdateProfilePage from '../pages/UpdateProfilePage';
-import WalletComponent from './WalletComponent.jsx';
 import getUserProfile from '../hooks/useGetUserProfile';
 
 function UserHeader({ user }) {
@@ -110,9 +109,6 @@ function UserHeader({ user }) {
           <Text fontSize={['sm', 'md']}>
             {user?.bio}
           </Text>
-          <Box mt="auto" alignSelf="center">
-            <WalletComponent />
-          </Box>
         </Flex>
       </Flex>
       <Flex justifyContent="space-between" w="full" alignItems="center" mt={[0, 1]}>
