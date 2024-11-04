@@ -61,7 +61,9 @@ export const GetFeedPosts = ` query GetFeedPosts($skip: Int!, $limit: Int!) {
     createdAt
   }
 }`
-
+export const GetRandomPostImage = `query Query {
+  getRandomPostedImage
+}`
 export const GetPost = `query GetPost($postId: String) {
   getPost(postId: $postId) {
     _id

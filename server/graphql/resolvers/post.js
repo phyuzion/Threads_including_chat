@@ -5,9 +5,23 @@ const Post = require('../../models/postModel')
 const User = require('../../models/userModel')
 const { updateHashTags, getHashtagPosts } = require('../helpers/hashtags')
 const { QUERY_USER_FOLLOWING_FEEDS } = require('../aggregation/user')
+const { QUERY_RANDOM_POST_IMAGE } = require('../aggregation/post')
 const config = require('../../config')
 module.exports = {
     Query: {
+
+        getRandomPostedImage: async (_,args,{req, res}) => { 
+          try {
+            const aggregation = QUERY_RANDOM_POST_IMAGE( )
+            console.log(('getRandomPostedImage  aggregation: ',JSON.stringify(aggregation,null,2)))
+            const results = await Post.aggregate(aggregation)
+            console.log('getRandomPostedImage  results: ',results)
+            return (results && results.length > 0) ? results[0].img : ""
+          } catch (error) {
+            console.log('getRandomPostedImage error: ',error)
+            throwServerError(error)
+          }
+        },
         getLatestPosts: async (_,args,{req, res}) => {
           const { skip,limit } = args
           console.log(' getLatestPost : ',args)

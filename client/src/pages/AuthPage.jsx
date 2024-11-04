@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   Box,
   Button,
@@ -24,14 +24,23 @@ import {
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom.js';
-import { gql, useMutation, useApolloClient } from "@apollo/client";
+import { gql, useMutation, useApolloClient,useLazyQuery } from "@apollo/client";
 import { loginUser } from "../apollo/mutations.js";
+import { GetRandomPostImage } from "../apollo/queries.js";
 import SignUpCard from '../components/SignupCard.jsx'; // SignUpCard를 가져옵니다.
+
 
 const LOGIN_USER = gql`${loginUser}`;
 
+const GET_RANDOM_POST_IMAGE = gql`${GetRandomPostImage}`;
+
+
+
+
+
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [randomImage, setRandomImage] = useState("")
   const [inputs, setInputs] = useState({
     username: '',
     password: '',
@@ -41,7 +50,24 @@ function AuthPage() {
   const toast = useToast();
   const client = useApolloClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [fetchImage, { loading, data }] = useLazyQuery(
+    GET_RANDOM_POST_IMAGE,
+    {
+      onCompleted: (data) => {
+        const randomImage =  data?.getRandomPostedImage
+        setRandomImage(randomImage)
+        
+      },
+      onError: (error) => {
+        console.error(`Error fetching ${queryType.toLowerCase()} posts:`, error);
+      },
+    }
+  );
+  useEffect(() => {
 
+    fetchImage();
+
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
@@ -177,7 +203,7 @@ function AuthPage() {
           height="100%"
         >
           <Image
-            src="https://via.placeholder.com/800"
+            src={randomImage}
             alt="Sample"
             objectFit="cover"
             width="100%"

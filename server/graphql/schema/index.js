@@ -108,6 +108,8 @@ type Query {
     getMessages(otherUserId: String): [Message]
     getConversations: [Conversation]
 
+    getRandomPostedImage: String
+
 }
 type Mutation {
 
