@@ -12,5 +12,8 @@ module.exports = {
   DEBUG_DB: process.env.DEBUG_DB,
   SECRET_KEY: "Thread clone secret Key 213213231",
   DB_TYPE: process.env.DB_TYPE,
-  CORS_ORIGIN: process.env.CORS_ORIGIN
+  CORS_ORIGIN: process.env.CORS_ORIGIN,
+
+  ADMIN_USER: process.env.ADMIN_USER || 'admin',
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'song0918',
 }

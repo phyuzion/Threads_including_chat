@@ -6,12 +6,14 @@ const rootResolver = {
   Query: {
     ...userResolver.Query,
     ...postResolver.Query,
-    ...messageResolver.Query
+    ...messageResolver.Query,
+    ...adminResolver.Query,
   },
   Mutation: {
     ...userResolver.Mutation,
     ...postResolver.Mutation,
-    ...messageResolver.Mutation
+    ...messageResolver.Mutation,
+    ...adminResolver.Mutation,
   },
 
 }

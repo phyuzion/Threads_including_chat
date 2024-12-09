@@ -109,6 +109,9 @@ type Query {
     getConversations: [Conversation]
 
     getRandomPostedImage: String
+    
+    getAllUsers: [User]
+    getAllPosts: [Post]
 
 }
 type Mutation {
@@ -128,7 +131,10 @@ type Mutation {
     updateUser(email: String,password: String,profilePic: String, bio: String): User
     freezeAccount: Boolean!
 
-    sendMessage(receiverId: String, text: String , img: String): Message
+    sendMessage(receiverId: String, text: String , img: String): Message\
+    
+    deleteUser(userId: String!): Boolean!
+    deletePost(postId: String!): Boolean!
 
 }
 
