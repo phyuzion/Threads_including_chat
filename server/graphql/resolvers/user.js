@@ -98,7 +98,7 @@ module.exports = {
         if(!req.user) {
           throwForbiddenError()
         }        
-        const { email, password, profilePic , bio } = args
+        const { email, password, profilePic , bio, wallet_address } = args
         console.log('updateUser args ',args)
         let session
         if (config.DB_TYPE == "ATLAS") {
@@ -116,9 +116,10 @@ module.exports = {
             const hashedPassword = await bcrypt.hash(password, salt);
             user.password = hashedPassword;
           }
-          user.profilePic = profilePic || user.profilePic
+          user.profilePic = profilePic || user.profilePic;
           user.email = email || user.email;
-          user.bio = bio || user.bio
+          user.bio = bio || user.bio;
+          user.wallet_address = wallet_address || user.wallet_address;
           user = await user.save({ session });
           console.log(' saved user : ',user)
           await Post.updateMany(

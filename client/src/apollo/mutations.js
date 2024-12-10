@@ -94,6 +94,7 @@ export const Update_User = `mutation UpdateUser($email: String, $password: Strin
       startDate
     }
     profilePic
+    wallet_address
   }
 }
 `

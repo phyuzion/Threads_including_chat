@@ -37,6 +37,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
     email: user?.loginUser?.email || '',
     password: '',
     passwordConfirm: '',
+    wallet_address : user?.loginUser?.wallet_address || '',
   });
 
   const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState(false);
@@ -82,6 +83,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
           password: inputs.password || null,
           profilePic: previewUrl || user?.loginUser?.profilePic,
           bio: bioText || null,
+          wallet_address: inputs.wallet_address || null,
         },
       });
 
@@ -93,6 +95,7 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
             email: inputs.email || prevUser?.loginUser?.email,
             profilePic: previewUrl || prevUser?.loginUser?.profilePic,
             bio: bioText || prevUser?.loginUser?.bio,
+            wallet_address: inputs.wallet_address || prevUser?.loginUser?.wallet_address,
           },
         }));
         toast({
@@ -224,6 +227,18 @@ const UpdateProfilePage = ({ isOpen, onClose }) => {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
+              <FormControl mb={4}>
+              <FormLabel fontSize="sm" color="#333333">Wallet Address</FormLabel>
+                <Input
+                  placeholder="Your Wallet Address"
+                  type="text"
+                  value={inputs.wallet_address}
+                  onChange={(e) => setInputs({ ...inputs, wallet_address: e.target.value })}
+                  border="1px solid #D1D1D1"
+                  _focus={{ borderColor: '#48639D' }}
+                />
+              </FormControl>
+
 
               {/* Action Buttons */}
               <Stack direction="row" spacing={4} w="full">

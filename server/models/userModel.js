@@ -30,6 +30,10 @@ const userSchema = new Schema(
       type: String,
       default: '',
     },
+    wallet_address: {
+      type: String,
+      default: '',
+    },
     isFrozen: {
       type: Boolean,
       default: false,

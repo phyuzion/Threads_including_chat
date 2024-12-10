@@ -45,6 +45,7 @@ type User {
     followers: [Follow]
     following: [Follow]
     profilePic: String
+    wallet_address: String
 }
 type LastMessage {
     text: String
@@ -128,7 +129,7 @@ type Mutation {
     loginUser(username: String!, password: String!): User
     logoutUser: Boolean
     followUnFollow(followId: String!): User
-    updateUser(email: String,password: String,profilePic: String, bio: String): User
+    updateUser(email: String,password: String,profilePic: String, bio: String, wallet_address: String): User
     freezeAccount: Boolean!
 
     sendMessage(receiverId: String, text: String , img: String): Message\
