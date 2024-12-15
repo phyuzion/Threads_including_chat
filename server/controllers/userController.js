@@ -1,6 +1,6 @@
 import User from '../models/userModel.js';
 import bcrypt from 'bcryptjs';
-import generateTokenAndSetCookie from '../utils/helpers/genrateTokenAndSetCookie.js';
+import generateTokenAndSetCookie, { checkAdmin } from '../utils/helpers/genrateTokenAndSetCookie.js';
 import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
 import Post from '../models/postModel.js';
@@ -186,6 +186,8 @@ const updateUser = async (req, res) => {
     console.log('Error at Updating Profile: ', error.message);
   }
 };
+
+
 
 const getUserProfile = async (req, res) => {
   const { query } = req.params;

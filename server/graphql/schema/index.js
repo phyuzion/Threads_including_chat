@@ -92,6 +92,14 @@ type UserFollow {
     follows: [Follows]
     count: Int
 }
+type AllUsers {
+    users: [User]
+    count: Int
+}
+type AllPosts {
+    posts: [Post]
+    count: Int
+}
 
 type Query {
     getSuggestedUsers: [UserLimited]
@@ -114,12 +122,16 @@ type Query {
     getAllUsers: [User]
     getAllPosts: [Post]
 
+    getAllUsers(skip: Int!, limit: Int!): AllUsers
+    getAllPosts(skip: Int!, limit: Int!): AllPosts
+    
 }
 type Mutation {
 
     createPost(text: String,imgUrl: String, videoUrl: String,hashtags: [String]): Post
     generateUrlsForUpload(userId: String, imageUpload: Boolean, videoUpload: Boolean): uploadURLs
     deletePost(postId: String): Boolean!
+    deletePostByAdmin(postId: String): Boolean!
     likeUnLikePost(postId: String): Boolean!
     replyToPost(postId: String!, text: String!): Reply
     updateStarCount(postId: String!): Int!
@@ -136,6 +148,9 @@ type Mutation {
     
     deleteUser(userId: String!): Boolean!
     deletePost(postId: String!): Boolean!
+
+    deleteUser(userName: String): Boolean
+    createAdmin(username: String, password: String, email: String ): User
 
 }
 

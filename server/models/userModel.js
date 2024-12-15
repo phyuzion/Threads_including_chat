@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const {followSchema} = require('./followModel')
+const { USER_TYPES} = require('../helpers/enum')
 mongoose.pluralize(null);
 
 const userSchema = new Schema(
@@ -40,7 +41,12 @@ const userSchema = new Schema(
     },
     jwtToken: {
       type: String
+    },
+    type: {
+      type: Number,
+      default: USER_TYPES.USER
     }
+
   },
   {
     timestamps: true,

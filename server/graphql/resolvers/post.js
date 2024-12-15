@@ -1,4 +1,4 @@
-const { throwServerError, throwForbiddenError } = require("../../utils/helpers/genrateTokenAndSetCookie")
+const { throwServerError, throwForbiddenError, checkAdmin } = require("../../utils/helpers/genrateTokenAndSetCookie")
 const { transformPost,transformPosts } = require('../../utils/transform')
 const mongoose = require('mongoose')
 const Post = require('../../models/postModel')
@@ -60,9 +60,7 @@ module.exports = {
         },
 
         getUserPosts: async (_,args,{req, res}) => {
-            if(!req.user) {
-                throwForbiddenError()
-            }
+            checkUser(req)
             const { username , skip , limit } = args;
             try {
                 const user = await User.findOne({ username });
@@ -85,9 +83,7 @@ module.exports = {
         getFeedPosts: async (_,args,{req, res}) => {
             //console.log(' getFeedPosts: ')
             const { skip , limit } = args
-            if(!req.user) {
-                throwForbiddenError()
-            }
+            checkUser(req)
             try {
                 const aggregation = QUERY_USER_FOLLOWING_FEEDS(req.user._id,skip , limit )
                 const results = await User.aggregate(aggregation)
@@ -99,13 +95,30 @@ module.exports = {
                 throwServerError(error)
               }
         },
+        getAllPosts: async (_,args,{req, res}) => {
+          const { skip , limit } = args
+          checkAdmin(req)
+
+          try {
+            const count = await Post.countDocuments({})
+            const posts =  await Post.find({}).limit(limit)
+                            .skip(skip)
+                            .sort({createdAt: -1})
+            return {
+              posts: posts,
+              count: count
+            }
+
+          } catch(error) {
+            throwServerError(error)
+          }
+
+        }
 
     },
     Mutation: {
       updateStarCount: async (_,args,{req, res}) => { 
-        if(!req.user) {
-          throwForbiddenError()
-        }
+        checkUser(req)
         const { postId } = args
 
         const post = await Post.findOneAndUpdate(
@@ -125,9 +138,7 @@ module.exports = {
       },
         createPost: async (_,args,{req, res}) => {
 
-            if(!req.user) {
-                throwForbiddenError()
-            }
+          checkUser(req)
 
             const { text, imgUrl , videoUrl, hashtags } = args
             const userId = req.user._id.toString()
@@ -177,12 +188,26 @@ module.exports = {
             }
 
         },
+        deletePostByAdmin: async (_,args,{req, res}) => {
+          const { postId } = args
+          checkAdmin(req)
+          try {
+            const post = await Post.findById(postId);
+            if (!post) {
+              return throwServerError('Post not found')
+            }
+            await Post.findByIdAndDelete(postId);
+            return true
 
+          } catch (error) {
+            throwServerError(error)
+            //console.log('Error at deleting post: ', error.message);
+          }
+
+        },
         deletePost: async (_,args,{req, res}) => {
             const { postId } = args
-            if(!req.user) {
-                throwForbiddenError()
-            }
+            checkUser(req)
             try {
                 const post = await Post.findById(postId);
                 if (!post) {
@@ -212,9 +237,7 @@ module.exports = {
         likeUnLikePost: async (_,args,{req, res}) => {
             const {postId} = args
             console.log('likeUnLikePost postId: ',postId)
-            if(!req.user) {
-                throwForbiddenError()
-            }
+            checkUser(req)
             try{
                 const post = await Post.findById(postId);
                 //console.log('likeUnLikePost post: ',post)
@@ -259,9 +282,7 @@ module.exports = {
         replyToPost: async (_,args,{req, res}) => {
             //console.log(' replyToPost : ', args)
             const { text, postId } = args;
-            if(!req.user) {
-                throwForbiddenError()
-            }
+          checkUser(req)
             const userId = req.user._id;
             const userProfilePic = req.user.profilePic;
             const username = req.user.username;

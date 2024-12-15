@@ -112,3 +112,12 @@ export const Update_Star_Count = `mutation UpdateStarCount($postId: String!) {
   updateStarCount(postId: $postId)
 }`
 
+
+export const Delete_User = `mutation DeleteUser($userName: String) {
+  deleteUser(userName: $userName)
+}`
+export const Delete_Post_BY_ADMIN = `mutation DeletePostByAdmin($postId: String) {
+  deletePostByAdmin(postId: $postId)
+}`
+
+
