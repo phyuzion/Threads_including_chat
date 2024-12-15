@@ -118,9 +118,6 @@ type Query {
     getConversations: [Conversation]
 
     getRandomPostedImage: String
-    
-    getAllUsers: [User]
-    getAllPosts: [Post]
 
     getAllUsers(skip: Int!, limit: Int!): AllUsers
     getAllPosts(skip: Int!, limit: Int!): AllPosts
@@ -147,16 +144,8 @@ type Mutation {
     sendMessage(receiverId: String, text: String , img: String): Message\
     
     deleteUser(userId: String!): Boolean!
-    deletePost(postId: String!): Boolean!
-
-    deleteUser(userName: String): Boolean
     createAdmin(username: String, password: String, email: String ): User
 
-    deleteUser(userName: String): Boolean
-    createAdmin(username: String, password: String, email: String ): User
-
-    deleteUser(userName: String): Boolean
-    createAdmin(username: String, password: String, email: String ): User
 
 }
 
