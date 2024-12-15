@@ -1,4 +1,4 @@
-const { throwServerError , generateToken, throwForbiddenError} = require("../../utils/helpers/genrateTokenAndSetCookie");
+const { throwServerError , generateToken, throwForbiddenError,checkUser,checkSuperAdmin,checkAdmin} = require("../../utils/helpers/genrateTokenAndSetCookie");
 const { transformUser,transformUserWithToken,transformUsers } = require("../../utils/transform");
 const bcrypt = require('bcryptjs')
 const User = require('../../models/userModel')
@@ -7,20 +7,19 @@ const Follow = require('../../models/followModel')
 const mongoose = require('mongoose')
 const ObjectId = require('mongodb').ObjectId;
 const config = require('../../config')
+const { USER_TYPES } = require('../../helpers/enum')
 const {
     QUERY_FOLLOWS,
     QUERY_FOLLOWS_COUNT,
     QUERY_SUGGESTED_USERS} = require('../aggregation/user')
 
-const { getFollowUnfollowUpdate } = require('../helpers/user')
+const { getFollowUnfollowUpdate,deleteUserAndPosts } = require('../helpers/user')
 module.exports = {
     Query: {
       getFollows: async (_,args,{req, res}) => {
         const {skip, limit , following } = args
         //console.log( ' getFollows skip: ',skip, ' limit: ',limit , ' following: ',following)
-        if(!req.user) {
-          throwForbiddenError()
-        }
+        checkUser(req)
         let aggregation 
         try{ 
           aggregation  = QUERY_FOLLOWS(req.user._id,skip,limit,following)
@@ -58,6 +57,29 @@ module.exports = {
         }
 
       },
+      getAllUsers:  async (_,args,{req, res}) => {
+        const { skip , limit } = args
+        checkAdmin(req)
+      
+        try {
+          const count = await User.countDocuments({type: USER_TYPES.USER})
+          const users = await User.find({type: USER_TYPES.USER}).limit(limit)
+          .skip(skip)
+          .sort({createdAt: -1}).
+          select('-password').
+          select('-updatedAt').
+          select('-jwtToken');
+          console.log('getAllUsers users:  ',users)
+          return {
+            users: users,
+            count: count
+          }
+        
+        } catch (error) {
+      
+          throwServerError(error)
+        }
+      },
       getUserProfile: async (_,args,{req, res}) => {
         const {postedBy} = args
        // console.log(' getUserProfile id: ',postedBy)
@@ -77,9 +99,7 @@ module.exports = {
       },
         getSuggestedUsers: async (_,args,{req, res}) => {
           //console.log(' getSuggestedUsers: ')
-            if(!req.user) {
-                throwForbiddenError()
-            }
+          checkUser(req)
             try {
                 const userId = req.user._id;
                 const aggregation = QUERY_SUGGESTED_USERS(userId,0,10)
@@ -94,10 +114,30 @@ module.exports = {
         }
     },
     Mutation: {
+
+      deleteUser: async (_,args,{req, res}) => {
+        checkAdmin(req)     
+        const { userName } = args
+        const session = await mongoose.startSession();
+        try {
+          const transactionOptions = {
+            readPreference: 'primary',
+            readConcern: { level: 'local' },
+            writeConcern: { w: 'majority' }
+          };
+          await session.withTransaction(async () => {
+            await deleteUserAndPosts(userName,session)
+          },transactionOptions);          
+          return true
+        } catch (error) {
+          throwServerError(error)
+        } finally {
+          await session.endSession()
+       }
+      },
+
       updateUser: async (_,args,{req, res}) => {
-        if(!req.user) {
-          throwForbiddenError()
-        }        
+        checkUser(req)     
         const { email, password, profilePic , bio } = args
         console.log('updateUser args ',args)
         let session
@@ -155,9 +195,7 @@ module.exports = {
 
       },
         logoutUser: async (_,args,{req, res}) => {
-            if(!req.user) {
-                throwForbiddenError()
-            }
+            checkUser(req)
 
             try{
                 const user = User.findOneAndUpdate(
@@ -176,7 +214,32 @@ module.exports = {
             }
 
         },
+        createAdmin: async (_,args,{req, res}) => {
+          try {
+            checkSuperAdmin(req)
+            const { name, username, password, email } = args;
+            const user = await User.findOne({ $or: [{ email }, { username }] });
+            if (user) {
+              throwServerError('Admin already exits')
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            const newUser = new User({
+              name,
+              email,
+              username,
+              password: hashedPassword,
+              type: USER_TYPES.ADMIN
+            });
+            const user_ = await newUser.save();
+            return transformUser(user_)
+          } catch (error) {
+            console.log('Error at Signup: ', error.message);
+            throwServerError(error)
+          }
 
+
+        },
         signupUser : async (_,args,{req, res}) => {
           console.log('args ; ',args)
             try {
@@ -215,7 +278,7 @@ module.exports = {
                   throwForbiddenError()
                 }
               
-                const token = generateToken(user._id, user.email);
+                const token = generateToken(user._id, user.email,user.type);
                 if (user.isFrozen) {
                     user.isFrozen = false;
                     
@@ -230,9 +293,7 @@ module.exports = {
         },
 
         freezeAccount: async (_,args,{req, res}) => {
-            if(!req.user) {
-                throwForbiddenError()
-            }
+          checkUser(req)
             try {
                 const user = await User.findById(req.user._id);
                 if (!user) {
@@ -249,9 +310,7 @@ module.exports = {
 
         followUnFollow: async (_,args,{req, res}) => {
             const { followId } = args
-            if(!req.user) {
-                throwForbiddenError()
-            }
+            checkUser(req)
             //console.log( 'followUnFollow  followId: ',followId)
             if (followId == req.user._id.toString()) {
               throwServerError('You can not follow/un-follow yourself ');

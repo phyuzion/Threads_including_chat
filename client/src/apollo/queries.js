@@ -196,3 +196,25 @@ export const GetFollows = `query GetFollows($skip: Int!, $limit: Int!, $followin
     count
   }
 }`
+
+export const GetAllUsers = `query GetAllUsers($skip: Int!, $limit: Int!) {
+  getAllUsers(skip: $skip, limit: $limit) {
+    count
+    users {
+      _id
+      email
+      username
+    }
+  }
+}`
+
+export const GetAllPosts = `query GetAllPosts($skip: Int!, $limit: Int!) {
+  getAllPosts(skip: $skip, limit: $limit) {
+    count
+    posts {
+      postedBy
+      _id
+      text
+    }
+  }
+}`

@@ -1,4 +1,4 @@
-const { throwServerError, throwForbiddenError } = require("../../utils/helpers/genrateTokenAndSetCookie")
+const { throwServerError, throwForbiddenError,checkUser } = require("../../utils/helpers/genrateTokenAndSetCookie")
 const Conversation = require('../../models/conversationModel')
 const Message = require('../../models/messageModel')
 const { emitSendMessage,startApolloServer } = require('../../socket/socket');
@@ -9,9 +9,7 @@ module.exports = {
     Query: {
         getMessages: async (_,args,{req, res}) => { 
             const { otherUserId } = args
-            if(!req.user) {
-                throwForbiddenError()
-            } 
+            checkUser(req)
             const userId = req.user._id;
             try {
                 const conversation = await Conversation.findOne({
@@ -30,9 +28,7 @@ module.exports = {
             }
         },
         getConversations: async (_,args,{req, res}) => { 
-            if(!req.user) {
-                throwForbiddenError()
-            } 
+            checkUser(req)
             const userId = req.user._id;
             console.log(' getConversations userId: ',userId)
             try {
@@ -65,9 +61,7 @@ module.exports = {
         sendMessage: async (_,args,{req, res}) => {
             const { receiverId, text , img } = args
             console.log('sendMessage args: ',args)
-            if(!req.user) {
-                throwForbiddenError()
-            } 
+            checkUser(req)
             const senderId = req.user._id;
             console.log(' sendMessage receiverId: ',receiverId, ' text: ',text)
             try {

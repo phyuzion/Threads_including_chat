@@ -58,6 +58,8 @@ module.exports = {
 
         },
 
+
+
         signupUser : async (_,args,{req, res}) => {
             try {
                 const { name, username, password, email , bio } = args;
@@ -72,7 +74,8 @@ module.exports = {
                   email,
                   username,
                   password: hashedPassword,
-                  bio
+                  bio,
+                  type: USER_TYPES.USER
                 });
                 const user_ = await newUser.save();
                 return transformUser(user_)
@@ -93,7 +96,7 @@ module.exports = {
                   throwForbiddenError()
                 }
               
-                const token = generateToken(user._id, user.name , user.email);
+                const token = generateToken(user._id, user.name , user.email,user.type);
                 if (user.isFrozen) {
                     user.isFrozen = false;
                     

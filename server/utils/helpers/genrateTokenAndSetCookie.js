@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { GraphQLError } = require('graphql')
 const config = require('../../config')
+const { USER_TYPES } = require('../../helpers/enum')
 const throwForbiddenError = () => {
   throw new GraphQLError('You are not authorized to perform this action.', {
       extensions: {
@@ -30,11 +31,12 @@ const generateTokenAndSetCookie = (userId, res) => {
   return token;
 };
 
-const generateToken = (userId,  email) => {
+const generateToken = (userId,  email, userType) => {
   const token = jwt.sign(
     { 
       userId : userId,
-      email: email
+      email: email,
+      type: userType
     },
     `${config.SECRET_KEY}`, {
     expiresIn: '15d',
@@ -43,6 +45,33 @@ const generateToken = (userId,  email) => {
   return token;
 };
 
+const checkSuperAdmin =  (req) => {
+  console.log('checkSuperAdmin')
+  if (!req.user || req.user.type > USER_TYPES.SUPER_ADMIN ) {
+      throwForbiddenError()
+  }
+  return true
+}
+
+const checkAdmin =  (req) => {
+  console.log('checkAdmin')
+  if (!req.user || req.user.type > USER_TYPES.ADMIN ) {
+      throwForbiddenError()
+  }
+  return true
+}
+
+const checkUser =  (req) => {
+  console.log('checkSuperAdmin')
+  if (!req.user || req.user.type != USER_TYPES.USER ) {
+      throwForbiddenError()
+  }
+  return true
+}
+
+exports.checkUser = checkUser
+exports.checkAdmin = checkAdmin
+exports.checkSuperAdmin = checkSuperAdmin
 exports.generateToken = generateToken
 exports.throwServerError = throwServerError
 exports.throwForbiddenError = throwForbiddenError
