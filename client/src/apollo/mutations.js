@@ -122,3 +122,12 @@ export const Delete_Post_BY_ADMIN = `mutation DeletePostByAdmin($postId: String)
 }`
 
 
+export const CREATE_ADMIN = `mutation CreateAdmin($username: String, $password: String, $email: String) {
+  createAdmin(username: $username, password: $password, email: $email) {
+    _id
+    email
+    username
+  }
+}`
+
+
