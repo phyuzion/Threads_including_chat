@@ -51,6 +51,7 @@ export const loginUser = ` mutation LoginUser($username: String!, $password: Str
     email
     jwtToken
     profilePic
+    type
   }
 }
 `
