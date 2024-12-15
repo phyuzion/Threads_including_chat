@@ -137,7 +137,6 @@ module.exports = {
       },
 
       updateUser: async (_,args,{req, res}) => {
-
         checkUser(req)     
         const { email, password, profilePic , bio } = args
 

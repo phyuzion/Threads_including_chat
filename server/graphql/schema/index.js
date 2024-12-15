@@ -152,6 +152,9 @@ type Mutation {
     deleteUser(userName: String): Boolean
     createAdmin(username: String, password: String, email: String ): User
 
+    deleteUser(userName: String): Boolean
+    createAdmin(username: String, password: String, email: String ): User
+
 }
 
 `
