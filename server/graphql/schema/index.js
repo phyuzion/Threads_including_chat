@@ -46,6 +46,7 @@ type User {
     following: [Follow]
     profilePic: String
     wallet_address: String
+    type: Int
 }
 type LastMessage {
     text: String
@@ -143,7 +144,7 @@ type Mutation {
 
     sendMessage(receiverId: String, text: String , img: String): Message\
     
-    deleteUser(userId: String!): Boolean!
+    deleteUser(userName: String!): Boolean!
     createAdmin(username: String, password: String, email: String ): User
 
 

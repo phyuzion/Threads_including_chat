@@ -10,7 +10,6 @@ const transformUserWithToken = (user) => {
         ...user._doc,
         _id: user._id,
         password: null,
-        type:null
     }
 }
 
