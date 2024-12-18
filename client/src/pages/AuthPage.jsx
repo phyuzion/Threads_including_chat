@@ -101,10 +101,29 @@ function AuthPage() {
       setIsLoading(true);
       const response = await LOGIN_USER_COMMAND({ variables: inputs });
       if (response?.data) {
+
         localStorage.setItem('user', JSON.stringify(response.data));
         setUser(response?.data);
-        await client.clearStore();
-        await client.resetStore();
+
+        if(response?.data.type == 0){
+          //super admin
+          console.log('test is super admin');
+          //navigate to SuperAdminPage
+
+        }else if( response?.data.type ==1){
+          //admin
+
+          console.log('test is admin');
+
+          //navigate to Admin
+
+          
+        }else{
+
+          await client.clearStore();
+          await client.resetStore();
+
+        }
       }
     } catch (error) {
       toast({

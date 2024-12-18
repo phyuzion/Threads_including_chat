@@ -16,6 +16,7 @@ import setupApolloClient from "./apollo/apolloindex.js";
 import SideBar from './components/SideBar';
 import SuggestedUsers from './components/SuggestedUsers';
 import MessageContainer from './components/MessageContainer';
+import Tokenomics from './tokenomics/Tokenomics';
 
 function App() {
   const user = useRecoilValue(userAtom);
@@ -30,6 +31,12 @@ function App() {
       navigate('/auth', { replace: true });
     }
   }, [user, pathname, navigate]);
+
+
+  // Tokenomics 경로인 경우 별도 처리
+  if (pathname.startsWith('/tokenomics')) {
+    return <Tokenomics />;
+  }
 
   return (
     <Box position={'relative'} w={'full'} maxW="100vw" mx="auto" minH="100vh" bg="transparent">

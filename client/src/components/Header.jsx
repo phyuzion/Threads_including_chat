@@ -170,6 +170,9 @@ function Header() {
           <Menu>
             <MenuButton as={IconButton} aria-label="Menu" icon={<GiHamburgerMenu size={iconSize} color={iconColor} />} variant="ghost" size="sm" mx={1} />
             <MenuList>
+              <NavLink to="/tokenomics">
+                <MenuItem icon={<FiLogOut size={20} color={iconColor} />} >Tokenomics</MenuItem>
+              </NavLink>
               <MenuItem icon={<FiLogOut size={20} color={iconColor} />} onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>

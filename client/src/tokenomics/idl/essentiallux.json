@@ -1,0 +1,495 @@
+{
+  "address": "9xu4SyXFV5ktthzKFRahjJqZW7kMF9DMPNMjbW9pPiKT",
+  "metadata": {
+    "name": "essentiallux",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "change_nft_fee_wallet",
+      "discriminator": [
+        161,
+        132,
+        73,
+        143,
+        106,
+        94,
+        212,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true
+        },
+        {
+          "name": "admin_info"
+        },
+        {
+          "name": "fee_account",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_fee_wallet",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "emergency_recovery",
+      "discriminator": [
+        243,
+        108,
+        62,
+        60,
+        131,
+        169,
+        148,
+        83
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true
+        },
+        {
+          "name": "admin_info"
+        },
+        {
+          "name": "sender_account",
+          "writable": true
+        },
+        {
+          "name": "admin_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_admin",
+      "discriminator": [
+        35,
+        176,
+        8,
+        143,
+        42,
+        160,
+        61,
+        158
+      ],
+      "accounts": [
+        {
+          "name": "admin_info",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fee_account",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "admin_wallet",
+          "type": "pubkey"
+        },
+        {
+          "name": "elx_mint",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "mint_nft",
+      "discriminator": [
+        211,
+        57,
+        6,
+        167,
+        15,
+        219,
+        35,
+        251
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "nft_account",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_account",
+          "writable": true
+        },
+        {
+          "name": "fee_account",
+          "writable": true
+        },
+        {
+          "name": "admin_info"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "metadata_url",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_nft_fee",
+      "discriminator": [
+        103,
+        160,
+        94,
+        183,
+        226,
+        44,
+        161,
+        173
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true
+        },
+        {
+          "name": "admin_info"
+        },
+        {
+          "name": "fee_account",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "fee_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_timelock",
+      "discriminator": [
+        131,
+        159,
+        222,
+        21,
+        225,
+        226,
+        54,
+        214
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true
+        },
+        {
+          "name": "admin_info"
+        },
+        {
+          "name": "timelock",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallet_to_lock",
+          "type": "pubkey"
+        },
+        {
+          "name": "lock_time",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "unlock_tokens",
+      "discriminator": [
+        233,
+        35,
+        95,
+        159,
+        37,
+        185,
+        47,
+        88
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true
+        },
+        {
+          "name": "admin_info"
+        },
+        {
+          "name": "timelock",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "view_nft_fee_wallet",
+      "discriminator": [
+        77,
+        89,
+        54,
+        61,
+        187,
+        56,
+        71,
+        78
+      ],
+      "accounts": [
+        {
+          "name": "fee_account"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "view_nft_metadata",
+      "discriminator": [
+        186,
+        5,
+        29,
+        97,
+        103,
+        207,
+        3,
+        140
+      ],
+      "accounts": [
+        {
+          "name": "nft_account"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "view_timelock_status",
+      "discriminator": [
+        33,
+        22,
+        97,
+        236,
+        53,
+        2,
+        40,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "timelock"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AdminInfo",
+      "discriminator": [
+        231,
+        184,
+        54,
+        71,
+        139,
+        62,
+        143,
+        186
+      ]
+    },
+    {
+      "name": "FeeAccount",
+      "discriminator": [
+        137,
+        191,
+        201,
+        34,
+        168,
+        222,
+        43,
+        138
+      ]
+    },
+    {
+      "name": "NftAccount",
+      "discriminator": [
+        33,
+        180,
+        91,
+        53,
+        236,
+        15,
+        63,
+        97
+      ]
+    },
+    {
+      "name": "Timelock",
+      "discriminator": [
+        189,
+        33,
+        78,
+        75,
+        205,
+        31,
+        4,
+        177
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access."
+    },
+    {
+      "code": 6001,
+      "name": "InvalidToken",
+      "msg": "Invalid token for this transaction."
+    },
+    {
+      "code": 6002,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds to pay the fee."
+    },
+    {
+      "code": 6003,
+      "name": "TimeLockNotExpired",
+      "msg": "Time lock has not expired."
+    }
+  ],
+  "types": [
+    {
+      "name": "AdminInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "elx_mint",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "NftAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "balance",
+            "type": "u64"
+          },
+          {
+            "name": "metadata_url",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Timelock",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "lock_time",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}
