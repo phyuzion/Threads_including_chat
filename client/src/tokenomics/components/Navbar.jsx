@@ -8,6 +8,7 @@ import { useStateContext } from '../contexts/ContextProvider';
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 
 
+
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <TooltipComponent content={title} position="BottomCenter" >
     <button
@@ -23,8 +24,17 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 
 
 const Navbar = () => {
-
-  const { activeMenu, setActiveMenu, isClicked, setIsClicked, handleClick, screenSize, setScreenSize, currentColor } = useStateContext();
+  const {
+    activeMenu,
+    setActiveMenu,
+    isClicked,
+    setIsClicked,
+    handleClick,
+    screenSize,
+    setScreenSize,
+    currentColor,
+    connectWallet, // 여기서 가져옴
+  } = useStateContext();
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth)
@@ -42,6 +52,19 @@ const Navbar = () => {
     }
   }, [screenSize])
 
+
+
+  // 지갑 연결 함수
+  const handleWalletConnect = async () => {
+    try {
+      const phantomWallet = new PhantomWalletAdapter(); // Phantom Adapter 초기화
+      await connectWallet(phantomWallet); // ContextProvider의 connectWallet 호출
+      alert('Wallet connected successfully!');
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+      alert('Failed to connect wallet.');
+    }
+  };
 
   return (
     <nav className='flex justify-between p-2 md:mx-6 relative'>
@@ -61,7 +84,7 @@ const Navbar = () => {
         <NavButton
           title="Notifications"
           dotColor="#03C9D7"
-          customFunc={() => handleClick('notification')}
+          customFunc={handleWalletConnect} // 버튼 클릭 시 지갑 연결
           color={currentColor}
           icon={<RiNotification3Line />}
         />

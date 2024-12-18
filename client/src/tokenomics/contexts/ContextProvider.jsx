@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { loadProgram } from "../utils/SolanaLoader";
 
 const StateContext = createContext();
 
@@ -17,6 +18,11 @@ export const ContextProvider = ({ children }) => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
 
+
+  // Solana 상태
+  const [wallet, setWallet] = useState(null);
+  const [program, setProgram] = useState(null);
+
   const setMode = (e) => {
     setCurrentMode(e.target.value);
     setThemeSettings(prev => !prev)
@@ -30,6 +36,30 @@ export const ContextProvider = ({ children }) => {
   };
 
   const handleClick = (clicked) => setIsClicked({ ...initialState, [clicked]: true });
+
+
+  // 지갑 연결
+  const connectWallet = async (walletAdapter) => {
+    try {
+      await walletAdapter.connect();
+      const anchorProgram = await loadProgram(walletAdapter);
+      setWallet(walletAdapter);
+      setProgram(anchorProgram);
+      console.log("Wallet connected:", walletAdapter.publicKey.toString());
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+    }
+  };
+
+  // 지갑 해제
+  const disconnectWallet = async () => {
+    if (wallet) {
+      await wallet.disconnect();
+      setWallet(null);
+      setProgram(null);
+      console.log("Wallet disconnected.");
+    }
+  };
 
   return (
     <StateContext.Provider
@@ -49,7 +79,9 @@ export const ContextProvider = ({ children }) => {
         setMode,
         setColor,
         themeSettings,
-        setThemeSettings
+        setThemeSettings,
+        connectWallet, 
+        disconnectWallet,
       }}
     >
       {children}
