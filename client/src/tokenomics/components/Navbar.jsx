@@ -5,6 +5,8 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import { useStateContext } from '../contexts/ContextProvider';
 
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <TooltipComponent content={title} position="BottomCenter" >

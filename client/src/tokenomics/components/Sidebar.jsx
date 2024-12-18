@@ -1,6 +1,7 @@
 import React from 'react';
+
+import { Image } from '@chakra-ui/react';
 import { Link, NavLink } from 'react-router-dom';
-import { SiShopware } from 'react-icons/si';
 import { MdOutlineCancel } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { routes } from '../RoutesConfig';
@@ -29,8 +30,8 @@ const Sidebar = () => {
               onClick={handleCloseSideBar}
               className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900"
             >
-              <SiShopware style={{ fill: currentColor }} />
-              <span>Tigerfactory</span>
+              <Image alt="Home" w={[6, 8, 9]} h={[6, 8, 9]} src={'/ess-logo.png'} />
+              <span>ELX Tokenomics</span>
             </Link>
             <TooltipComponent content="Close Menu" position="BottomCenter">
               <button
