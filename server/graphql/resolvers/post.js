@@ -97,7 +97,7 @@ module.exports = {
         },
         getAllPosts: async (_,args,{req, res}) => {
           const { skip , limit } = args
-          checkAdmin(req)
+          //checkAdmin(req)
 
           try {
             const count = await Post.countDocuments({})
