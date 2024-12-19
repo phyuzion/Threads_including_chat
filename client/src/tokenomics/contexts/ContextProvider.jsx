@@ -18,33 +18,35 @@ export const ContextProvider = ({ children }) => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
 
-
   // Solana 상태
   const [wallet, setWallet] = useState(null);
   const [program, setProgram] = useState(null);
 
   const setMode = (e) => {
     setCurrentMode(e.target.value);
-    setThemeSettings(prev => !prev)
+    setThemeSettings((prev) => !prev);
     localStorage.setItem('themeMode', e.target.value);
   };
 
   const setColor = (color) => {
     setCurrentColor(color);
-    setThemeSettings(prev => !prev)
+    setThemeSettings((prev) => !prev);
     localStorage.setItem('colorMode', color);
   };
 
   const handleClick = (clicked) => setIsClicked({ ...initialState, [clicked]: true });
 
-
   // 지갑 연결
   const connectWallet = async (walletAdapter) => {
     try {
+      if (!walletAdapter.ready) {
+        throw new Error("Phantom Wallet 브라우저 확장이 설치되지 않았습니다.");
+      }
       await walletAdapter.connect();
-      const anchorProgram = await loadProgram(walletAdapter);
+
+      const { provider, program } = await loadProgram(walletAdapter); // Alchemy 사용
       setWallet(walletAdapter);
-      setProgram(anchorProgram);
+      setProgram(program);
       console.log("Wallet connected:", walletAdapter.publicKey.toString());
     } catch (error) {
       console.error("Failed to connect wallet:", error);
@@ -80,7 +82,7 @@ export const ContextProvider = ({ children }) => {
         setColor,
         themeSettings,
         setThemeSettings,
-        connectWallet, 
+        connectWallet,
         disconnectWallet,
       }}
     >

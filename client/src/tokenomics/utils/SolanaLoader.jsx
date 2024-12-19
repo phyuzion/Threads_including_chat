@@ -3,8 +3,8 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import idl from "../idl/essentiallux.json";
 
 // 클러스터 및 프로그램 ID
-export const CLUSTER = "https://api.devnet.solana.com";
-export const PROGRAM_ID = "9xu4SyXFV5ktthzKFRahjJqZW7kMF9DMPNMjbW9pPiKT";
+export const CLUSTER = "https://solana-devnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB";
+export const PROGRAM_ID = "3cPFHxRsxZLhzG66g4j42fqqh7tzEkENfwFnixcH53di";
 
 // Anchor 프로그램 로드
 export const loadProgram = async (wallet) => {

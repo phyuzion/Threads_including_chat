@@ -202,8 +202,12 @@ export const GetAllUsers = `query GetAllUsers($skip: Int!, $limit: Int!) {
     count
     users {
       _id
-      email
       username
+      email
+      bio
+      profilePic
+      wallet_address
+      type
     }
   }
 }`
@@ -212,9 +216,14 @@ export const GetAllPosts = `query GetAllPosts($skip: Int!, $limit: Int!) {
   getAllPosts(skip: $skip, limit: $limit) {
     count
     posts {
-      postedBy
       _id
+      postedBy
+      img
+      video
       text
+      hashtags
+      star
+      createdAt
     }
   }
 }`

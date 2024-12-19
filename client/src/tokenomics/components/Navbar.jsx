@@ -54,15 +54,14 @@ const Navbar = () => {
 
 
 
-  // 지갑 연결 함수
   const handleWalletConnect = async () => {
     try {
-      const phantomWallet = new PhantomWalletAdapter(); // Phantom Adapter 초기화
-      await connectWallet(phantomWallet); // ContextProvider의 connectWallet 호출
-      alert('Wallet connected successfully!');
+      const phantomWallet = new PhantomWalletAdapter();
+      await connectWallet(phantomWallet);
+      alert("Wallet connected successfully!");
     } catch (error) {
-      console.error('Failed to connect wallet:', error);
-      alert('Failed to connect wallet.');
+      console.error("Failed to connect wallet:", error);
+      alert(error.message);
     }
   };
 
