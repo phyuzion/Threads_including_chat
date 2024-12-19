@@ -4,6 +4,9 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Page, Selection, Inje
 import { GetAllPosts } from '../../apollo/queries';
 import { Header } from '../components';
 
+import { useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
+
 // gql 태그로 쿼리 감싸기
 const GET_ALL_POSTS = gql`
   ${GetAllPosts}
@@ -14,11 +17,15 @@ const Contents = () => {
   const [mediaPreview, setMediaPreview] = useState({ open: false, url: '', type: '' }); // 미디어 미리보기 상태
   const [selectedRows, setSelectedRows] = useState([]); // 선택된 행 데이터
 
+  const user = useRecoilValue(userAtom);
+
   const [fetchPosts, { loading, error, data, refetch }] = useLazyQuery(GET_ALL_POSTS, {
     variables: { skip: 0, limit }, // 서버에서 한 번에 데이터를 가져옴
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       console.log('Fetched posts:', data);
+      const type = user?.loginUser?.type;
+      console.log('type : ' + type);
     },
     onError: (error) => {
       console.error('Error fetching posts:', error);
@@ -73,7 +80,7 @@ const Contents = () => {
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl shadow-2xl">
-      <Header category="Page" title="Posts" />
+      <Header category="Page" title="Contents" />
       <GridComponent
         dataSource={posts}
         enableHover={true}
