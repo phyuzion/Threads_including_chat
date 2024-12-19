@@ -1,26 +1,38 @@
 import React, { useState } from 'react';
-import { gql, useLazyQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Selection, Inject, Toolbar, Sort, Filter, Edit, Search } from '@syncfusion/ej2-react-grids';
 import { GetAllUsers } from '../../apollo/queries';
+import { Delete_User } from '../../apollo/mutations';
 import { Header } from '../components';
+import { useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
 
 // gql 태그로 쿼리 감싸기
-const GET_ALL_USERS = gql`
-  ${GetAllUsers}
-`;
+const GET_ALL_USERS = gql`${GetAllUsers}`;
+const DELETE_USER = gql`${Delete_User}`;
 
 const Holders = () => {
   const [limit] = useState(1000); // 한 번에 더 많은 데이터를 가져옴
   const [selectedRows, setSelectedRows] = useState([]); // 선택된 행 데이터
+  const user = useRecoilValue(userAtom); // 현재 사용자 정보 가져오기
 
   const [fetchUsers, { loading, error, data, refetch }] = useLazyQuery(GET_ALL_USERS, {
-    variables: { skip: 0, limit }, // 서버에서 데이터를 한 번에 가져옴
+    variables: { skip: 0, limit },
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       console.log('Fetched users:', data);
     },
     onError: (error) => {
       console.error('Error fetching users:', error);
+    },
+  });
+
+  const [deleteUser] = useMutation(DELETE_USER, {
+    onCompleted: () => {
+      console.log('User deleted successfully');
+    },
+    onError: (error) => {
+      console.error('Error deleting user:', error);
     },
   });
 
@@ -47,18 +59,29 @@ const Holders = () => {
   const selectionSettings = { type: 'Multiple', persistSelection: true };
   const editing = { allowDeleting: true, allowEditing: false };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedRows.length === 0) {
       alert('No rows selected for deletion!');
       return;
     }
 
-    // 실제로 서버에서 삭제하려면 API 호출 추가
-    console.log('Deleting rows:', selectedRows);
+    if (user?.loginUser?.type === 0 || user?.loginUser?.type === 1) {
+      try {
+        for (const row of selectedRows) {
+          await deleteUser({ variables: { userName: row.HolderName } });
+          console.log(`Deleted user: ${row.HolderName}`);
+        }
 
-    // 삭제 후 데이터 새로 고침
-    refetch();
-    alert('Selected rows deleted successfully!');
+        alert('Selected rows deleted successfully!');
+        refetch(); // 데이터 새로 고침
+        setSelectedRows([]); // 선택된 행 초기화
+      } catch (error) {
+        console.error('Error deleting users:', error);
+        alert('Failed to delete some users!');
+      }
+    } else {
+      alert('You do not have permission to delete users.');
+    }
   };
 
   return (

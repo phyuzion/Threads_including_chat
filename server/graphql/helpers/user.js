@@ -7,6 +7,10 @@ const { USER_TYPES } = require('../../helpers/enum')
 const deleteUserAndPosts = async (userName,session) => {
 
     const user = await User.findOne({username: userName}).session(session).exec()
+    if (!user) {
+        throw new Error("User not found");
+    }
+
     const hashtagResult = await HashTag.deleteOne({ createdBy: user._id }).session(session)
     console.log('deleteUserAndPosts  hashtagResult: ',hashtagResult)
     const postResult = await  Post.deleteOne({ postedBy: user._id }).session(session)

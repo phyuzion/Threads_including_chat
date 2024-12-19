@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { gql, useLazyQuery } from '@apollo/client';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Selection, Inject, Edit, Toolbar, Sort, Filter, Search } from '@syncfusion/ej2-react-grids';
+import { gql, useLazyQuery, useMutation } from '@apollo/client';
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Selection, Inject, Toolbar, Sort, Filter, Search, Edit } from '@syncfusion/ej2-react-grids';
 import { GetAllPosts } from '../../apollo/queries';
+import { Delete_Post_BY_ADMIN } from '../../apollo/mutations';
 import { Header } from '../components';
-
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 
 // gql 태그로 쿼리 감싸기
-const GET_ALL_POSTS = gql`
-  ${GetAllPosts}
-`;
+const GET_ALL_POSTS = gql`${GetAllPosts}`;
+const DELETE_POST_BY_ADMIN = gql`${Delete_Post_BY_ADMIN}`;
 
 const Contents = () => {
   const [limit] = useState(1000); // 한 번에 더 많은 데이터를 가져옴
@@ -20,15 +19,23 @@ const Contents = () => {
   const user = useRecoilValue(userAtom);
 
   const [fetchPosts, { loading, error, data, refetch }] = useLazyQuery(GET_ALL_POSTS, {
-    variables: { skip: 0, limit }, // 서버에서 한 번에 데이터를 가져옴
+    variables: { skip: 0, limit },
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       console.log('Fetched posts:', data);
-      const type = user?.loginUser?.type;
-      console.log('type : ' + type);
     },
     onError: (error) => {
       console.error('Error fetching posts:', error);
+    },
+  });
+
+  const [deletePostByAdmin] = useMutation(DELETE_POST_BY_ADMIN, {
+    onCompleted: () => {
+      console.log('Post deleted successfully.');
+    },
+    onError: (error) => {
+      console.error('Error deleting posts:', error);
+      alert('Failed to delete posts!');
     },
   });
 
@@ -64,20 +71,38 @@ const Contents = () => {
     setMediaPreview({ open: false, url: '', type: '' });
   };
 
-  const handleDelete = () => {
+  
+  const handleDelete = async () => {
     if (selectedRows.length === 0) {
       alert('No rows selected for deletion!');
       return;
     }
-
-    // 실제로 서버에서 삭제하려면 API 호출 추가
-    console.log('Deleting rows:', selectedRows);
-
-    // 삭제 후 데이터 새로 고침
-    refetch();
-    alert('Selected rows deleted successfully!');
+  
+    if (user?.loginUser?.type === 0 || user?.loginUser?.type === 1) {
+      try {
+        // 삭제 요청 처리
+        for (const row of selectedRows) {
+          await deletePostByAdmin({ variables: { postId: row.PostID } });
+          console.log(`Deleted post ID: ${row.PostID}`);
+        }
+  
+        // 삭제 완료 후 한 번만 알림
+        alert('Selected rows deleted successfully!');
+        
+        // 모든 삭제가 끝난 후 refetch
+        refetch();
+        setSelectedRows([]); // 선택된 행 초기화
+      } catch (error) {
+        console.error('Error deleting posts:', error);
+        alert('Failed to delete some posts!');
+      }
+    } else {
+      alert('You do not have permission to delete posts.');
+    }
   };
-
+  
+  
+  
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl shadow-2xl">
       <Header category="Page" title="Contents" />
@@ -85,9 +110,9 @@ const Contents = () => {
         dataSource={posts}
         enableHover={true}
         allowPaging
-        toolbar={['Search', { text: 'Delete', prefixIcon: 'e-delete', id: 'Delete' }]}
+        toolbar={['Search', { text: 'Delete', prefixIcon: 'e-delete', id: 'Delete', disabled: !(user?.loginUser?.type === 0 || user?.loginUser?.type === 1) }]}
         pageSettings={{
-          pageSize: 10, // 클라이언트에서 한 페이지에 표시할 데이터 수
+          pageSize: 10,
         }}
         selectionSettings={selectionSettings}
         editSettings={editing}
