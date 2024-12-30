@@ -2,11 +2,7 @@ import React, { useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { RiNotification3Line } from 'react-icons/ri';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-
 import { useStateContext } from '../contexts/ContextProvider';
-
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
-
 
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -33,7 +29,6 @@ const Navbar = () => {
     screenSize,
     setScreenSize,
     currentColor,
-    connectWallet, // 여기서 가져옴
   } = useStateContext();
 
   useEffect(() => {
@@ -54,17 +49,6 @@ const Navbar = () => {
 
 
 
-  const handleWalletConnect = async () => {
-    try {
-      const phantomWallet = new PhantomWalletAdapter();
-      await connectWallet(phantomWallet);
-      alert("Wallet connected successfully!");
-    } catch (error) {
-      console.error("Failed to connect wallet:", error);
-      alert(error.message);
-    }
-  };
-
   return (
     <nav className='flex justify-between p-2 md:mx-6 relative'>
 
@@ -83,7 +67,6 @@ const Navbar = () => {
         <NavButton
           title="Notifications"
           dotColor="#03C9D7"
-          customFunc={handleWalletConnect} // 버튼 클릭 시 지갑 연결
           color={currentColor}
           icon={<RiNotification3Line />}
         />
