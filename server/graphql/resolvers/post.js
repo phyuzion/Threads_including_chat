@@ -1,4 +1,4 @@
-const { throwServerError, throwForbiddenError, checkAdmin } = require("../../utils/helpers/genrateTokenAndSetCookie")
+const { throwServerError, throwForbiddenError, checkUser, checkAdmin } = require("../../utils/helpers/genrateTokenAndSetCookie")
 const { transformPost,transformPosts } = require('../../utils/transform')
 const mongoose = require('mongoose')
 const Post = require('../../models/postModel')
