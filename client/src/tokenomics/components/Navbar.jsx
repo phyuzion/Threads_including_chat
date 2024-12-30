@@ -3,6 +3,7 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import { RiNotification3Line } from 'react-icons/ri';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { useStateContext } from '../contexts/ContextProvider';
+import SolanaWallet from '../utils/SolanaWallet';
 
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -70,6 +71,7 @@ const Navbar = () => {
           color={currentColor}
           icon={<RiNotification3Line />}
         />
+        <SolanaWallet />
 
       </div>
     </nav>
