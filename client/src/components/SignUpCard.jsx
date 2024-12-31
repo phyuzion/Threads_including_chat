@@ -22,7 +22,7 @@ import { signupUser } from "../apollo/mutations.js";
 
 const SIGNUP_USER = gql`${signupUser}`;
 
-function SignUpCard() {
+function SignUpCard({ onClose }) {
   const [showPassword, setShowPassword] = useState(false);
   const [_, setAuthScreen] = useRecoilState(authScreenAtom);
   const [SIGNUP_USER_COMMAND] = useMutation(SIGNUP_USER);
@@ -32,6 +32,8 @@ function SignUpCard() {
     password: ''
   });
 
+  const [passwordError, setPasswordError] = useState(false);
+  const setUser = useSetRecoilState(userAtom);
 
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,11 +41,15 @@ function SignUpCard() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
+    if (name === 'password' && value.length >= 8) {
+      setPasswordError(false);
+    }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
     if (inputs.password.length < 8) {
+      setPasswordError(true);
       toast({
         title: 'Signup failed',
         description: "Password must be at least 8 characters long.",
@@ -64,6 +70,9 @@ function SignUpCard() {
         duration: 5000,
         isClosable: true,
       });
+
+
+      if (onClose) onClose(); // 모달 닫기
     } catch (error) {
       toast({
         title: 'Signup failed',

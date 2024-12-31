@@ -237,7 +237,7 @@ function AuthPage() {
           <ModalContent maxW="600px" borderRadius="lg" p={0}> {/* 패딩을 0으로 설정 */}
             <ModalCloseButton />
             <ModalBody p={0}> {/* `ModalBody` 패딩을 0으로 설정 */}
-              <SignUpCard />
+              <SignUpCard onClose={onClose} />
             </ModalBody>
           </ModalContent>
         </Modal>
