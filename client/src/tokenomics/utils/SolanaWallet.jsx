@@ -2,12 +2,14 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { Connection } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
+const ELX_MINT_ADDRESS = '32ANuQfyYmsKLoyxcKjBqoBNYGf3u8jZUZdJp761PAH1'; // ELX 민트 주소
+
 const SolanaWallet = () => {
-  const endpoint = useMemo(() => 'https://solana-mainnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB', []);
+  const endpoint = useMemo(() => 'https://solana-devnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB', []);
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   return (
@@ -21,42 +23,55 @@ const SolanaWallet = () => {
   );
 };
 
-
 const WalletInterface = () => {
-    const { connect, publicKey, connected } = useWallet();
-    const [balance, setBalance] = useState(null);
-  
-    const getBalance = useCallback(async () => {
-      if (publicKey) {
-        const connection = new Connection('https://solana-mainnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB');
-        const balance = await connection.getBalance(publicKey);
-        setBalance(balance / 1e9); // Convert lamports to SOL
-      }
-    }, [publicKey]);
-  
-    useEffect(() => {
-      if (connected) {
-        getBalance();
-      }
-    }, [connected, getBalance]);
-  
-    return (
-      <Box>
-        {connected && (
-          <>
-            <Flex alignItems="center" gap={[2, 4]}>
-              <Text fontSize={['xs', 'sm']}>Address: {publicKey.toBase58()}</Text>
-            </Flex>
-            <Flex alignItems="center" gap={[2, 4]}>
-              <Text fontSize={['xs', 'sm']}>Balance: {balance !== null ? balance : 'Loading...'} SOL</Text>
-            </Flex>
-          </>
-        )}
-        <Box transform="scale(0.8)" transformOrigin="top left">
-          <WalletMultiButton />
-        </Box>
+  const { connect, publicKey, connected } = useWallet();
+  const [solBalance, setSolBalance] = useState(null);
+  const [elxBalance, setElxBalance] = useState(null);
+
+  const getBalances = useCallback(async () => {
+    if (publicKey) {
+      const connection = new Connection('https://solana-devnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB');
+
+      // SOL 잔액 조회
+      const sol = await connection.getBalance(publicKey);
+      setSolBalance(sol / 1e9); // Lamports를 SOL로 변환
+
+      // ELX 토큰 잔액 조회
+      const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
+        mint: new PublicKey(ELX_MINT_ADDRESS),
+      });
+
+      const elxAccount = tokenAccounts.value[0]?.account.data.parsed.info.tokenAmount.uiAmount || 0;
+      setElxBalance(elxAccount);
+    }
+  }, [publicKey]);
+
+  useEffect(() => {
+    if (connected) {
+      getBalances();
+    }
+  }, [connected, getBalances]);
+
+  return (
+    <Box>
+      {connected && (
+        <>
+          <Flex alignItems="center" gap={[2, 4]}>
+            <Text fontSize={['xs', 'sm']}>Address: {publicKey.toBase58()}</Text>
+          </Flex>
+          <Flex alignItems="center" gap={[2, 4]}>
+            <Text fontSize={['xs', 'sm']}>SOL Balance: {solBalance !== null ? solBalance : 'Loading...'} SOL</Text>
+          </Flex>
+          <Flex alignItems="center" gap={[2, 4]}>
+            <Text fontSize={['xs', 'sm']}>ELX Balance: {elxBalance !== null ? elxBalance : 'Loading...'} ELX</Text>
+          </Flex>
+        </>
+      )}
+      <Box transform="scale(0.8)" transformOrigin="top left">
+        <WalletMultiButton />
       </Box>
-    );
-  };
-  
-  export default SolanaWallet;
+    </Box>
+  );
+};
+
+export default SolanaWallet;
