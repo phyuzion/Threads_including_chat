@@ -1,25 +1,17 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
-import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
+import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
+import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+
 const ELX_MINT_ADDRESS = '32ANuQfyYmsKLoyxcKjBqoBNYGf3u8jZUZdJp761PAH1'; // ELX 민트 주소
 
 const SolanaWallet = () => {
-  const endpoint = useMemo(() => 'https://solana-devnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB', []);
-  const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect={false}>
-        <WalletModalProvider>
           <WalletInterface />
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
   );
 };
 

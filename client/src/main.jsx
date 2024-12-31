@@ -9,7 +9,10 @@ import { SocketContextProvider } from './context/SocketContext.jsx';
 import { ApolloProvider } from '@apollo/client';
 import setupApolloClient from './apollo/apolloindex.js';
 import { Buffer } from 'buffer';
+import process from 'process';
+
 window.Buffer = Buffer;
+window.process = process;
 
 const theme = extendTheme({
     styles: {

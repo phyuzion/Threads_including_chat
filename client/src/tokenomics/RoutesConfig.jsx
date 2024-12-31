@@ -1,6 +1,6 @@
 // RoutesConfig.jsx
 
-import { Summary, Transactions, Calendar, Holders, Contents, Kanban, Editor} from './pages';
+import { Summary, Transactions, AdminProgram, Holders, Contents, Kanban, Editor} from './pages';
 
 import Wallets from './pages/Wallets';
 import { FiShoppingBag } from 'react-icons/fi';
@@ -62,9 +62,9 @@ export const routes = [
     category: "Apps",
     links: [
       {
-        path: "calendar",
-        name: "calendar",
-        component: <Calendar />,
+        path: "adminprogram",
+        name: "adminprogram",
+        component: <AdminProgram />,
         icon: <AiOutlineCalendar />,
       },
       {

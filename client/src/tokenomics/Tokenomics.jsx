@@ -7,6 +7,16 @@ import './Tokenomics.css';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 
+
+import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
+import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
+
+
+const endpoint = 'https://solana-devnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB';
+const wallets = [new PhantomWalletAdapter()];
+
+
 const TokenomicsContent = () => {
   const { activeMenu } = useStateContext();
   const [menuInitialized, setMenuInitialized] = useState(false);
@@ -63,7 +73,14 @@ const TokenomicsContent = () => {
 const Tokenomics = () => {
   return (
     <ContextProvider>
-        <TokenomicsContent />
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect={false}>
+          <WalletModalProvider>
+          <TokenomicsContent />
+
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
     </ContextProvider>
   );
 };
