@@ -1,103 +1,93 @@
-import React, { useCallback, useState } from 'react';
-import { PublicKey, SystemProgram, Keypair, Connection } from '@solana/web3.js';
-import * as anchor from '@coral-xyz/anchor';
-import idl from '../idl/essentiallux.json';
+import React, { useState } from 'react';
+import { Connection, PublicKey, Transaction, SystemProgram } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 
-const ELX_MINT_ADDRESS = '32ANuQfyYmsKLoyxcKjBqoBNYGf3u8jZUZdJp761PAH1';
-const PROGRAM_ID = new PublicKey('3cPFHxRsxZLhzG66g4j42fqqh7tzEkENfwFnixcH53di');
+const PROGRAM_ID = new PublicKey("3cPFHxRsxZLhzG66g4j42fqqh7tzEkENfwFnixcH53di");
+const CLUSTER_URL = "https://api.devnet.solana.com";
 
 const AdminProgram = () => {
-  const { publicKey, connected } = useWallet();
-  const [status, setStatus] = useState('');
-  const connection = new Connection('https://solana-devnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB');
+    const { publicKey, connected, signTransaction } = useWallet();
+    const [status, setStatus] = useState('');
 
-  const initializeAdmin = useCallback(async () => {
-    if (!connected || !publicKey) {
-      setStatus('Please connect your wallet first.');
-      return;
-    }
+    const initializeAdmin = async () => {
+        if (!connected || !publicKey) {
+            setStatus('Please connect your wallet first.');
+            return;
+        }
 
-    try {
-      console.log('Initializing admin...');
+        try {
+            setStatus('Initializing admin...');
 
-      // Anchor provider 설정
-      const provider = new anchor.AnchorProvider(connection, window.solana, anchor.AnchorProvider.defaultOptions());
-      anchor.setProvider(provider);
+            const connection = new Connection(CLUSTER_URL);
 
-      console.log('Provider and connection set up.');
-      console.log("IDL Address:", idl.address);
-      console.log("PROGRAM_ID:", PROGRAM_ID.toString());
+            // Generate PDA for the admin account
+            const [adminPda, adminBump] = await PublicKey.findProgramAddress(
+                [Buffer.from('admin')],
+                PROGRAM_ID
+            );
 
-      console.log("IDL Object:", idl);
-      console.log("IDL Address:", idl.address);
-      console.log("IDL Instructions:", idl.instructions);
-      console.log("IDL Accounts:", idl.accounts);
+            console.log('Admin PDA:', adminPda.toBase58());
 
+            // Create transaction to invoke the program
+            const transaction = new Transaction().add({
+                keys: [
+                    { pubkey: adminPda, isSigner: false, isWritable: true },
+                    { pubkey: publicKey, isSigner: true, isWritable: true },
+                    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+                ],
+                programId: PROGRAM_ID,
+                data: Buffer.from(Uint8Array.of(0, ...new Uint8Array([10]))) // Instruction data: initializeAdmin with fee 10
+            });
 
-      // 프로그램 초기화 (권장 방식, 2개의 인자만 사용)
-      const program = new anchor.Program<typeof idl>(idl, provider);
+            console.log('Transaction prepared:', transaction);
 
-      console.log('Program initialized using provider.');
+            // Sign and send the transaction
+            const signedTransaction = await signTransaction(transaction);
+            const signature = await connection.sendRawTransaction(signedTransaction.serialize());
 
-      const feeAccount = Keypair.generate();
-      const adminInfo = Keypair.generate();
+            await connection.confirmTransaction(signature);
 
-      console.log('Generated FeeAccount and AdminInfo keys.');
+            setStatus(`Admin initialized! Transaction: ${signature}`);
+            console.log('Transaction signature:', signature);
+        } catch (error) {
+            console.error('Error initializing admin:', error);
+            setStatus(`Error: ${error.message}`);
+        }
+    };
 
-      const tx = await program.methods
-        .initializeAdmin(publicKey, new PublicKey(ELX_MINT_ADDRESS))
-        .accounts({
-          adminInfo: adminInfo.publicKey,
-          feeAccount: feeAccount.publicKey,
-          user: publicKey,
-          systemProgram: SystemProgram.programId,
-        })
-        .signers([adminInfo, feeAccount])
-        .rpc();
+    return (
+        <Box p="4">
+            <Box mb="4">
+                <Text fontSize="lg" fontWeight="bold">
+                    Admin Program Interaction (Native Solana)
+                </Text>
+            </Box>
 
-      setStatus(`Admin initialized! Transaction: ${tx}`);
-      console.log('Admin Info Account:', adminInfo.publicKey.toBase58());
-      console.log('Fee Account:', feeAccount.publicKey.toBase58());
-    } catch (error) {
-      console.error('Error initializing admin:', error);
-      setStatus(`Error: ${error.message}`);
-    }
-  }, [connected, publicKey, connection]);
+            {connected ? (
+                <Box mb="4" p="4" border="1px solid #e0e0e0" borderRadius="8px">
+                    <Flex direction="column" gap="2">
+                        <Text fontSize="sm">Wallet Address: {publicKey.toBase58()}</Text>
+                    </Flex>
+                </Box>
+            ) : (
+                <Text fontSize="sm" color="red.500">
+                    Please connect your wallet to interact with the program.
+                </Text>
+            )}
 
-  return (
-    <Box p="4">
-      <Box mb="4">
-        <Text fontSize="lg" fontWeight="bold">
-          Admin Program Interaction
-        </Text>
-      </Box>
+            <Button
+                colorScheme="teal"
+                onClick={initializeAdmin}
+                isDisabled={!connected}
+                mb="4"
+            >
+                Initialize Admin
+            </Button>
 
-      {connected ? (
-        <Box mb="4" p="4" border="1px solid #e0e0e0" borderRadius="8px">
-          <Flex direction="column" gap="2">
-            <Text fontSize="sm">Wallet Address: {publicKey.toBase58()}</Text>
-          </Flex>
+            {status && <Text fontSize="sm" color="gray.600">{status}</Text>}
         </Box>
-      ) : (
-        <Text fontSize="sm" color="red.500">
-          Please connect your wallet to interact with the program.
-        </Text>
-      )}
-
-      <Button
-        colorScheme="teal"
-        onClick={initializeAdmin}
-        isDisabled={!connected}
-        mb="4"
-      >
-        Initialize Admin
-      </Button>
-
-      {status && <Text fontSize="sm" color="gray.600">{status}</Text>}
-    </Box>
-  );
+    );
 };
 
 export default AdminProgram;

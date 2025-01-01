@@ -13,7 +13,7 @@ import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-r
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 
 
-const endpoint = 'https://solana-devnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB';
+const endpoint = 'https://solana-mainnet.g.alchemy.com/v2/m6sEEdz41_7K9bGEZoOIpEwPncqf6kHB';
 const wallets = [new PhantomWalletAdapter()];
 
 

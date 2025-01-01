@@ -64,13 +64,6 @@ const Navbar = () => {
       {/* Right side buttons */}
       <div className='flex'>
         
-
-        <NavButton
-          title="Notifications"
-          dotColor="#03C9D7"
-          color={currentColor}
-          icon={<RiNotification3Line />}
-        />
         <SolanaWallet />
 
       </div>

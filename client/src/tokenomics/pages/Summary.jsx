@@ -19,7 +19,7 @@ const Summary = () => {
           <div className='flex justify-between items-center self-center'>
             <div>
               <p className="font-bold text-gray-400">Total Market Cap</p>
-              <p className="text-2xl">$987,463,448.78</p>
+              <p className="text-2xl">300,000,000 ELX</p>
             </div>
           </div>
           <div className="mt-6">
