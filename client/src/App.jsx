@@ -17,6 +17,13 @@ import SideBar from './components/SideBar';
 import SuggestedUsers from './components/SuggestedUsers';
 import MessageContainer from './components/MessageContainer';
 import Tokenomics from './tokenomics/Tokenomics';
+import { gql, useLazyQuery } from '@apollo/client';
+
+import useLogout from './hooks/useLogout';
+import { GetMe } from './apollo/queries';
+
+// gql 태그로 GetMe 쿼리 감싸기
+const GET_ME = gql`${GetMe}`;
 
 function App() {
   const user = useRecoilValue(userAtom);
@@ -24,6 +31,31 @@ function App() {
   const navigate = useNavigate();
   const client = setupApolloClient();
   const [isLargerThan800px] = useMediaQuery('(min-width: 800px)');
+
+  const logout = useLogout();
+
+  // Lazy query로 `me` 쿼리 실행
+  const [fetchMe, { data, error }] = useLazyQuery(GET_ME, {
+    onCompleted: (data) => {
+      console.log(data);
+      if (data.me) {
+        console.log('Authenticated');
+      } else {
+        console.log('Not authenticated');
+        logout();
+      }
+    },
+    onError: () => {
+      logout();
+    },
+  });
+
+  useEffect(() => {
+    if (localStorage.getItem('user')) {
+      fetchMe(); // 유효성 확인용 쿼리 실행
+    }
+  }, []);
+
 
   useEffect(() => {
     // 로그아웃 시 '/auth' 페이지로 이동

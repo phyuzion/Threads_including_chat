@@ -36,8 +36,6 @@ const GET_RANDOM_POST_IMAGE = gql`${GetRandomPostImage}`;
 
 
 
-
-
 function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [randomImage, setRandomImage] = useState("")
@@ -73,27 +71,7 @@ function AuthPage() {
     setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
   };
 
-  async function loginCompleted({ data }) {
-    localStorage.setItem('user', JSON.stringify(data));
-    setUser(data.loginUser);
-    await client.clearStore();
-    await client.resetStore();
-  }
-
-  function loginError(errors) {
-    toast({
-      title: 'Login failed',
-      description: "Invalid username or password.",
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-  }
-
-  const [LOGIN_USER_COMMAND] = useMutation(LOGIN_USER, {
-    onCompleted: loginCompleted,
-    onError: loginError,
-  });
+  const [LOGIN_USER_COMMAND] = useMutation(LOGIN_USER);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -128,7 +106,7 @@ function AuthPage() {
     } catch (error) {
       toast({
         title: 'An error occurred',
-        description: "Unable to login. Please try again later.",
+        description: "Unable to login. Please check user name and password.",
         status: 'error',
         duration: 5000,
         isClosable: true,

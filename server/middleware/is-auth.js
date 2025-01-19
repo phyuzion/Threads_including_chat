@@ -17,6 +17,7 @@ const authenticateUser = async (req,authHeader_) => {
             }
           } catch (err) {
             console.log('ath error: ',err)
+            throw new Error('Invalid or expired token');
           }
           return null
         }

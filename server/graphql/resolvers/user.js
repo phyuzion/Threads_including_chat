@@ -14,8 +14,29 @@ const {
     QUERY_SUGGESTED_USERS} = require('../aggregation/user')
 
 const { getFollowUnfollowUpdate,deleteUserAndPosts } = require('../helpers/user')
+
+
+const { isAuthenticated } = require('../../middleware/is-auth')
+
 module.exports = {
     Query: {
+      me: async (_, __, { req }) => {
+        try {
+          console.log('[me] Starting JWT validation...');
+          await isAuthenticated(req); // JWT 검증
+      
+          if (req.user) {
+            console.log('[me] JWT validation successful. User: ', req.user);
+            return true; // 인증된 사용자
+          } else {
+            console.log('[me] JWT validation failed. No user found.');
+            return false; // 인증 실패
+          }
+        } catch (err) {
+          console.error('[me] Error during JWT validation:', err.message);
+          return false; // 에러 발생 시 false 반환
+        }
+      },      
       getFollows: async (_,args,{req, res}) => {
         const {skip, limit , following } = args
         //console.log( ' getFollows skip: ',skip, ' limit: ',limit , ' following: ',following)

@@ -103,6 +103,7 @@ type AllPosts {
 }
 
 type Query {
+    me: Boolean
     getSuggestedUsers: [UserLimited]
     getFollows(skip: Int! , limit: Int!, following: Boolean): UserFollow
     getUserProfile(postedBy: String!): User

@@ -227,3 +227,7 @@ export const GetAllPosts = `query GetAllPosts($skip: Int!, $limit: Int!) {
     }
   }
 }`
+
+export const GetMe = `query Me {
+    me
+  }`
