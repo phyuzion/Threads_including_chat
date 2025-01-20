@@ -116,6 +116,13 @@ function AuthPage() {
     }
   };
 
+
+  const openIntroPage = () => {
+    window.open('/intro/intro.html', '_blank');
+  };
+
+
+
   return (
     <Flex minHeight="100vh" align="center" justify="center" bg="#f4f4f4" overflow="hidden">
       <Flex
@@ -180,6 +187,21 @@ function AuthPage() {
               >
                 Login
               </Button>
+
+
+              {/* Introduce Essentiallux Button */}
+              <Button
+                size="lg"
+                bg="#007bff"
+                color="white"
+                _hover={{
+                  bg: "#0056b3",
+                }}
+                onClick={openIntroPage}
+              >
+                Introduce Essentiallux
+              </Button>
+
 
               <Text align="center" mt={2}>
                 Create Account?{' '}

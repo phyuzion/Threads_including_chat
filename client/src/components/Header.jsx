@@ -78,6 +78,11 @@ function Header() {
   const backgroundColor = "#EDF2F7"; // gray.100에 해당하는 색상 코드
   const focusRingColor = "rgba(72, 187, 120, 0.4)"; // 포커스 링 색상
 
+
+  const openIntroPage = () => {
+    window.open('/intro/intro.html', '_blank');
+  };
+
   return (
     <Flex
       alignItems="center"
@@ -170,6 +175,13 @@ function Header() {
           <Menu>
             <MenuButton as={IconButton} aria-label="Menu" icon={<GiHamburgerMenu size={iconSize} color={iconColor} />} variant="ghost" size="sm" mx={1} />
             <MenuList>
+              {/* 새 메뉴 아이템 추가 */}
+              <MenuItem
+                icon={<FiLogOut size={20} color={iconColor} />}
+                onClick={openIntroPage}
+              >
+                Introduce Essentiallux
+              </MenuItem>
               <NavLink to="/tokenomics">
                 <MenuItem icon={<FiLogOut size={20} color={iconColor} />} >Tokenomics</MenuItem>
               </NavLink>

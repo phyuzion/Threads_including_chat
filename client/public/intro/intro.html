@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+     <meta charset="utf-8" />
+     <title>ESSENTIALLUX</title>
+     <meta name="description" content="" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+     <!--Favicon -->
+     <link rel="icon" type="image/png" href="images/logos/ess-logo.png" />
+     <!-- CSS Files -->
+     <link rel="stylesheet" href="css/plugins.min.css" />
+     <!-- Page Styles -->
+     <link rel="stylesheet" href="css/style.css?v=2.0" />
+     <!-- End CSS Files -->
+</head>
+
+<body>
+
+     <!-- Website loader -->
+     <div class="page-loader loader-wrapper bg-dark-800">
+          <div class="loader"><img src="images/loading.gif" alt="loader gif"></div>
+     </div>
+   
+
+
+
+     
+
+     <!-- Home section -->
+     <div id="home" class="bg-semi-25 bg-semi-dark-800 has-parallax text-white fullscreen mnh-30 align-items-center flex" >
+
+          <!-- Your video -->
+          <div data-video-id="IsS1wnVlLkQ" data-startAt="0" id="youtubeVideo" class="youtube-video zi-0 pointer-events-none"></div>
+
+          <!-- Mute&Unmute buttons -->
+          <div class="absolute zi-10 h-18 left-4 bottom-4 pointer-events-none flex align-items-end justify-content-center">
+               <!-- Mute&Unmute button -->
+               <button class="playToggle mx-1 relative icon-md w-18 h-18 rounded-full pointer-events-all bg-semi-15 hover-bg-semi-45 active-bg-semi-85 bg-semi-gray-800 bg-blur" type="button">
+                    <i class="bi-pause active-hidden absolute"></i>
+                    <i class="bi-play active-visible absolute"></i>
+               </button>
+               <!-- Mute&Unmute button
+               <button class="muteToggle mx-1 relative icon-md w-18 h-18 rounded-full pointer-events-all bg-semi-15 hover-bg-semi-45 active-bg-semi-85 bg-semi-gray-800 bg-blur" type="button">
+                    <i class="bi-volume-mute active-hidden absolute"></i>
+                    <i class="bi-volume-up active-visible absolute"></i>
+               </button>
+                -->
+          </div>
+          <!-- End Mute&Unmute buttons -->
+
+          <!-- Start titles -->
+          <div class="container text-center text-white relative">
+               <!-- Title slider -->
+               <div id="home-title-slider" class="custom-slider" data-slick='{"vertical": true, "verticalSwiping": true, "dots": true, "speed":600, "arrows": false, "fade": false, "draggable":true, "slidesToShow": 1}' >
+                    <!-- Slide -->
+                    <div class="slide">
+                         <!-- Title -->
+                         <h1 class="font-secondary text-13xl sm-text-8xl uppercase">
+                              ESSENTIALLUX
+                         </h1>
+                    </div>
+                    <!-- End slide -->
+                    <!-- Slide -->
+                    <div class="slide">
+                         <!-- Title -->
+                         <h1 class="font-secondary text-13xl sm-text-8xl uppercase">
+                              Blockchain Convergence
+                         </h1>
+                    </div>
+                    <!-- End slide -->
+                    <!-- Slide -->
+                    <div class="slide">
+                         <!-- Title -->
+                         <h1 class="font-secondary text-13xl sm-text-8xl uppercase">
+                              New <span class="text-colored">NFT</span> Community
+                         </h1>
+                    </div>
+                    <!-- End slide -->
+               </div>
+               <!-- End title slider -->
+
+               <!-- Dots -->
+               <div class="dots-container lg-mt-1"></div>
+
+               <!-- Description -->
+               <p class="text-md sm-text-md text-gray-300 lg-mt-3 mxw-45 mx-auto">
+                    Future of Beauty Creators - Driven Advertising Platform.
+               </p>
+               <!-- External or internal link - you can add target="_blank" attribute for open with new tab -->
+               <div class="mt-4">
+                  <a href="#about" target="_blank"
+                    class="btn-sm text-gray-300 hover-text-dark-400 bg-semi-70 mx-2 hover-bg-semi-100 bg-semi-dark-700 hover-bg-semi-white border-1 border-semi-white-20 hover-border-semi-white-100 uppercase font-secondary transition-colors">
+                      <span>Read More</span>
+                  </a>
+              </div>
+          </div>
+          <!-- End titles -->
+     </div>
+     <!-- End #home section -->
+
+
+
+
+
+
+     <!-- Start Navigation -->
+     <nav id="navigation" class="modern-nav sticky nav-lg text-sm bordered nav-white font-secondary fixed-height" data-offset="15">
+          <!-- Navigation container - You can chnage container type and paddding value -->
+          <div class="container nav-container">
+            <!-- Row for cols in the nav -->
+            <div class="flex-row nav-wrapper justify-content-between">
+                <!-- Column for logo -->
+                <div class="column">
+                    <a href="#top" class="logo">
+                        <img src="images/logos/ess-logo.png" alt="website logo" class="logo-white mxw-15">
+                        <img src="images/logos/ess-logo.png" alt="website logo" class="logo-dark mxw-15">
+                    </a>
+                </div>
+                <!-- Column for Navigation -->
+                <div id="nav-menu" class="column ml-auto nav-menu">
+                    <!-- Navigation links, you can add nav-links-centered class for centered links -->
+                    <ul class="nav-links justify-content-end">
+                        <!-- Logo for mobile navigation -->
+                        <li class="logo-for-mobile-navigation">
+                              <img src="images/logos/logo_01_white.svg" alt="website logo" class="logo-white mxw-22">
+                              <img src="images/logos/logo_01_dark.svg" alt="website logo" class="logo-dark mxw-22">
+                         </li>
+                        <!-- Link -->
+                        <li><a href="#home" class="nav-link">Home</a></li>
+                        <li><a href="#about" class="nav-link">About</a></li>
+                        <li><a href="#services" class="nav-link">Services</a></li>
+                        <li><a href="#features" class="nav-link">Features</a></li>
+                        <li><a href="#roadmap" class="nav-link">Roadmap</a></li>
+                        <li><a href="#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                </div>
+                <!-- End Column for Navigation -->
+                <!-- Mobile navigation trigger button -->
+                <div class="mobile-nb">
+                    <div class="hamburger-menu">
+                        <div class="top-bun"></div>
+                        <div class="meat"></div>
+                        <div class="bottom-bun"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Row for cols in the nav -->
+          </div>
+          <!-- End Navigation container -->
+          <div class="mobile-nav-bg"></div>
+     </nav>
+     <!-- End Navigation -->
+
+
+     
+
+
+
+
+     <!-- About section -->
+     <section id="about" class="lg-py-12 sm-py-8">
+
+          <!-- Container for all boxes -->
+          <div class="container cursor-default">
+
+               <!-- Tablet image -->
+               <div class="-mt-5 flex justify-content-center block-images">
+                    <img src="images/bg_nft.png" alt="ipad image template" class="sm-w-full">
+               </div>
+
+               <!-- Flex row for all columns -->
+               <div class="flex-row lg-flex-columns-4 md-flex-columns-2 sm-flex-columns-2 xs-flex-columns-1">
+
+                    <!-- Info box group -->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-dark text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-xl bg-transparent relative border-2 border-dark text-base rounded-full group-hover-bg-white d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <i class="bi-cloud-hail-fill text-20"></i>
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-dark group-hover-text-white transition mt-3">
+                                   Media
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-gray-400 mt-2 transition">
+                                   Text, Photo, Video, GIF Sharing
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+
+                    <!-- Info box group -->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-dark text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-xl bg-transparent relative border-2 border-dark text-base rounded-full group-hover-bg-white d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <i class="bi-bell-fill text-20"></i>
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-dark group-hover-text-white transition mt-3">
+                                   Community
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-gray-400 mt-2 transition">
+                                   Community Based on Blockchain Governance
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+
+                    <!-- Info box group -->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-dark text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-xl bg-transparent relative border-2 border-dark text-base rounded-full group-hover-bg-white d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <i class="bi-bookmark-check-fill text-20"></i>
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-dark group-hover-text-white transition mt-3">
+                                   Communication
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-gray-400 mt-2 transition">
+                                   DM messages, user-to-user communication chat
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+
+                    <!-- Info box group -->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-dark text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-xl bg-transparent relative border-2 border-dark text-base rounded-full group-hover-bg-white d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <i class="bi-boombox-fill text-20"></i>
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-dark group-hover-text-white transition mt-3">
+                                   Security
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-gray-400 mt-2 transition">
+                                   Login and account security using cryptocurrency wallets
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+
+               </div>
+               <!-- End flex row for all columns -->
+
+          </div>
+          <!-- End container for all boxes -->
+
+     </section>
+     <!-- End about section -->
+
+
+
+
+
+     <!-- Top icon for bottom section -->
+     <div class="flex justify-content-center relative">
+          <!-- Top icon -->
+          <div class="absolute w-full left-0 top-0 h-auto flex justify-content-center">
+               <div class="icon-lg text-lg rounded-full border-1 -translate-y-perc-50 border-gray-400 bg-white text-gray-700 zi-10">
+                    <i class="bi-award"></i>
+               </div>
+          </div>
+     </div>
+
+     <!-- Start services section -->
+     <section id="services" class="has-parallax lg-py-12 sm-py-8">
+
+          <!-- Parallax background -->
+          <div class="parallax" data-bg="images/i4.jpg" data-target="#history" data-bottom-top="transform:translate3d(0px,-100px,0px);" data-top-bottom="transform:translate3d(0px,100px,0px);"></div>
+
+          <!-- Container for title -->
+          <div class="container text-center">
+               <!-- Title -->
+               <h1 class="font-secondary uppercase text-dark lg-text-5xl sm-text-3xl font-light">
+                    OUR SERVICES
+               </h1>
+               <!-- Subtitle -->
+               <p class="mx-auto mxw-50 text-gray-700 lg-mt-4 sm-mt-3">
+                    CONTRARY TO POPULAR BELIEF, LOREM IPSUM IS NOT SIMPLY RANDOM TEXT. IT HAS ROOTS IN A PIECE OF CLASSICAL LATIN LITERATURE FROM 45 BC, MAKING IT OVER 2000 YEARS OLD.
+               </p>
+          </div>
+          <!-- End container for title -->
+
+          <!-- Carousel arrows -->
+          <div class="container flex justify-content-center mt-4">
+               <!-- Previous button -->
+               <button type="button" class="icon-sm mx-1 rounded-full text-dark hover-text-white bg-gray-300 hover-bg-dark-200 transition-colors"
+                    data-slider-control="#services-slider"
+                    data-slider-dir="prev">
+                         <i class="bi-chevron-left"></i>
+               </button>
+               <!-- Next button -->
+               <button type="button" class="icon-sm mx-1 rounded-full text-dark hover-text-white bg-gray-300 hover-bg-dark-200 transition-colors"
+                    data-slider-control="#services-slider"
+                    data-slider-dir="next">
+                         <i class="bi-chevron-right"></i>
+               </button>
+          </div>
+          <!-- End carousel arrows -->
+
+          <!-- Container for services boxes -->
+          <div class="container mt-4">
+               
+               <!-- Slider -->
+               <div id="services-slider" class="custom-slider animated-group" 
+                    data-slick='{"dots": false, "speed":600, "arrows": false, "fade": false, "draggable":true, "slidesToShow": 4, "slidesToScroll": 1, "responsive":[{"breakpoint": 1300,"settings":{"slidesToShow": 3,"slidesToScroll": 1}},{"breakpoint": 1024,"settings":{"slidesToShow": 2,"slidesToScroll": 1}},{"breakpoint": 768,"settings":{"slidesToShow": 1,"slidesToScroll": 1}}]}' >
+
+                    <!-- Slide / service box -->
+                    <div class="group px-3 py-4 flex justify-content-center text-center flex-column animated" data-animation="flipInX" data-animation-delay="0">
+                         <!-- Employee image -->
+                         <div class="icon-4xl flex text-2xl align-items-center justify-content-center group-hover-border-double rounded-full mx-auto border-1 border-dark-400 transition bg-transparent group-hover-bg-dark-400 group-hover-text-white">
+                              <i class="bi-at"></i>
+                         </div>
+                         <!-- Name -->
+                         <h4 class="font-secondary text-lg uppercase text-gray-800 mt-3">Decentralization</h4>
+                         <!-- Message -->
+                         <p class="text-base text-gray-800 mt-2">Data is distributed and stored across multiple nodes instead of traditional central servers.</p>
+                         <p class="text-base text-gray-800 mt-2">Reduce server downtime problems and prevent data censorship.</p>
+                    </div>
+                    <!-- End slide / service box -->
+
+                    <!-- Slide / service box -->
+                    <div class="group px-3 py-4 flex justify-content-center text-center flex-column animated" data-animation="flipInX" data-animation-delay="100">
+                         <!-- Employee image -->
+                         <div class="icon-4xl flex text-2xl align-items-center justify-content-center group-hover-border-double rounded-full mx-auto border-1 border-dark-400 transition bg-transparent group-hover-bg-dark-400 group-hover-text-white">
+                              <i class="bi-archive"></i>
+                         </div>
+                         <!-- Name -->
+                         <h4 class="font-secondary text-lg uppercase text-gray-800 mt-3">Transparency and Security</h4>
+                         <!-- Message -->
+                         <p class="text-base text-gray-800 mt-2">All data changes are transparently recorded through blockchain technology.</p>
+                         <p class="text-base text-gray-800 mt-2">Prevention of falsification of data.</p>
+                    </div>
+                    <!-- End slide / service box -->
+
+                    <!-- Slide / service box -->
+                    <div class="group px-3 py-4 flex justify-content-center text-center flex-column animated" data-animation="flipInX" data-animation-delay="200">
+                         <!-- Employee image -->
+                         <div class="icon-4xl flex text-2xl align-items-center justify-content-center group-hover-border-double rounded-full mx-auto border-1 border-dark-400 transition bg-transparent group-hover-bg-dark-400 group-hover-text-white">
+                              <i class="bi-bag-check"></i>
+                         </div>
+                         <!-- Name -->
+                         <h4 class="font-secondary text-lg uppercase text-gray-800 mt-3">Strengthen User Sovereignty</h4>
+                         <!-- Message -->
+                         <p class="text-base text-gray-800 mt-2">Users can own and manage their own data.</p>
+                         <p class="text-base text-gray-800 mt-2">Strengthen privacy.</p>
+                    </div>
+                    <!-- End slide / service box -->
+
+                    <!-- Slide / service box -->
+                    <div class="group px-3 py-4 flex justify-content-center text-center flex-column animated" data-animation="flipInX" data-animation-delay="300">
+                         <!-- Employee image -->
+                         <div class="icon-4xl flex text-2xl align-items-center justify-content-center group-hover-border-double rounded-full mx-auto border-1 border-dark-400 transition bg-transparent group-hover-bg-dark-400 group-hover-text-white">
+                              <i class="bi-balloon-heart"></i>
+                         </div>
+                         <!-- Name -->
+                         <h4 class="font-secondary text-lg uppercase text-gray-800 mt-3">Economic incentives</h4>
+                         <!-- Message -->
+                         <p class="text-base text-gray-800 mt-2">Providing rewards to content creators and consumers through cryptocurrency.</p>
+                         <p class="text-base text-gray-800 mt-2">Introduction of an economic compensation system based on user activities.</p>
+                         <p class="text-base text-gray-800 mt-2">Establish governance in holding cryptocurrency for content consumption.</p>
+                    </div>
+                    <!-- End slide / service box -->
+
+                    <!-- Slide / service box -->
+                    <div class="group px-3 py-4 flex justify-content-center text-center flex-column animated" data-animation="flipInX" data-animation-delay="400">
+                         <!-- Employee image -->
+                         <div class="icon-4xl flex text-2xl align-items-center justify-content-center group-hover-border-double rounded-full mx-auto border-1 border-dark-400 transition bg-transparent group-hover-bg-dark-400 group-hover-text-white">
+                              <i class="bi-bell"></i>
+                         </div>
+                         <!-- Name -->
+                         <h4 class="font-secondary text-lg uppercase text-gray-800 mt-3">Smart Contact</h4>
+                         <!-- Message -->
+                         <p class="text-base text-gray-800 mt-2">Increase reliability and efficiency with automated contacts.</p>
+                         <p class="text-base text-gray-800 mt-2">Automate tasks such as governance contracts, content distribution, and content management.</p>
+                    </div>
+                    <!-- End slide / service box -->
+
+
+
+               </div>
+               <!-- End Slider -->
+
+          </div>
+          <!-- End container for services boxes -->
+
+     </section>
+     <!-- End services section -->
+
+
+
+     <!-- Features section -->
+     <section id="features" class="lg-py-12 sm-py-8 relative">
+
+
+          <!-- Top icon -->
+          <div class="absolute w-full left-0 top-0 h-auto flex justify-content-center">
+               <div class="icon-lg text-lg rounded-full border-1 -translate-y-perc-50 border-gray-400 bg-white text-gray-700 zi-10">
+                    <i class="bi-basket"></i>
+               </div>
+          </div>
+          
+
+          <!-- Container for the title and boxes -->
+          <div class="container text-center relative zi-20">
+
+               <!-- Title -->
+               <h1 class="font-secondary uppercase text-gray-800 lg-text-5xl sm-text-3xl font-light">
+                    Essentiallux provides all the features you need to become a beauty creator!
+               </h1>
+               <!-- Subtitle -->
+               <p class="mx-auto mxw-50 text-gray-700 lg-mt-4 sm-mt-3">
+                    You can share photos, videos, and more to attract people's attention as an influencer, and even create NFTs to preserve them forever. All of these features are powered by the ELX token.
+               </p>
+
+               <!-- Mobile device and box list -->
+               <div class="flex-row xl-mt-8 lg-mt-7 justify-content-center animated-group">
+
+
+               
+               <!-- Tablet image -->
+               <div class="-mt-5 flex justify-content-center block-images">
+                    <img src="images/bg_full.png" alt="ipad image template" class="sm-w-full">
+               </div>
+
+                    <!-- Column for hotspots and image -->
+                    <div class=" lg-flex sm-hidden">
+                         <!-- Hotspots -->
+                         <div id="hotspots" class="hotspots animated" data-animation="flipInX" data-animation-delay="100">
+                               <!-- Your image is here -->
+                               <img src="images/f-iphone-loader.svg" data-src="images/bg_phone.png" alt="hotspot image">
+                               <!-- Items -->
+                               <div class="items">
+                                   <!-- Item -->
+                                   <div style="left:25%; top:30%;" class="item animated" data-animation="blurIn" data-animation-delay="1100">
+                                       <div class="text-4xl text-black bi-1-circle-fill"
+                                       data-bs-toggle="popover"
+                                       data-bs-trigger="hover"
+                                       data-bs-placement="left"
+                                       data-bs-html="true"
+                                       title="Chat with others"
+                                       data-bs-content="<p class='mt-2 lh-20'>You can contact anyone!</p>"></div>
+                                   </div>
+                                   <!-- Item -->
+                                   <div style="left:66.2%; top:28.1%;" class="item animated" data-animation="blurIn" data-animation-delay="1200">
+                                       <div class="text-4xl text-black bi-2-circle-fill"
+                                       data-bs-toggle="popover"
+                                       data-bs-trigger="hover"
+                                       data-bs-placement="right"
+                                       data-bs-html="true"
+                                       title="Send love and like!"
+                                       data-bs-content="<p class='mt-2 lh-20'>There are many contents for can love and like!</p>"></div>
+                                   </div>
+                                   <!-- Item -->
+                                   <div style="left:27.2%; top:80.5%;" class="item animated" data-animation="blurIn" data-animation-delay="1300">
+                                       <div class="text-4xl text-black bi-3-circle-fill"
+                                       data-bs-toggle="popover"
+                                       data-bs-trigger="hover"
+                                       data-bs-placement="left"
+                                       data-bs-html="true"
+                                       title="Share your contents!"
+                                       data-bs-content="<p class='mt-2 lh-20'>You can share your image, video, even good writing!</p>"></div>
+                                   </div>
+                                   <!-- Item -->
+                                   <div style="left:73.2%; top:80.5%;" class="item animated" data-animation="blurIn" data-animation-delay="1400">
+                                       <div class="text-4xl text-black bi-4-circle-fill"
+                                       data-bs-toggle="popover"
+                                       data-bs-trigger="hover"
+                                       data-bs-placement="top"
+                                       data-bs-html="true"
+                                       title="Advertise yourself!"
+                                       data-bs-content="<p class='mt-2 lh-20'>Share your beauty video and get more love!</p>"></div>
+                                   </div>
+                               </div>
+                               <!-- End items -->
+                         </div>
+                         <!-- End Hotspots -->
+                    </div>
+                    <!-- End column for hotspots and image -->
+
+
+               </div>
+               <!-- End mobile device and list -->
+
+
+
+
+          </div>
+          <!-- End container for the title and boxes -->
+           
+           
+     </section>
+     <!-- End features section -->
+
+
+
+
+
+
+
+
+     <!-- Top icon for bottom section -->
+     <div class="flex justify-content-center relative">
+          <!-- Top icon -->
+          <div class="absolute w-full left-0 top-0 h-auto flex justify-content-center">
+               <div class="icon-lg text-lg rounded-full border-1 -translate-y-perc-50 border-gray-400 bg-white text-gray-700 zi-10">
+                    <i class="bi-clock-history"></i>
+               </div>
+          </div>
+     </div>
+
+     <!-- Start roadmap section -->
+     <section id="roadmap" class="has-parallax lg-py-12 sm-py-8">
+
+          <!-- Parallax background -->
+          <div class="parallax" data-bg="images/i2.jpg" data-target="#history" data-bottom-top="transform:translate3d(0px,-400px,0px);" data-top-bottom="transform:translate3d(0px,400px,0px);"></div>
+
+          
+          <!-- Container for title -->
+          <div class="container text-center">
+               <!-- Title -->
+               <h1 class="font-secondary uppercase text-white lg-text-5xl sm-text-3xl font-light">
+                    Project Roadmap
+               </h1>
+          </div>
+          <!-- End container for title -->
+
+
+
+          <!-- Container for history posts -->
+          <div class="container-lg relative mt-7">
+               <!-- Strip for history - You can customize everything with classes -->
+               <div class="sm-hidden w-3 bg-white absolute left-perc-50 top-0 -translate-x-perc-50 h-full zi-0 pointer-events-none"></div>
+
+               <!-- Today button -->
+               <div class="column-12 text-center relative zi-5">
+                    <div class="icon-2xl border-3 border-gray-500 text-md bg-white text-dark-100 font-secondary rounded-full">2024</div>
+               </div>
+               <!-- End today button -->
+
+               <!-- Start history posts -->
+               <div class="flex-row" data-masonry='{"percentPosition": true }'>
+
+                    <!-- Post -->
+                    <div class="lg-column-6 group px-4 lg-mt-5 sm-mt-3 animated" data-animation="fadeInLeft" data-animation-delay="0">
+                         <!-- Keeper, background colors -->
+                         <div class="w-full h-auto bg-semi-50 group-hover-bg-semi-100 bg-semi-gray-800 group-hover-bg-semi-gray-200 lg-p-4 sm-p-4 rounded-md">
+                              <!-- Title -->
+                              <h4 class="font-secondary text-lg uppercase text-white group-hover-text-dark transition-colors duration-300">
+                                   Project build-up
+                              </h4>
+                         </div>
+                         <!-- Circle dot on RIGHT -->
+                         <div class="sm-hidden transition-colors duration-300 border-2 bg-dark-200 border-gray-200 group-hover-bg-colored group-hover-border-colored right-0 top-perc-15 w-10 h-10 translate-x-perc-50 rounded-full absolute"></div>
+
+                    </div>
+                    <!-- End post -->
+
+                    <!-- Post -->
+                    <div class="lg-column-6 group px-4 lg-mt-12 sm-mt-3 animated" data-animation="fadeInRight" data-animation-delay="0">
+                         <!-- Keeper, background colors -->
+                         <div class="w-full h-auto bg-semi-50 group-hover-bg-semi-100 bg-semi-gray-800 group-hover-bg-semi-gray-200 lg-p-4 sm-p-4 rounded-md">
+                              <!-- Title -->
+                              <h4 class="font-secondary text-lg uppercase text-white group-hover-text-dark transition-colors duration-300">
+                                   Launching a VC Investment Round (Seed Investment)
+                              </h4>
+                         </div>
+                         <!-- Circle dot on LEFT -->
+                         <div class="sm-hidden transition-colors duration-300 border-2 bg-dark-200 border-gray-200 group-hover-bg-colored group-hover-border-colored left-0 top-perc-15 w-10 h-10 -translate-x-perc-50 rounded-full absolute"></div>
+                    </div>
+                    <!-- End post -->
+
+                    <!-- Post -->
+                    <div class="lg-column-6 group px-4 lg-mt-4 sm-mt-3 animated" data-animation="fadeInLeft" data-animation-delay="0">
+                         <!-- Keeper, background colors -->
+                         <div class="w-full h-auto bg-semi-50 group-hover-bg-semi-100 bg-semi-gray-800 group-hover-bg-semi-gray-200 lg-p-4 sm-p-4 rounded-md">
+                              <!-- Title -->
+                              <h4 class="font-secondary text-lg uppercase text-white group-hover-text-dark transition-colors duration-300">
+                                   Concluding Global Partnership
+                              </h4>
+                         </div>
+                         <!-- Circle dot on RIGHT -->
+                         <div class="sm-hidden transition-colors duration-300 border-2 bg-dark-200 border-gray-200 group-hover-bg-colored group-hover-border-colored right-0 top-perc-15 w-10 h-10 translate-x-perc-50 rounded-full absolute"></div>
+                    </div>
+                    <!-- End post -->
+
+
+
+                    <!-- Date button -->
+                    <div class="column-12 text-center relative zi-5 lg-mt-4 sm-mt-3">
+                         <div class="icon-2xl border-3 border-gray-500 text-md bg-white text-dark-100 font-secondary rounded-full">2025</div>
+                    </div>
+                    <!-- End date button -->
+
+                    <!-- Post -->
+                    <div class="lg-column-6 group px-4 lg-mt-4 sm-mt-3 animated" data-animation="fadeInLeft" data-animation-delay="0">
+                         <!-- Keeper, background colors -->
+                         <div class="w-full h-auto bg-semi-50 group-hover-bg-semi-100 bg-semi-gray-800 group-hover-bg-semi-gray-200 lg-p-4 sm-p-4 rounded-md">
+                              <!-- Title -->
+                              <h4 class="font-secondary text-lg uppercase text-white group-hover-text-dark transition-colors duration-300">
+                                   VC Investment
+                              </h4>
+                         </div>
+                         <!-- Circle dot on RIGHT -->
+                         <div class="sm-hidden transition-colors duration-300 border-2 bg-dark-200 border-gray-200 group-hover-bg-colored group-hover-border-colored right-0 top-perc-15 w-10 h-10 translate-x-perc-50 rounded-full absolute"></div>
+                    </div>
+                    <!-- End post -->
+
+                    <!-- Post -->
+                    <div class="lg-column-6 group px-4 lg-mt-10 sm-mt-3 animated" data-animation="fadeInRight" data-animation-delay="0">
+                         <!-- Keeper, background colors -->
+                         <div class="w-full h-auto bg-semi-50 group-hover-bg-semi-100 bg-semi-gray-800 group-hover-bg-semi-gray-200 lg-p-4 sm-p-4 rounded-md">
+                              <!-- Title -->
+                              <h4 class="font-secondary text-lg uppercase text-white group-hover-text-dark transition-colors duration-300">
+                                   Release Essential Lux Beta version.1
+                              </h4>
+                         </div>
+                         <!-- Circle dot on LEFT -->
+                         <div class="sm-hidden transition-colors duration-300 border-2 bg-dark-200 border-gray-200 group-hover-bg-colored group-hover-border-colored left-0 top-perc-15 w-10 h-10 -translate-x-perc-50 rounded-full absolute"></div>
+                    </div>
+                    <!-- End post -->
+
+                    
+                    <!-- Post -->
+                    <div class="lg-column-6 group px-4 lg-mt-4 sm-mt-3 animated" data-animation="fadeInLeft" data-animation-delay="0">
+                         <!-- Keeper, background colors -->
+                         <div class="w-full h-auto bg-semi-50 group-hover-bg-semi-100 bg-semi-gray-800 group-hover-bg-semi-gray-200 lg-p-4 sm-p-4 rounded-md">
+                              <!-- Title -->
+                              <h4 class="font-secondary text-lg uppercase text-white group-hover-text-dark transition-colors duration-300">
+                                   Listing on a Global Exchange
+                              </h4>
+                         </div>
+                         <!-- Circle dot on RIGHT -->
+                         <div class="sm-hidden transition-colors duration-300 border-2 bg-dark-200 border-gray-200 group-hover-bg-colored group-hover-border-colored right-0 top-perc-15 w-10 h-10 translate-x-perc-50 rounded-full absolute"></div>
+                    </div>
+                    <!-- End post -->
+
+                    <!-- Post -->
+                    <div class="lg-column-6 group px-4 lg-mt-10 sm-mt-3 animated" data-animation="fadeInRight" data-animation-delay="0">
+                         <!-- Keeper, background colors -->
+                         <div class="w-full h-auto bg-semi-50 group-hover-bg-semi-100 bg-semi-gray-800 group-hover-bg-semi-gray-200 lg-p-4 sm-p-4 rounded-md">
+                              <!-- Title -->
+                              <h4 class="font-secondary text-lg uppercase text-white group-hover-text-dark transition-colors duration-300">
+                                  Starting Offline Beauty Business
+                              </h4>
+                         </div>
+                         <!-- Circle dot on LEFT -->
+                         <div class="sm-hidden transition-colors duration-300 border-2 bg-dark-200 border-gray-200 group-hover-bg-colored group-hover-border-colored left-0 top-perc-15 w-10 h-10 -translate-x-perc-50 rounded-full absolute"></div>
+                    </div>
+                    <!-- End post -->
+                    <!-- Date button -->
+                    <div class="column-12 text-center relative zi-5 lg-mt-4 sm-mt-3">
+                         <div class="icon-xl border-3 border-gray-500 text-md bg-white text-dark-100 font-secondary rounded-full"><i class="bi-bookmark-fill"></i></div>
+                    </div>
+                    <!-- End date button -->
+
+               </div>
+               <!-- End history posts -->
+
+          </div>
+          <!-- End container for history posts -->
+     </section>
+     <!-- End history section -->
+
+
+
+
+
+
+
+     <!-- Start generic slider section -->
+     <div id="generic-slider-section" class="lg-py-12 sm-py-8">
+
+          <!-- Container for all -->
+          <div class="container">
+
+               <!-- invisible SVG gradient -->
+               <div class="invisible w-0 h-0 overflow-hidden">
+                    <!-- This SVG have filter only for gradient. All arrows uses this gradient in #generic-slider and you can customize colors of them all with this SVG -->
+                    <svg width="0" height="0" viewBox="0 0 0 0" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <defs>
+                            <filter x="-7.0%" y="-100.0%" width="114.0%" height="300.0%" filterUnits="objectBoundingBox" id="filter-o1hjv2wq92-1">
+                                <feGaussianBlur stdDeviation="2" in="SourceGraphic"></feGaussianBlur>
+                            </filter>
+                            <linearGradient x1="57.4255137%" y1="100%" x2="57.4255137%" y2="0%" id="linearGradient-o1hjv2wq92-2">
+                                <stop stop-color="#2F3840" offset="0%"></stop>
+                                <stop stop-color="#556B84" offset="100%"></stop>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+               </div>
+               
+               <!-- Slider -->
+               <div id="generic-slider" class="custom-slider cursor-grab" 
+                    data-slick='{"autoplay": true, "autoplaySpeed": 2222000, "dots": false, "speed":600, "arrows": false, "fade": false, "draggable":true}'>
+
+                    <!-- Slide -->
+                    <div class="group px-3 lg-h-26 sm-h-23 xs-h-24 flex justify-content-start text-center flex-column">
+                         <!-- Name -->
+                         <h1 class="font-secondary lg-text-7xl sm-text-lg font-light uppercase lh-normal text-gray-800">
+                              Create your own
+                              <!-- Span has SVG design -->
+                              <span class="mx-1 bg-gradient-100 lg-px-3 sm-px-2 py-1 inline-flex rounded-md text-white relative">
+                                   NFT
+                                   <!-- You can change gradient filter if you use another gradient on parent span -->
+                                   <span class="absolute top-perc-100 lg-left-perc-5 sm-left-0 block">
+                                        <svg class="sm-mxw-18" width="94px" height="89px" viewBox="0 0 94 89" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMin meet">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <ellipse fill="#000000" opacity="0.400000006" filter="url(#filter-o1hjv2wq92-1)" cx="47" cy="81" rx="43" ry="3"></ellipse>
+                                                <polygon fill="url(#linearGradient-o1hjv2wq92-2)" points="19.890625 1.85293527e-13 60.1504797 0 3.78288977 79.0947836"></polygon>
+                                            </g>
+                                        </svg>
+                                   </span>
+                              </span>
+                              <!-- End span has SVG design -->
+                         </h1>
+                    </div>
+                    <!-- End slide -->
+
+                    <!-- Slide -->
+                    <div class="group px-3 lg-h-26 sm-h-23 xs-h-24 flex justify-content-start text-center flex-column">
+                         <!-- Name -->
+                         <h1 class="font-secondary lg-text-7xl sm-text-lg font-light uppercase lh-normal text-gray-800">
+                              <!-- Span has SVG design -->
+                              <span class="mx-1 bg-gradient-100 lg-px-3 sm-px-2 py-1 inline-flex rounded-md text-white relative">
+                                   Advertise you
+                                   <!-- You can change gradient filter if you use another gradient on parent span -->
+                                   <span class="absolute top-perc-100 lg-left-perc-5 sm-left-0 block">
+                                        <svg class="sm-mxw-18" width="94px" height="89px" viewBox="0 0 94 89" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMin meet">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <ellipse fill="#000000" opacity="0.400000006" filter="url(#filter-o1hjv2wq92-1)" cx="47" cy="81" rx="43" ry="3"></ellipse>
+                                                <polygon fill="url(#linearGradient-o1hjv2wq92-2)" points="19.890625 1.85293527e-13 60.1504797 0 3.78288977 79.0947836"></polygon>
+                                            </g>
+                                        </svg>
+                                   </span>
+                              </span>
+                              <!-- End span has SVG design -->
+                              with us
+                         </h1>
+                    </div>
+                    <!-- End slide -->
+                    <!-- Slide -->
+                    <div class="group px-3 lg-h-26 sm-h-23 xs-h-24 flex justify-content-start text-center flex-column">
+                         <!-- Name -->
+                         <h1 class="font-secondary lg-text-7xl sm-text-lg font-light uppercase lh-normal text-gray-800">
+                              Make yourself a
+                              <!-- Span has SVG design -->
+                              <span class="mx-1 bg-gradient-100 lg-px-3 sm-px-2 py-1 inline-flex rounded-md text-white relative">
+                                   Beauty Creator
+                                   <!-- You can change gradient filter if you use another gradient on parent span -->
+                                   <span class="absolute top-perc-100 lg-left-perc-5 sm-left-0 block">
+                                        <svg class="sm-mxw-18" width="94px" height="89px" viewBox="0 0 94 89" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMin meet">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <ellipse fill="#000000" opacity="0.400000006" filter="url(#filter-o1hjv2wq92-1)" cx="47" cy="81" rx="43" ry="3"></ellipse>
+                                                <polygon fill="url(#linearGradient-o1hjv2wq92-2)" points="19.890625 1.85293527e-13 60.1504797 0 3.78288977 79.0947836"></polygon>
+                                            </g>
+                                        </svg>
+                                   </span>
+                              </span>
+                              <!-- End span has SVG design -->
+                         </h1>
+                    </div>
+                    <!-- End slide -->
+
+               </div>
+               <!-- End Slider -->
+
+               <!-- Tablet image -->
+               <div class="-mt-5 flex justify-content-center block-images">
+                    <img src="images/bg_web.png" alt="ipad image template" class="sm-w-full">
+               </div>
+
+          </div>
+          <!-- End container for all -->
+
+     </div>
+     <!-- End generic slider section -->
+
+
+
+
+
+
+
+
+     <!-- Bottom icon for top section -->
+     <div class="flex justify-content-center relative">
+          <!-- Top icon -->
+          <div class="absolute w-full left-0 top-0 h-auto flex justify-content-center">
+               <div class="icon-lg text-lg rounded-full border-1 -translate-y-perc-50 border-gray-400 bg-white text-gray-700 zi-10">
+                    <i class="bi-bag-plus"></i>
+               </div>
+          </div>
+     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     <!-- Map section, map image on the background. You can set a small map image for tablets, iPads. Map will be invisibile on mobile phones. -->
+     <div id="map" class="relative lg-h-43 sm-h-45 sm-bg-right-top" data-bg="images/map_01.jpg" data-bg-sm="images/map_01_sm.jpg">
+
+          <!-- Your map link -->
+          <a href="https://www.google.com.tr/maps/place/Place+du+Trocadero/@48.8622259,2.2867585,18.35z/data=!4m13!1m7!3m6!1s0x47e6701f7e8337b5:0xa2cb58dd28914524!2sEiffel+Tower,+Paris,+Fransa!3b1!8m2!3d48.8560934!4d2.2930458!3m4!1s0x47e66fe3405d7ecf:0xc03ac392486d25b5!8m2!3d48.8629697!4d2.2871786" class="fai pointer-events-all" target="_blank"></a>
+
+          <!-- Contact seciton start -->
+          <div id="contact" class="fai zi-10">
+               <!-- Container for the contact form -->
+               <div class="container h-full">
+                    <!-- Row for contact form column -->
+                    <div class="flex-row h-full">
+                         <!-- Column for contact form, you can set the sizes on screens -->
+                         <div class="xl-column-4 lg-column-6 sm-column-8 xs-column-12 h-full flex align-items-center">
+                              <!-- Container for contact form and success message -->
+                              <div id="contact-form-container" class="w-full h-full sm-h-auto bg-semi-90 bg-semi-dark-800 lg-px-5 sm-px-3 lg-py-5 sm-py-7 flex align-items-center">
+                                   <!-- Contact form wrapper -->
+                                   <div class="contact-form-wrapper w-full h-full flex flex-column justify-content-center pointer-events-all transition duration-500">
+
+                                        <!-- Title -->
+                                        <h1 class="text-2xl text-white font-secondary uppercase">
+                                             Drop us a message
+                                        </h1>
+
+                                        <!-- Contact Form -->
+                                        <form id="contact-form" class="contact-form lg-mt-3 validate-me" novalidate name="contact_form" method="post" action="php/mail.php">
+                                             <input type="text" name="name" id="name" placeholder="Your Name*" required class="py-3 px-3 bg-dark-400 text-white lg-mt-3 sm-mt-3">
+                                             <input type="email" name="email" id="email" placeholder="E-Mail*" required class="py-3 px-3 bg-dark-400 text-white lg-mt-3 sm-mt-3">
+                                             <input type="text" name="subject" id="subject" placeholder="Subject" class="py-3 px-3 bg-dark-400 text-white lg-mt-3 sm-mt-3">
+                                             <textarea name="message" id="message" placeholder="Tell us about your project.*" required class="py-3 px-3 bg-dark-400 mnh-22 text-white lg-mt-3 sm-mt-3"></textarea>
+                                             <!-- End col for input -->
+                                             <!-- Col for input -->
+                                             <div class="mt-4">
+                                                 <!-- Send Button -->
+                                                 <button type="submit" id="submit" class="xl-btn block font-secondary bg-colored hover-bg-colored-100 py-2 text-white text-lg uppercase font-bold w-full">
+                                                      <i class="bi-envelope-fill"></i>
+                                                 </button>
+                                                 <!-- End Send Button -->
+                                             </div>
+                                             <!-- End col for input -->
+                                        </form>
+                                        <!-- End contact Form -->
+                                   </div>
+                                   <!-- End contact form wrapper -->
+                                   <!-- Success message wrapper -->
+                                   <div class="success-message-wrapper pointer-events-all unselectable hidden lg-px-3 sm-px-2 lg-py-5 text-center flex flex-column align-items-center transition duration-500">
+                                        <!-- SVG for check icon -->
+                                        <svg width="54px" height="50px" viewBox="0 0 54 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                             <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                  <path d="M18.9526053,50 C17.0492133,50.0026165 15.2485978,49.1358819 14.0621508,47.6459509 L0.348067622,30.4593528 C-0.250279824,29.5582555 -0.0598946109,28.3486099 0.786242025,27.6753353 C1.63237866,27.0020608 2.85255542,27.0893162 3.59449702,27.876155 L17.3085802,45.0419209 C17.7187995,45.5777448 18.3629613,45.881359 19.0368836,45.8565261 C19.7108059,45.8316931 20.3309261,45.4814922 20.7006827,44.9169275 L50.189083,0.919236234 C50.6054349,0.3014969 51.3193752,-0.046964041 52.0619694,0.00511527446 C52.8045636,0.0571945899 53.462994,0.501902075 53.7892363,1.17172072 C54.1154786,1.84153937 54.0599688,2.6347078 53.6436169,3.25244713 L24.176027,47.2293061 C23.0638578,48.8938865 21.2221934,49.9241298 19.2231411,50 L18.9526053,50 Z" fill="#49D078" fill-rule="nonzero"></path>
+                                             </g>
+                                        </svg>
+                                        <!-- End SVG for check icon -->
+                                        <h1 class="font-secondary text-2xl font-light text-white uppercase mt-5">
+                                             Thank you!
+                                        </h1>
+                                        <p class="text-lg text-gray-600 mt-3">
+                                             Your message has reached us. We will get back to you as soon as possible.
+                                        </p>
+                                   </div>
+                                   <!-- End success message wrapper -->
+                              </div>
+                              <!-- End container for contact form and success message -->
+                         </div>
+                         <!-- End column for contact form, you can set the sizes on screens -->
+                    </div>
+                    <!-- End row for contact form column -->
+               </div>
+               <!-- End container for the contact form -->
+          </div>
+          <!-- Contact seciton end -->
+     </div>
+     <!-- End map section -->
+
+
+
+
+     <!-- Footer -->
+     <footer id="footer" class="lg-py-12 sm-py-8 bg-dark-900">
+          
+          <!-- Container for all footer elements -->
+          <div class="container-lg text-center text-sm">
+               
+               <!-- Flex row -->
+               <div class="flex-row lg-flex-columns-3 sm-flex-columns-3 xs-flex-columns-1">
+                    
+                    <!-- Column -->
+                    <div class="flex flex-column align-items-center animated" data-animation="flipInX" data-animation-delay="0">
+                         <!-- Keeper for links -->
+                         <div>
+                              <!-- Link -->
+                              <a href="tel:1234567890" class="icon-md mx-1 text-sm border-1 border-gray-800 text-gray-800 hover-text-white hover-border-white rounded-full transition-colors duration-300">
+                                   <i class="bi-telephone-fill"></i>
+                              </a>
+                          </div>
+                         <!-- Paragraph -->
+                         <p class="lg-mt-3 sm-mt-3 text-gray-700">
+                              Phone : (123) 456-7890
+                         </p>
+                    </div>
+                    <!-- End column -->
+
+                    <!-- Column -->
+                    <div class="flex flex-column align-items-center xs-mt-5 animated" data-animation="flipInX" data-animation-delay="200">
+                         <!-- Keeper for links -->
+                         <div>
+                              <!-- Link -->
+                              <a href="#" target="_blank" class="icon-md mx-1 sm-mt-2 text-sm border-1 border-gray-800 text-gray-800 hover-text-facebook hover-border-facebook rounded-full transition-colors duration-300">
+                                   <i class="bi-facebook"></i>
+                              </a>
+                              <!-- Link -->
+                              <a href="#" target="_blank" class="icon-md mx-1 sm-mt-2 text-sm border-1 border-gray-800 text-gray-800 hover-text-twitter hover-border-twitter rounded-full transition-colors duration-300">
+                                   <i class="bi-twitter"></i>
+                              </a>
+                              <!-- Link -->
+                              <a href="#" target="_blank" class="icon-md mx-1 sm-mt-2 text-sm border-1 border-gray-800 text-gray-800 hover-text-linkedin hover-border-linkedin rounded-full transition-colors duration-300">
+                                   <i class="bi-linkedin"></i>
+                              </a>
+                         </div>
+                         <!-- Paragraph -->
+                         <p class="lg-mt-3 sm-mt-3 text-gray-700">
+                              Mail : <a href="mailto:admin@essentiallux.io" class="hover-text-white">admin@essentiallux.io</a>
+                         </p>
+                         <!-- Paragraph -->
+                         <p class="lg-mt-1 sm-mt-1 text-gray-700">
+                              ©2024 Essentiallux Developed with <i class="bi-heart-fill text-colored"></i> by <a href="https://goldeyes.net/studio/" target="_blank" class="hover-text-white">Tiger Factory</a>
+                         </p>
+                    </div>
+                    <!-- End column -->
+
+                    <!-- Column -->
+                    <div class="flex flex-column align-items-center xs-mt-5 animated" data-animation="flipInX" data-animation-delay="400">
+                         <!-- Link -->
+                         <a href="https://essentiallux.io" target="_blank" class="icon-md text-lg border-1 border-gray-800 text-gray-800 hover-text-white hover-border-white rounded-full transition-colors duration-300">
+                              <i class="bi-pin-angle-fill"></i>
+                         </a>
+                         <!-- Paragraph -->
+                         <p class="lg-mt-3 sm-mt-3 text-gray-700">
+                              https://essentiallux.io
+                         </p>
+                    </div>
+                    <!-- End column -->
+
+               </div>
+               <!-- Flex row end -->
+
+          </div>
+          <!-- End container for all footer elements -->
+
+     </footer>
+     <!-- Footer end -->
+
+
+
+
+
+
+
+
+
+     
+
+
+     <!-- JS Files -->
+     <script src="js/bs.js"></script>
+     <script src="js/plugins.min.js"></script>
+     <!-- End REVOLUTION SLIDER -->
+     <script src="js/functions.js"></script>
+ 
+
+
+
+</body>
+</html>
