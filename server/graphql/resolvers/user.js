@@ -159,7 +159,7 @@ module.exports = {
 
       updateUser: async (_,args,{req, res}) => {
         checkUser(req)     
-        const { email, password, profilePic , bio } = args
+        const { email, password, profilePic , bio , wallet_address } = args
 
         console.log('updateUser args ',args)
         let session

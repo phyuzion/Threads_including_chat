@@ -49,6 +49,8 @@ export const loginUser = ` mutation LoginUser($username: String!, $password: Str
     _id
     username
     email
+    bio
+    wallet_address
     jwtToken
     profilePic
     type
@@ -78,8 +80,8 @@ export const freezeAccount = `mutation Mutation {
   freezeAccount
 }`
 
-export const Update_User = `mutation UpdateUser($email: String, $password: String, $profilePic: String, $bio: String) {
-  updateUser(email: $email, password: $password, profilePic: $profilePic, bio: $bio) {
+export const Update_User = `mutation UpdateUser($email: String, $password: String, $profilePic: String, $bio: String, $wallet_address: String) {
+  updateUser(email: $email, password: $password, profilePic: $profilePic, bio: $bio wallet_address: $wallet_address) {
     _id
     username
     email
