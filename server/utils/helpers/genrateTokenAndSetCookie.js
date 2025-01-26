@@ -47,26 +47,35 @@ const generateToken = (userId,  email, userType) => {
 
 const checkSuperAdmin =  (req) => {
   console.log('checkSuperAdmin')
-  if (!req.user || req.user.type > USER_TYPES.SUPER_ADMIN ) {
-      throwForbiddenError()
+
+  if(req.user && req.user.type == USER_TYPES.SUPER_ADMIN) {
+    return true;
+  }else{
+    throwForbiddenError()
   }
-  return true
 }
 
 const checkAdmin =  (req) => {
   console.log('checkAdmin')
-  if (!req.user || req.user.type > USER_TYPES.ADMIN ) {
+  if (req.user){
+    if (req.user.type == USER_TYPES.ADMIN || req.user.type == USER_TYPES.SUPER_ADMIN){
+      return true
+    }else{
       throwForbiddenError()
+    }
+  }else{
+    throwForbiddenError()
   }
-  return true
 }
 
 const checkUser =  (req) => {
-  console.log('checkSuperAdmin')
-  if (!req.user || req.user.type != USER_TYPES.USER ) {
-      throwForbiddenError()
+
+  console.log('checkUser  : ', req.user);
+  if (req.user){
+      return true
+  }else{
+    throwForbiddenError()
   }
-  return true
 }
 
 exports.checkUser = checkUser

@@ -96,12 +96,10 @@ function AuthPage() {
           //navigate to Admin
 
           
-        }else{
-
-          await client.clearStore();
-          await client.resetStore();
-
         }
+        
+        await client.clearStore();
+        await client.resetStore();
       }
     } catch (error) {
       toast({
