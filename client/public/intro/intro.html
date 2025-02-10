@@ -12,6 +12,7 @@
      <!-- Page Styles -->
      <link rel="stylesheet" href="css/style.css?v=2.0" />
      <!-- End CSS Files -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -120,11 +121,24 @@
                 <div id="nav-menu" class="column ml-auto nav-menu">
                     <!-- Navigation links, you can add nav-links-centered class for centered links -->
                     <ul class="nav-links justify-content-end">
+                         <!-- Logo for mobile navigation -->
+                        <li class="logo-for-mobile-navigation">
+                              <img src="images/logos/ess-logo.png" alt="website logo" class="logo-white mxw-15">
+                              <img src="images/logos/ess-logo.png" alt="website logo" class="logo-dark mxw-15">
+                         </li>
                         <!-- Link -->
                         <li><a href="#home" class="nav-link">Home</a></li>
                         <li><a href="#about" class="nav-link">About</a></li>
                         <li><a href="#services" class="nav-link">Services</a></li>
                         <li><a href="#features" class="nav-link">Features</a></li>
+                        <li class="dd-toggle">
+                              <a href="#" class="nav-link stay">Tokenomics</a>
+                              <ul class="dropdown-menu to-right">
+                              <li><a href="#tokenomics" class="nav-link">Tokenomics</a></li>
+                              <li><a href="#dao" class="nav-link">Dao Matrix</a></li>
+                              <li><a href="#howitworks" class="nav-link">How it works</a></li>
+                              </ul>
+                         </li>
                         <li><a href="#roadmap" class="nav-link">Roadmap</a></li>
                         <li><a href="#contact" class="nav-link">Contact</a></li>
                         <li>
@@ -274,7 +288,7 @@
      <section id="services" class="has-parallax lg-py-12 sm-py-8">
 
           <!-- Parallax background -->
-          <div class="parallax" data-bg="images/i4.jpg" data-target="#history" data-bottom-top="transform:translate3d(0px,-100px,0px);" data-top-bottom="transform:translate3d(0px,100px,0px);"></div>
+          <div class="parallax" data-bg="images/i4.jpg" data-target="#services" data-bottom-top="transform:translate3d(0px,-100px,0px);" data-top-bottom="transform:translate3d(0px,100px,0px);"></div>
 
           <!-- Container for title -->
           <div class="container text-center">
@@ -503,8 +517,294 @@
      </section>
      <!-- End features section -->
 
+     <!-- add tokenomics-->
 
 
+     
+
+     <!-- Top icon for bottom section -->
+     <div class="flex justify-content-center relative">
+          <!-- Top icon -->
+          <div class="absolute w-full left-0 top-0 h-auto flex justify-content-center">
+               <div class="icon-lg text-lg rounded-full border-1 -translate-y-perc-50 border-gray-400 bg-white text-gray-700 zi-10">
+                    <i class="bi-award"></i>
+               </div>
+          </div>
+     </div>
+
+     <!-- tokenomics and tab menu section -->
+     <section id="tokenomics" class="has-parallax lg-py-12 sm-py-8">
+          
+          <!-- Parallax background -->
+          <div class="parallax" data-bg="images/tokenomics_bg.png" data-target="#tokenomics" data-bottom-top="transform:translate3d(0px,-100px,0px);" data-top-bottom="transform:translate3d(0px,100px,0px);"></div>
+
+
+          <!-- Container for title -->
+          <div class="container text-center mb-5">
+               <!-- Title -->
+               <h1 class="font-secondary uppercase text-white lg-text-5xl sm-text-3xl font-light">
+                    TOKENOMICS
+               </h1>
+          </div>
+          <!-- End container for title -->
+          
+ 
+          <div class="container">
+
+               <!-- Start flex row -->
+               <div class="flex-row justify-content-center">
+
+                    <!-- Column -->
+                    <div class="lg-column-3 sm-column-6 mt-5 ">
+                         <img src="images/donut.png"alt="mobile image template" class="mxw-full animated justify-content-center" data-animation="fadeInLeft" data-animation-delay="100" >
+                    </div>
+                    <!-- End column -->
+
+
+                    <!-- Column -->
+                    <div class="lg-column-6 sm-column-12 lg-mt-0 sm-mt-4">
+
+                         <!-- Title for skills -->
+                         <h3 class="font-secondary text-gray-600 uppercase lg-text-3xl sm-text-xl">
+                              Allocation
+                         </h3>
+
+                         <!-- Container for all skills -->
+                         <div class="border-1 border-gray-300 p-3 mt-2">
+
+                              <!-- Row for bar cols -->
+                              <div class="flex-row py-3">
+
+                                   <!-- Col for bar -->
+                                   <div class="column-12">
+                                        <h6 class="text-gray-600 uppercase font-secondary">ADVISOR & TEAM</h6>
+                                        <!-- Progress bar -->
+                                        <div class="progress h-9 bg-gray-100 mt-2">
+                                             <!-- Value and details -->
+                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-purple" role="progressbar" aria-label="progress bar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">15%</div>
+                                        </div>
+                                        <!-- End Progress bar -->
+                                   </div>
+                                   <!-- End col for bar -->
+                                    
+                                   <!-- Col for bar -->
+                                   <div class="column-12">
+                                        <h6 class="text-gray-600 uppercase font-secondary mt-2">COMMUNITY</h6>
+                                        <!-- Progress bar -->
+                                        <div class="progress h-9 bg-gray-100 mt-2">
+                                             <!-- Value and details -->
+                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-purple" role="progressbar" aria-label="progress bar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">30%</div>
+                                        </div>
+                                        <!-- End Progress bar -->
+                                   </div>
+                                   <!-- End col for bar -->
+                                    
+                                   <!-- Col for bar -->
+                                   <div class="column-12">
+                                        <h6 class="text-gray-600 uppercase font-secondary mt-2">RESERVE</h6>
+                                        <!-- Progress bar -->
+                                        <div class="progress h-9 bg-gray-100 mt-2">
+                                             <!-- Value and details -->
+                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-purple" role="progressbar" aria-label="progress bar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">10%</div>
+                                        </div>
+                                        <!-- End Progress bar -->
+                                   </div>
+                                   <!-- End col for bar -->
+                                    
+                                   <!-- Col for bar -->
+                                   <div class="column-12">
+                                        <h6 class="text-gray-600 uppercase font-secondary mt-2">SALES</h6>
+                                        <!-- Progress bar -->
+                                        <div class="progress h-9 bg-gray-100 mt-2">
+                                             <!-- Value and details -->
+                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-purple" role="progressbar" aria-label="progress bar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">10%</div>
+                                        </div>
+                                        <!-- End Progress bar -->
+                                   </div>
+                                   <!-- End col for bar -->
+                                    
+                                   <!-- Col for bar -->
+                                   <div class="column-12">
+                                        <h6 class="text-gray-600 uppercase font-secondary mt-2">ECOSYSTEM</h6>
+                                        <!-- Progress bar -->
+                                        <div class="progress h-9 bg-gray-100 mt-2">
+                                             <!-- Value and details -->
+                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-purple" role="progressbar" aria-label="progress bar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">35%</div>
+                                        </div>
+                                        <!-- End Progress bar -->
+                                   </div>
+                                   <!-- End col for bar -->
+
+
+                              </div>
+                              <!-- End row for bar cols -->
+
+                         </div>
+
+  
+                    </div>
+                    <!-- End column -->
+
+
+               </div>
+               <!-- End flex row -->
+
+          </div>
+          <!-- End container for skill bars -->
+
+     </section>
+
+
+
+     <!-- dao and tab menu section -->
+     <section id="dao" class="has-parallax lg-py-12 sm-py-8">
+          
+          <!-- Parallax background -->
+          <div class="parallax" data-bg="images/dao_bg.png" data-target="#dao" data-bottom-top="transform:translate3d(0px,-100px,0px);" data-top-bottom="transform:translate3d(0px,100px,0px);"></div>
+
+          <!-- Container for title -->
+          <div class="container text-center mb-5">
+               <!-- Title -->
+               <h1 class="font-secondary uppercase text-white lg-text-5xl sm-text-3xl font-light">
+                    DAO MATRIX
+               </h1>
+          </div>
+          <!-- End container for title -->
+ 
+          <div class="container">
+               <!-- Column -->
+               <div class="justify-content-center">
+                    <img src="images/dao_map.png"alt="mobile image template" class="mxw-full animated justify-content-center" data-animation="fadeInLeft" data-animation-delay="100" >
+               </div>
+          <!-- End column -->
+          </div>
+          <!-- End container for skill bars -->
+
+     </section>
+
+     
+     <!-- how it works section -->
+     <section id="howitworks" class="has-parallax lg-py-12 sm-py-8">
+          
+          <!-- Parallax background -->
+          <div class="parallax" data-bg="images/how_bg.png" data-target="#howitworks" data-bottom-top="transform:translate3d(0px,-100px,0px);" data-top-bottom="transform:translate3d(0px,100px,0px);"></div>
+
+          <!-- Container for title -->
+          <div class="container text-center mb-5">
+               <!-- Title -->
+               <h1 class="font-secondary uppercase text-white lg-text-5xl sm-text-3xl font-light">
+                    HOW IT WORKS
+               </h1>
+          </div>
+          <!-- End container for title -->
+
+
+          <!-- Container for all boxes -->
+          <div class="container cursor-default">
+
+
+               <!-- Flex row for all columns -->
+               <div class="flex-row lg-flex-columns-5 md-flex-columns-3 sm-flex-columns-3 xs-flex-columns-1">
+
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-white text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-4xl bg-transparent relative text-base d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <img src="images/work_icon_01.png" class="w-full">
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-white group-hover-text-dark transition mt-3">
+                                   Referral System
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-dark mt-2 transition">
+                                   Enhanced with tiered rewards and performance-based bonuses.
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-white text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-4xl bg-transparent relative text-base d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <img src="images/work_icon_02.png" class="w-full">
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-white group-hover-text-dark transition mt-3">
+                                   Gamification
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-dark mt-2 transition">
+                                   Leaderboards and community engagement activities rewarded with tokens
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+                    <!-- Info box group iss fixing now-->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-white text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-4xl bg-transparent relative text-base d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <img src="images/work_icon_03.png" class="w-full">
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-white group-hover-text-dark transition mt-3">
+                                   Mentorship
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-dark mt-2 transition">
+                                   New artists paired with experienced ones, with token rewards for successful mentorship.
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+                    <!-- Info box group iss fixing now-->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-white text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-4xl bg-transparent relative text-base d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <img src="images/work_icon_04.png" class="w-full">
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-white group-hover-text-dark transition mt-3">
+                                   Sustainable Growth
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-dark mt-2 transition">
+                                   Referral program funded by transaction fees or art sales, ensuring long-term community support.
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+                    <!-- Info box group iss fixing now-->
+                    <div>
+                         <div class="group lg-py-4 sm-py-4 px-2 lg-mt-0 sm-mt-5 bg-transparent hover-bg-white text-center flex align-items-center flex-column transition">
+                              <!-- Icon -->
+                              <div class="icon-4xl bg-transparent relative text-base d-flex group-hover-border-double group-hover-border-white justify-content-center align-items-center transition">
+                                   <img src="images/work_icon_05.png" class="w-full">
+                              </div>
+                              <!-- Title -->
+                              <h4 class="text-lg font-secondary uppercase text-white group-hover-text-dark transition mt-3">
+                                   Special Token Allocation
+                              </h4>
+                              <!-- Paragraph -->
+                              <p class="text-gray-700 text-base group-hover-text-dark mt-2 transition">
+                                   1,000 tokens per successful referral, with a total distribution target of 3,000,000 ELX tokens, ending when the reserve is depleted.
+                              </p>
+                         </div>
+                    </div>
+                    <!-- End info box group -->
+
+
+
+               </div>
+               <!-- End flex row for all columns -->
+
+          </div>
+          <!-- End container for all boxes -->
+
+     </section>
+     <!-- End howitworks section -->
 
 
 
@@ -524,7 +824,7 @@
      <section id="roadmap" class="has-parallax lg-py-12 sm-py-8">
 
           <!-- Parallax background -->
-          <div class="parallax" data-bg="images/i2.jpg" data-target="#history" data-bottom-top="transform:translate3d(0px,-400px,0px);" data-top-bottom="transform:translate3d(0px,400px,0px);"></div>
+          <div class="parallax" data-bg="images/i2.jpg" data-target="#roadmap" data-bottom-top="transform:translate3d(0px,-400px,0px);" data-top-bottom="transform:translate3d(0px,400px,0px);"></div>
 
           
           <!-- Container for title -->
@@ -910,13 +1210,13 @@
                          <!-- Keeper for links -->
                          <div>
                               <!-- Link -->
-                              <a href="mailto:admin@essentiallux.io" class="icon-md mx-1 text-sm border-1 border-gray-800 text-gray-800 hover-text-white hover-border-white rounded-full transition-colors duration-300">
+                              <a href="mailto:ethen@essentiallux.io" class="icon-md mx-1 text-sm border-1 border-gray-800 text-gray-800 hover-text-white hover-border-white rounded-full transition-colors duration-300">
                                    <i class="bi-envelope-fill"></i>
                               </a>
                           </div>
                          <!-- Paragraph -->
                          <p class="lg-mt-3 sm-mt-3 text-gray-700">
-                              Mail : <a href="mailto:admin@essentiallux.io" class="hover-text-white">admin@essentiallux.io</a>
+                              Mail : <a href="mailto:ethen@essentiallux.io" class="hover-text-white">ethen@essentiallux.io</a>
                          </p>
                     </div>
                     <!-- End column -->
@@ -975,12 +1275,102 @@
 
 
      <!-- JS Files -->
-     <script src="js/bs.js"></script>
-     <script src="js/plugins.min.js"></script>
+     <script src="./js/bs.js"></script>
+     <script src="./js/plugins.min.js"></script>
      <!-- End REVOLUTION SLIDER -->
-     <script src="js/functions.js"></script>
+     <script src="./js/functions.js"></script>
  
+     <script>
+          $(document).ready(function(){
+              // Show/Hide mobile navigation
+              $('.mobile-nb').on("click", function(){
+                  $(".modern-nav .mobile-nav-bg").fadeIn(300);
+                  $('.modern-nav, .modern-nav .nav-menu').addClass("active");
+                  $('.modern-nav li').removeClass("showing");
+                  $('.modern-nav .dropdown-menu').hide(300);
+                  setTimeout( function(){ $('.modern-nav .nav-menu').addClass("animate"); }, 300);
+                  return false;
+              });
+      
+              $('.mobile-nav-bg').on("click", function(){
+                  $('.modern-nav .nav-menu').removeClass("animate");
+                  $(".modern-nav .mobile-nav-bg").fadeOut(300);
+                  $('.modern-nav li').removeClass("showing");
+                  $('.modern-nav .dropdown-menu').slideUp(300);
+                  setTimeout( function(){ $('.modern-nav, .modern-nav .nav-menu').removeClass("active"); }, 500);
+                  return false;
+              });
+          });
+      </script>
 
+      <script>
+
+
+    //Dropdown styles
+    $('.modern-nav .dd-toggle').each(function() {
+        var showMobileNav = 992,
+            $this = $(this),
+            nTimer = null;
+
+        //Element over function work for desktops
+        $(this).on('mouseenter', function(){
+            if ($(window).width() > showMobileNav) {
+                window.clearTimeout(nTimer);
+                var $this = $(this), $item = $($this).find('>.dropdown-menu');
+                $($item).stop(true,true).addClass("d-flex");
+                $('.modern-nav .dd-toggle').not($this).not($(this).parents('.dd-toggle')).not($(this).find('.dd-toggle')).find('.dropdown-menu').stop(true,true).removeClass("d-flex").parents().removeClass("showing");
+
+                //Check screen sizes, dropdown width and heights
+                var navTop = $(themeNav).offset().top,
+                    navHeight = $(themeNav).outerHeight(),
+                    itemTop = $($item).offset().top - navTop,
+                    itemWidth = $($this).outerWidth(),
+                    itemHeight = $($item).outerHeight(),
+                    wHeight = $(window).outerHeight(),
+                    ofRight = ($(window).outerWidth() - ($item.offset().left + $item.outerWidth())),
+                    thisRight = ($(window).outerWidth() - ($this.offset().left + $this.outerWidth())),
+                    ofBottom = ($(window).outerHeight() - (itemTop + $item.outerHeight()));
+                if (ofRight < 30) {
+                    if ($($item).hasClass('mega-menu')) {
+                        if ($($item).hasClass('to-center')) { $($item).addClass('to-left centered-lg').removeClass('to-right to-center').css({'right': - thisRight + 10 + 'px' });}
+                        if ($($item).hasClass('to-right')) { $($item).addClass('to-left right-lg').removeClass('to-right to-center').css({'right': - thisRight + 10 + 'px' });}
+                    }
+                    else {$($item).removeClass('to-right to-center').addClass('to-left');}
+                } else{
+                    if ($($item).hasClass('centered-lg')) { $($item).addClass('to-center').removeClass('to-right to-left centered-lg').css({'right':'auto' });}
+                    if ($($item).hasClass('right-lg')) { $($item).addClass('to-right').removeClass('to-left to-center right-lg').css({'right':'auto' });}
+                }
+                if (ofBottom < 20) {
+                    if (!$($item).hasClass('mega-menu')) { $($item).css({'top': (wHeight -  (itemTop + itemHeight)) - 20 + 'px' }) }
+                }
+            }
+        });
+        //Element leave function work for desktops
+        $(this).on('mouseleave',function(){
+            var $this = $(this), $item = $($this).find('.dropdown-menu');
+            if ($(window).width() > showMobileNav) {
+                nTimer = window.setTimeout( function(){ $($item).removeClass("d-flex"); }, 400);
+            }
+        });
+        // Close dropdown menu when hover another link
+        $('.modern-nav .nav-links>li:not(.dd-toggle) a').on('mouseenter', function(){
+            if ($(window).width() > showMobileNav) {
+                $('.modern-nav .dropdown-menu').stop().hide();
+            }
+        });
+        //work dropdown for mobile devices
+        $(this).find(">a:not(.lg)").on("click", function(){
+            var elem = $(this);
+            if ($(window).width() < showMobileNav) {
+                if (elem.next("ul").length ) { $(elem).attr("href", "#"); }
+                $($this).find('>.dropdown-menu').stop().slideToggle({duration: 400, easing: "easeInOutQuart"}).parent().toggleClass("showing");
+                $('.modern-nav .dd-toggle').not($this).not($(this).parents('.dd-toggle')).not($(this).find('.dd-toggle')).find('.dropdown-menu').stop(true,true).slideUp({duration: 400, easing: "easeInOutQuart"}).parent(".dd-toggle").removeClass("showing");
+                return false;
+            }
+        });
+    });
+      </script>
+      
 
 
 </body>
